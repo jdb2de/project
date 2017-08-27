@@ -1,0 +1,8 @@
+spring:
+  main:
+    banner-mode: console
+  datasource:
+    initialize: false
+logging:
+  level:
+    org.springframework: info
