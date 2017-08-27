@@ -1,6 +1,7 @@
 package org.jdb2de.core;
 
 import org.jdb2de.core.information.impl.PostgresInformationImpl;
+import org.jdb2de.core.util.NameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +25,9 @@ public class EntityGeneratorService {
             return;
         }
 
-        ls.forEach((s) -> System.out.println(s));
+        ls.forEach((s) -> System.out.println(NameUtils.underscoreToTypeCamelcase(s)));
+        System.out.println("****************");
+        ls.forEach((s) -> System.out.println(NameUtils.underscoreToFieldCamelcase(s)));
     }
 
 }
