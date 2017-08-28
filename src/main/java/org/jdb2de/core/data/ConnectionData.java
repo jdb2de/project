@@ -1,5 +1,7 @@
 package org.jdb2de.core.data;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Objects;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -66,7 +68,22 @@ public class ConnectionData implements Serializable {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        return Objects.equal(this, obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(driver, url, userName, password);
+    }
+
+    @Override
     public String toString() {
-        return super.toString();
+        return MoreObjects.toStringHelper(this)
+                .add("driver", driver)
+                .add("url", url)
+                .add("userName", userName)
+                .add("password", password)
+                .toString();
     }
 }
