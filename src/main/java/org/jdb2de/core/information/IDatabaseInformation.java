@@ -13,6 +13,7 @@ public interface IDatabaseInformation {
     /**
      * Query in the database all table names from the specified schema
      *
+     * @param schema Database schema identification
      * @param regex A regular expression for table names, if null (or empty) query all tables
      * @return A list of all table names
      */
@@ -20,6 +21,7 @@ public interface IDatabaseInformation {
 
     /**
      * Check if a table exists
+     * @param schema Database schema identification
      * @param tableName The name of a table
      * @return If table exists <code>true</code>, otherwise <code>false</code>
      */
@@ -27,10 +29,33 @@ public interface IDatabaseInformation {
 
     /**
      *
-     * @param schema
+     * @param schema Database schema identification
+     * @param tableName
+     * @return A list of {@link ColumnData}
+     */
+    List<ColumnData> tableColumns(String schema, String tableName);
+
+    /**
+     *
+     * @param schema Database schema identification
+     * @param tableName
+     * @return A {@link String}
+     */
+    String tableComment(String schema, String tableName);
+
+    /**
+     *
+     * @param schema Database schema identification
      * @param tableName
      * @return
      */
-    List<ColumnData> tableColumns(String schema, String tableName);
+    String columnComment(String schema, String tableName);
+
+    /**
+     *
+     * @param dbType
+     * @return
+     */
+    Class<?> translateDbType(String dbType);
 
 }

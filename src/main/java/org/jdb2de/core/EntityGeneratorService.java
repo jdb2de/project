@@ -40,7 +40,19 @@ public class EntityGeneratorService {
         column.setType("int8");
         System.out.println(column);
         System.out.println("****************");
+        System.out.println(dbInformation.translateDbType("int4"));
 
+        for (String table : ls) {
+            System.out.println("****************");
+            System.out.println(table + " Columns");
+            System.out.println("****************");
+
+            List<ColumnData> cols = dbInformation.tableColumns("public", table);
+            for (ColumnData col : cols) {
+                System.out.println(col);
+            }
+        }
+        System.out.println("****************");
     }
 
 }
