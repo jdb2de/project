@@ -8,7 +8,7 @@
 	<version>0.1-SNAPSHOT</version>
 
     <name>jdb2de-core</name>
-    <description>JDB2DE - Database to Documented Entity - Core Project</description>
+    <description>JDB2DE - Database to Javaa Documented Entity - Core Project</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
