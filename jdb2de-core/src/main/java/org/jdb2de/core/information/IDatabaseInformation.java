@@ -47,9 +47,10 @@ public interface IDatabaseInformation {
      *
      * @param schema Database schema identification
      * @param tableName
+     * @param columnName
      * @return
      */
-    String columnComment(String schema, String tableName);
+    String columnComment(String schema, String tableName, String columnName);
 
     /**
      *

@@ -66,7 +66,6 @@ public class PostgresInformation implements IDatabaseInformation {
         String sql = ""
                 + "select a.attname "
                 + "     , t.typname "
-                + "     , a.* "
                 + "  from pg_attribute a "
                 + "  join pg_class c "
                 + "    on a.attrelid = c.oid "
@@ -91,12 +90,14 @@ public class PostgresInformation implements IDatabaseInformation {
 
     @Override
     public String tableComment(String schema, String tableName) {
-        return null;
+        int oid = tableOid(schema, tableName);
+        return objectComment(oid);
     }
 
     @Override
-    public String columnComment(String schema, String tableName) {
-        return null;
+    public String columnComment(String schema, String tableName, String columnName) {
+        int oid = columnOid(schema, tableName, columnName);
+        return objectComment(oid);
     }
 
 
@@ -118,9 +119,56 @@ public class PostgresInformation implements IDatabaseInformation {
         return types;
     }
 
-    /*
-    Get comments from oid, table or column
-    select obj_description(17345)
+    /**
+     *
+     * @param schema Database schema identification
+     * @param tableName
+     * @return
      */
+    private Integer tableOid(String schema, String tableName) {
+        String sql = ""
+                + "select c.oid "
+                + "  from pg_class c "
+                + "  join pg_namespace n "
+                + "    on c.relnamespace = n.oid "
+                + " where c.relkind = 'r' "
+                + "   and n.nspname = ? "
+                + "   and c.relname = ?";
+        return getJdbcTemplate().queryForObject(sql, LanguageUtils.toArray(schema, tableName), Integer.class);
+    }
+
+    /**
+     *
+     * @param schema Database schema identification
+     * @param tableName Table name
+     * @param columnName Column name
+     * @return A {@link Integer} with column <code>oid</code>
+     */
+    private Integer columnOid(String schema, String tableName, String columnName) {
+        String sql = ""
+                + "select a.oid "
+                + "  from pg_attribute a "
+                + "  join pg_class c "
+                + "    on a.attrelid = c.oid "
+                + "  join pg_namespace n "
+                + "    on c.relnamespace = n.oid "
+                + " where c.relkind = 'r' "
+                + "   and n.nspname = ? "
+                + "   and c.relname = ? "
+                + "   and a.attname = ? "
+                + "   and a.attnum > 0";
+
+        return getJdbcTemplate().queryForObject(sql, LanguageUtils.toArray(schema, tableName, columnName), Integer.class);
+    }
+
+    /**
+     * Query object comment by <code>oid</code> identification
+     * @param oid Object <code>oid</code> identification
+     * @return A {@link String} with object comment
+     */
+    private String objectComment(Integer oid) {
+        String sql = "select obj_description(?)";
+        return getJdbcTemplate().queryForObject(sql, LanguageUtils.toArray(oid), String.class);
+    }
 
 }
