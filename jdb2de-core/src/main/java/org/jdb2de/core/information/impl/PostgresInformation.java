@@ -91,15 +91,15 @@ public class PostgresInformation implements IDatabaseInformation {
     @Override
     public String tableComment(String schema, String tableName) {
         int oid = tableOid(schema, tableName);
-        return objectComment(oid);
+        return objectDescription(oid);
     }
 
     @Override
     public String columnComment(String schema, String tableName, String columnName) {
-        int oid = columnOid(schema, tableName, columnName);
-        return objectComment(oid);
+        int tableOid = tableOid(schema, tableName);
+        int columnIndex = columnIndex(schema, tableName, columnName);
+        return columnDescription(tableOid, columnIndex);
     }
-
 
     @Override
     public Class<?> translateDbType(String dbType) {
@@ -144,9 +144,9 @@ public class PostgresInformation implements IDatabaseInformation {
      * @param columnName Column name
      * @return A {@link Integer} with column <code>oid</code>
      */
-    private Integer columnOid(String schema, String tableName, String columnName) {
+    private Integer columnIndex(String schema, String tableName, String columnName) {
         String sql = ""
-                + "select a.oid "
+                + "select a.attnum "
                 + "  from pg_attribute a "
                 + "  join pg_class c "
                 + "    on a.attrelid = c.oid "
@@ -163,12 +163,23 @@ public class PostgresInformation implements IDatabaseInformation {
 
     /**
      * Query object comment by <code>oid</code> identification
-     * @param oid Object <code>oid</code> identification
+     * @param objectOid Object <code>oid</code> identification
      * @return A {@link String} with object comment
      */
-    private String objectComment(Integer oid) {
+    private String objectDescription(Integer objectOid) {
         String sql = "select obj_description(?)";
-        return getJdbcTemplate().queryForObject(sql, LanguageUtils.toArray(oid), String.class);
+        return getJdbcTemplate().queryForObject(sql, LanguageUtils.toArray(objectOid), String.class);
+    }
+
+    /**
+     *
+     * @param tableOid
+     * @param columnIndex
+     * @return
+     */
+    private String columnDescription(Integer tableOid, Integer columnIndex) {
+        String sql = "select col_description(?, ?)";
+        return getJdbcTemplate().queryForObject(sql, LanguageUtils.toArray(tableOid, columnIndex), String.class);
     }
 
 }

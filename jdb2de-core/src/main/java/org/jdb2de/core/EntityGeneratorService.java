@@ -45,11 +45,14 @@ public class EntityGeneratorService {
         for (String table : ls) {
             System.out.println("****************");
             System.out.println(table + " Columns");
+            System.out.println("Comment: " + dbInformation.tableComment("public", table));
             System.out.println("****************");
 
             List<ColumnData> cols = dbInformation.tableColumns("public", table);
             for (ColumnData col : cols) {
                 System.out.println(col);
+                System.out.println("Comment: " + dbInformation.columnComment("public", table, col.getName()));
+                System.out.println("Type: " + dbInformation.translateDbType(col.getType()));
             }
         }
         System.out.println("****************");
