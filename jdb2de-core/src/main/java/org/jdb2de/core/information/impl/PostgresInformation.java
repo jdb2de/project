@@ -3,12 +3,16 @@ package org.jdb2de.core.information.impl;
 import com.google.common.base.Preconditions;
 import org.jdb2de.core.connection.DataSourceSettings;
 import org.jdb2de.core.data.ColumnData;
+import org.jdb2de.core.data.ForeignKeyData;
 import org.jdb2de.core.information.IDatabaseInformation;
 import org.jdb2de.core.util.LanguageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import java.sql.Array;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.*;
 
 /**
@@ -64,27 +68,24 @@ public class PostgresInformation implements IDatabaseInformation {
     public List<ColumnData> tableColumns(String schema, String tableName) {
         List<ColumnData> ls = new ArrayList<>();
         String sql = ""
-                + "select a.attname "
-                + "     , t.typname "
-                + "  from pg_attribute a "
-                + "  join pg_class c "
-                + "    on a.attrelid = c.oid "
-                + "  join pg_type t "
-                + "    on a.atttypid = t.oid "
-                + "  join pg_namespace n "
-                + "    on c.relnamespace = n.oid "
-                + " where c.relkind = 'r' "
-                + "   and n.nspname = ? "
-                + "   and c.relname = ? "
-                + "   and a.attnum > 0";
+                + "  select a.attname "
+                + "       , t.typname "
+                + "       , a.attnum "
+                + "    from pg_attribute a "
+                + "    join pg_class c "
+                + "      on a.attrelid = c.oid "
+                + "    join pg_type t "
+                + "      on a.atttypid = t.oid "
+                + "    join pg_namespace n "
+                + "      on c.relnamespace = n.oid "
+                + "   where c.relkind = 'r' "
+                + "     and n.nspname = ? "
+                + "     and c.relname = ? "
+                + "     and a.attnum > 0 "
+                + "order by a.attnum";
 
         getJdbcTemplate().query(sql, LanguageUtils.toArray(schema, tableName),
-                (rs, rowNum) -> {
-                    ColumnData columnData = new ColumnData();
-                    columnData.setName(rs.getString("attname"));
-                    columnData.setType(rs.getString("typname"));
-                    return columnData;
-                }).forEach(ls::add);
+                (rs, rowNum) -> createColumnData(rs)).forEach(ls::add);
         return ls;
     }
 
@@ -102,9 +103,33 @@ public class PostgresInformation implements IDatabaseInformation {
     }
 
     @Override
-    public Class<?> translateDbType(String dbType) {
-        Class<?> result = getTypes().get(dbType);
-        Preconditions.checkNotNull(result, "Database type %s not mapped", dbType);
+    public List<ForeignKeyData> tableForeignKeys(String schema, String tableName) {
+        List<ForeignKeyData> ls = new ArrayList<>();
+        String sql = ""
+                + "select co.conname " +
+                "       , cf.relname "
+                + "     , co.conkey::int4[] "
+                + "     , co.confkey::int4[] "
+                + "  from pg_constraint co "
+                + "  join pg_namespace n "
+                + "    on co.connamespace = n.oid "
+                + "  join pg_class c "
+                + "    on co.conrelid = c.oid "
+                + "  join pg_class cf "
+                + "    on co.confrelid = cf.oid "
+                + " where co.contype = 'f' "
+                + "   and n.nspname = ? "
+                + "   and c.relname = ?";
+
+        getJdbcTemplate().query(sql, LanguageUtils.toArray(schema, tableName),
+                (rs, rowNum) -> createForeignKeyData(tableName, schema, rs)).forEach(ls::add);
+        return ls;
+    }
+
+    @Override
+    public Class<?> translateDbType(String databaseType) {
+        Class<?> result = getTypes().get(databaseType);
+        Preconditions.checkNotNull(result, "Database type %s not mapped", databaseType);
         return result;
     }
 
@@ -159,6 +184,62 @@ public class PostgresInformation implements IDatabaseInformation {
                 + "   and a.attnum > 0";
 
         return getJdbcTemplate().queryForObject(sql, LanguageUtils.toArray(schema, tableName, columnName), Integer.class);
+    }
+
+    private ColumnData tableColumnByIndex(String schema, String tableName, Integer columnIndex) {
+        String sql = ""
+                + "  select a.attname "
+                + "       , t.typname "
+                + "       , a.attnum "
+                + "    from pg_attribute a "
+                + "    join pg_class c "
+                + "      on a.attrelid = c.oid "
+                + "    join pg_type t "
+                + "      on a.atttypid = t.oid "
+                + "    join pg_namespace n "
+                + "      on c.relnamespace = n.oid "
+                + "   where c.relkind = 'r' "
+                + "     and n.nspname = ? "
+                + "     and c.relname = ? "
+                + "     and a.attnum = ? ";
+
+        return getJdbcTemplate().queryForObject(sql, LanguageUtils.toArray(schema, tableName, columnIndex),
+                (rs, rowNum) -> createColumnData(rs));
+    }
+
+    private ColumnData createColumnData(ResultSet rs) throws SQLException {
+        ColumnData columnData = new ColumnData();
+        columnData.setName(rs.getString("attname"));
+        columnData.setDatabaseType(rs.getString("typname"));
+        columnData.setType(translateDbType(columnData.getDatabaseType()));
+        columnData.setIndex(rs.getInt("attnum"));
+        return columnData;
+    }
+
+    private ForeignKeyData createForeignKeyData(String tableName, String schema, ResultSet rs) throws SQLException {
+
+        ForeignKeyData foreignKeyData = new ForeignKeyData();
+        foreignKeyData.setName(rs.getString("conname"));
+        foreignKeyData.setTable(tableName);
+        foreignKeyData.setReferenceTable(rs.getString("relname"));
+
+        Array columnsArray = rs.getArray("conkey");
+        Integer[] columnsIndexes = (Integer[]) columnsArray.getArray();
+
+        for (int idx : columnsIndexes) {
+            ColumnData columnData = tableColumnByIndex(schema, tableName, idx);
+            foreignKeyData.getColumns().add(columnData.getName());
+        }
+
+        Array referenceColumnsArray = rs.getArray("confkey");
+        Integer[] referenceColumnsIndexes = (Integer[]) referenceColumnsArray.getArray();
+        for (int idx : referenceColumnsIndexes) {
+            ColumnData columnData = tableColumnByIndex(schema, tableName, idx);
+            foreignKeyData.getReferenceColumns().add(columnData.getName());
+        }
+
+
+        return foreignKeyData;
     }
 
     /**

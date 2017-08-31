@@ -1,6 +1,7 @@
 package org.jdb2de.core.information;
 
 import org.jdb2de.core.data.ColumnData;
+import org.jdb2de.core.data.ForeignKeyData;
 
 import java.util.List;
 
@@ -54,9 +55,17 @@ public interface IDatabaseInformation {
 
     /**
      *
-     * @param dbType
+     * @param schema
+     * @param tableName
      * @return
      */
-    Class<?> translateDbType(String dbType);
+    List<ForeignKeyData> tableForeignKeys(String schema, String tableName);
+
+    /**
+     *
+     * @param databaseType
+     * @return
+     */
+    Class<?> translateDbType(String databaseType);
 
 }

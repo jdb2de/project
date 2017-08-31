@@ -8,7 +8,9 @@ import java.io.Serializable;
 public class ColumnData implements Serializable {
 
     private String name;
-    private String type;
+    private String databaseType;
+    private Class<?> type;
+    private Integer index;
 
     public String getName() {
         return name;
@@ -18,12 +20,28 @@ public class ColumnData implements Serializable {
         this.name = name;
     }
 
-    public String getType() {
+    public String getDatabaseType() {
+        return databaseType;
+    }
+
+    public void setDatabaseType(String databaseType) {
+        this.databaseType = databaseType;
+    }
+
+    public Class<?> getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(Class<?> type) {
         this.type = type;
+    }
+
+    public Integer getIndex() {
+        return index;
+    }
+
+    public void setIndex(Integer index) {
+        this.index = index;
     }
 
     @Override
@@ -33,14 +51,16 @@ public class ColumnData implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(name, type);
+        return Objects.hashCode(name, databaseType, type, index);
     }
 
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
                 .add("name", name)
+                .add("databaseType", databaseType)
                 .add("type", type)
+                .add("index", index)
                 .toString();
     }
 }
