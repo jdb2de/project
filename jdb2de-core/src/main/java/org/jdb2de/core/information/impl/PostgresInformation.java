@@ -2,8 +2,8 @@ package org.jdb2de.core.information.impl;
 
 import com.google.common.base.Preconditions;
 import org.jdb2de.core.connection.DataSourceSettings;
-import org.jdb2de.core.data.ColumnData;
-import org.jdb2de.core.data.ForeignKeyData;
+import org.jdb2de.core.data.database.ColumnData;
+import org.jdb2de.core.data.database.ForeignKeyData;
 import org.jdb2de.core.information.IDatabaseInformation;
 import org.jdb2de.core.util.LanguageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -210,8 +210,7 @@ public class PostgresInformation implements IDatabaseInformation {
     private ColumnData createColumnData(ResultSet rs) throws SQLException {
         ColumnData columnData = new ColumnData();
         columnData.setName(rs.getString("attname"));
-        columnData.setDatabaseType(rs.getString("typname"));
-        columnData.setType(translateDbType(columnData.getDatabaseType()));
+        columnData.setType(rs.getString("typname"));
         columnData.setIndex(rs.getInt("attnum"));
         return columnData;
     }

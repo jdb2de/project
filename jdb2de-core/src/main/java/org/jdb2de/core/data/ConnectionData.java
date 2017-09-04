@@ -16,6 +16,11 @@ import java.io.Serializable;
 public class ConnectionData implements Serializable {
 
     /**
+     * Serial Version UID
+     */
+    private static final long serialVersionUID = -1229916425332251970L;
+
+    /**
      * Driver class
      */
     private String driver;

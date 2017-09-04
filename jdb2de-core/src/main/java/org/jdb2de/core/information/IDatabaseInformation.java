@@ -1,7 +1,7 @@
 package org.jdb2de.core.information;
 
-import org.jdb2de.core.data.ColumnData;
-import org.jdb2de.core.data.ForeignKeyData;
+import org.jdb2de.core.data.database.ColumnData;
+import org.jdb2de.core.data.database.ForeignKeyData;
 
 import java.util.List;
 

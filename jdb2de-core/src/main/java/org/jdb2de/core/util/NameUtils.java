@@ -22,7 +22,7 @@ public final class NameUtils {
      * @param value
      * @return
      */
-    public static String underscoreToTypeCamelcase(String value) {
+    public static String underscoreToUpperCamelcase(String value) {
         return underscoreToCamelcase(value, CaseFormat.UPPER_CAMEL);
     }
 
@@ -31,7 +31,7 @@ public final class NameUtils {
      * @param value
      * @return
      */
-    public static String underscoreToFieldCamelcase(String value) {
+    public static String underscoreToLowerCamelcase(String value) {
         return underscoreToCamelcase(value, CaseFormat.LOWER_CAMEL);
     }
 

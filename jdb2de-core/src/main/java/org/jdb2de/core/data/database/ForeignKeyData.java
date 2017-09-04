@@ -1,4 +1,4 @@
-package org.jdb2de.core.data;
+package org.jdb2de.core.data.database;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
@@ -7,7 +7,16 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ *
+ * @author  Rodrigo Tavares
+ */
 public class ForeignKeyData implements Serializable {
+
+    /**
+     * Serial Version UID
+     */
+    private static final long serialVersionUID = 5526158702379112982L;
 
     private String name;
     private String table;
