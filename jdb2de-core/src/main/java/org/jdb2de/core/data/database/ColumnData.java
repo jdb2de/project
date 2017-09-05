@@ -16,6 +16,9 @@ public class ColumnData implements Serializable {
     private String type;
     private Integer index;
     private String comment;
+    private int size;
+    private boolean nullable;
+    private boolean primaryKey;
 
     public String getName() {
         return name;
@@ -45,6 +48,30 @@ public class ColumnData implements Serializable {
         return comment;
     }
 
+    public int getSize() {
+        return size;
+    }
+
+    public boolean isNullable() {
+        return nullable;
+    }
+
+    public void setNullable(boolean nullable) {
+        this.nullable = nullable;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
+    }
+
+    public boolean isPrimaryKey() {
+        return primaryKey;
+    }
+
+    public void setPrimaryKey(boolean primaryKey) {
+        this.primaryKey = primaryKey;
+    }
+
     /**
      *
      * @param comment
@@ -60,7 +87,7 @@ public class ColumnData implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(name, type, index, comment);
+        return Objects.hashCode(name, type, index, comment, size, nullable, primaryKey);
     }
 
     @Override
@@ -70,6 +97,9 @@ public class ColumnData implements Serializable {
                 .add("type", type)
                 .add("index", index)
                 .add("comment", comment)
+                .add("size", size)
+                .add("nullable", nullable)
+                .add("primaryKey", primaryKey)
                 .toString();
     }
 }

@@ -18,6 +18,7 @@ public class TableData implements Serializable {
 
     private String name;
     private String comment;
+    private boolean compositeKey;
 
     public String getName() {
         return name;
@@ -33,6 +34,14 @@ public class TableData implements Serializable {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public boolean isCompositeKey() {
+        return compositeKey;
+    }
+
+    public void setCompositeKey(boolean compositeKey) {
+        this.compositeKey = compositeKey;
     }
 
     @Override
@@ -51,6 +60,7 @@ public class TableData implements Serializable {
         return MoreObjects.toStringHelper(this)
                 .add("name", name)
                 .add("comment", comment)
+                .add("compositeKey", compositeKey)
                 .toString();
     }
 }

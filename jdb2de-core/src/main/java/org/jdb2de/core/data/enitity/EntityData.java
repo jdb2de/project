@@ -13,7 +13,6 @@ public class EntityData implements Serializable {
     private static final long serialVersionUID = -5480509444982670622L;
 
     private List<String> copyright;
-    private String entityPackage;
     private String author;
     private String serialUid;
     private String name;
@@ -29,14 +28,6 @@ public class EntityData implements Serializable {
 
     public void setCopyright(List<String> copyright) {
         this.copyright = copyright;
-    }
-
-    public String getEntityPackage() {
-        return entityPackage;
-    }
-
-    public void setEntityPackage(String entityPackage) {
-        this.entityPackage = entityPackage;
     }
 
     public String getAuthor() {

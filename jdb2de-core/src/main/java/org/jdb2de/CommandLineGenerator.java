@@ -50,3 +50,4 @@ public class CommandLineGenerator implements CommandLineRunner {
         service.generate();
     }
 }
+

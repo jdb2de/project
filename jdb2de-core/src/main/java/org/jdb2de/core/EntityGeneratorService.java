@@ -4,6 +4,7 @@ import com.google.common.io.Files;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import org.apache.commons.collections4.CollectionUtils;
+import org.jdb2de.core.data.ParametersData;
 import org.jdb2de.core.data.database.ColumnData;
 import org.jdb2de.core.data.database.ForeignKeyData;
 import org.jdb2de.core.data.database.TableData;
@@ -19,10 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -95,6 +93,11 @@ public class EntityGeneratorService {
     private void entityTemplate() {
 
         try {
+            ParametersData parameters = new ParametersData();
+            parameters.setSchema("public");
+            parameters.setEntityPackage("org.jdb2de.model");
+            parameters.setIdPackage("org.jdb2de.model.pk");
+
             String schema = "public";
             List<String> ls = dbInformation.allTables(schema, null);
             String tableName = ls.get(0);
@@ -122,14 +125,15 @@ public class EntityGeneratorService {
             entity.setTable(table);
             entity.setAuthor("Rodrigo Tavares");
             entity.setCopyright(Files.readLines(LanguageUtils.fileFromResource("copyright"), Charset.defaultCharset()));
-            entity.setEntityPackage("org.jdb2de.model");
             entity.setFields(fields);
             entity.setName(NameUtils.underscoreToUpperCamelcase(tableName));
 
-            String entityName = entity.getEntityPackage() + "." + entity.getName();
+            String entityName = parameters.getEntityPackage() + "." + entity.getName();
             entity.setSerialUid(LanguageUtils.generateSerialVersionUUID(entityName, entity.getName()));
             Map<String, Object> params = new HashMap<>();
+            params.put("param", parameters);
             params.put("entity", entity);
+            params.put("now", new Date());
 
             //freemarkerConfig.setClassForTemplateLoading(this.getClass(), "/templates");
             Template template = freemarkerConfig.getTemplate("entity.ftl");
