@@ -13,7 +13,7 @@ public class FieldData implements Serializable {
 
     private String name;
     private String upperName;
-    private Class type;
+    private String type;
     private ColumnData column;
 
     public String getName() {
@@ -32,15 +32,15 @@ public class FieldData implements Serializable {
         this.upperName = upperName;
     }
 
-    public Class getType() {
+    public String getType() {
         return type;
     }
 
     /**
      *
-     * @param type A {@link Class} value
+     * @param type A {@link String} value
      */
-    public void setType(Class type) {
+    public void setType(String type) {
         this.type = type;
     }
 

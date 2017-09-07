@@ -2,6 +2,7 @@ package org.jdb2de.core.data.database;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 
@@ -45,7 +46,7 @@ public class ColumnData implements Serializable {
     }
 
     public String getComment() {
-        return comment;
+        return StringUtils.trimToEmpty(comment);
     }
 
     public int getSize() {

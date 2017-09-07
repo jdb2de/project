@@ -25,7 +25,7 @@ public class PostgresInformation implements IDatabaseInformation {
     @Autowired
     private DataSourceSettings dataSourceSettings;
     private JdbcTemplate jdbcTemplate;
-    private Map<String, Class<?>> types;
+    private Map<String, String> types;
 
     public JdbcTemplate getJdbcTemplate() {
         if (jdbcTemplate == null) {
@@ -127,19 +127,22 @@ public class PostgresInformation implements IDatabaseInformation {
     }
 
     @Override
-    public Class<?> translateDbType(String databaseType) {
-        Class<?> result = getTypes().get(databaseType);
+    public String translateDbType(String databaseType) {
+        String result = getTypes().get(databaseType);
         Preconditions.checkNotNull(result, "Database type %s not mapped", databaseType);
         return result;
     }
 
-    private Map<String, Class<?>> getTypes() {
+    private Map<String, String> getTypes() {
         if (types == null) {
             types = new HashMap<>();
-            types.put("varchar", String.class);
-            types.put("int4", Integer.class);
-            types.put("timestamp", Date.class);
-            types.put("text", String.class);
+            types.put("varchar", String.class.getSimpleName());
+            types.put("int2", Integer.class.getSimpleName());
+            types.put("int4", Integer.class.getSimpleName());
+            types.put("bool", Boolean.class.getSimpleName());
+            types.put("timestamp", Date.class.getName());
+            types.put("text", String.class.getSimpleName());
+            types.put("bytea", "int[]");
         }
         return types;
     }

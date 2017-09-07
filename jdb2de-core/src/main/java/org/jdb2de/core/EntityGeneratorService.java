@@ -49,9 +49,9 @@ public class EntityGeneratorService {
         System.out.println("****************");
         ls.forEach((s) -> System.out.println(NameUtils.underscoreToLowerCamelcase(s)));
         System.out.println("****************");
-        System.out.println(dbInformation.checkIfTableExists("public", "parameter"));
+        System.out.println(dbInformation.checkIfTableExists("public", "staff"));
         System.out.println("****************");
-        System.out.println(dbInformation.checkIfTableExists("public", "time"));
+        System.out.println(dbInformation.checkIfTableExists("public", "xxx"));
         System.out.println("****************");
 
         for (String table : ls) {

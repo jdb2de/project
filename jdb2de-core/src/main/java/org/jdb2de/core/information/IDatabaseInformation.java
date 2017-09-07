@@ -66,6 +66,6 @@ public interface IDatabaseInformation {
      * @param databaseType
      * @return
      */
-    Class<?> translateDbType(String databaseType);
+    String translateDbType(String databaseType);
 
 }
