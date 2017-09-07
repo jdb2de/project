@@ -31,3 +31,4 @@
 ### Sonar ###
 **/.sonar
 /target/
+**/sonar-cloud.sh
