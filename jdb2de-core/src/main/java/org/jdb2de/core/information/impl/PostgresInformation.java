@@ -7,6 +7,10 @@ import org.jdb2de.core.data.database.ForeignKeyData;
 import org.jdb2de.core.information.IDatabaseInformation;
 import org.jdb2de.core.util.LanguageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.stereotype.Component;
 
 import java.sql.Array;
@@ -19,7 +23,35 @@ import java.util.*;
  * @author  Rodrigo Tavares
  */
 @Component
+@PropertySource("classpath:/queries/postgresql.properties")
 public class PostgresInformation implements IDatabaseInformation {
+
+    @Value("${pg.all.tables}")
+    private String sqlAllTables;
+
+    @Value("${pg.check.if.table.exists}")
+    private String sqlCheckIfTableExists;
+
+    @Value("${pg.table.columns}")
+    private String sqlTableColumns;
+
+    @Value("${pg.table.foreign.keys}")
+    private String sqlTableForeignKeys;
+
+    @Value("${pg.table.oid}")
+    private String sqlTableOid;
+
+    @Value("${pg.column.index}")
+    private String sqlColumnIndex;
+
+    @Value("${pg.table.column.by.index}")
+    private String sqlTableColumnByIndex;
+
+    @Value("${pg.object.description}")
+    private String sqlObjectDescription;
+
+    @Value("${pg.column.description}")
+    private String sqlColumnDescription;
 
     @Autowired
     private DatabaseService databaseService;
@@ -28,14 +60,7 @@ public class PostgresInformation implements IDatabaseInformation {
     @Override
     public List<String> allTables(String regex) {
         List<String> ls = new ArrayList<>();
-        String sql = ""
-                + "select c.relname "
-                + "  from pg_class c "
-                + "  join pg_namespace n "
-                + "    on c.relnamespace = n.oid "
-                + " where c.relkind = 'r' "
-                + "   and n.nspname = ?";
-        databaseService.getJdbc().query(sql, LanguageUtils.toArray(databaseService.getSchema()),
+        databaseService.getJdbc().query(sqlAllTables, LanguageUtils.toArray(databaseService.getSchema()),
                 (rs, rowNum) -> rs.getString("relname")).forEach(ls::add);
 
         return ls;
@@ -43,39 +68,16 @@ public class PostgresInformation implements IDatabaseInformation {
 
     @Override
     public boolean checkIfTableExists(String tableName) {
-        String sql = ""
-                + "select count(*) "
-                + "  from pg_class c "
-                + "  join pg_namespace n "
-                + "    on c.relnamespace = n.oid "
-                + " where c.relkind = 'r' "
-                + "   and n.nspname = ? "
-                + "   and c.relname = ?";
-        int qtd = databaseService.getJdbc().queryForObject(sql, LanguageUtils.toArray(databaseService.getSchema(), tableName), Integer.class);
+        int qtd = databaseService.getJdbc().queryForObject(sqlCheckIfTableExists,
+                LanguageUtils.toArray(databaseService.getSchema(), tableName), Integer.class);
         return qtd > 0;
     }
 
     @Override
     public List<ColumnData> tableColumns(String tableName) {
         List<ColumnData> ls = new ArrayList<>();
-        String sql = ""
-                + "  select a.attname "
-                + "       , t.typname "
-                + "       , a.attnum "
-                + "    from pg_attribute a "
-                + "    join pg_class c "
-                + "      on a.attrelid = c.oid "
-                + "    join pg_type t "
-                + "      on a.atttypid = t.oid "
-                + "    join pg_namespace n "
-                + "      on c.relnamespace = n.oid "
-                + "   where c.relkind = 'r' "
-                + "     and n.nspname = ? "
-                + "     and c.relname = ? "
-                + "     and a.attnum > 0 "
-                + "order by a.attnum";
 
-        databaseService.getJdbc().query(sql, LanguageUtils.toArray(databaseService.getSchema(), tableName),
+        databaseService.getJdbc().query(sqlTableColumns, LanguageUtils.toArray(databaseService.getSchema(), tableName),
                 (rs, rowNum) -> createColumnData(rs)).forEach(ls::add);
         return ls;
     }
@@ -96,24 +98,9 @@ public class PostgresInformation implements IDatabaseInformation {
     @Override
     public List<ForeignKeyData> tableForeignKeys(String tableName) {
         List<ForeignKeyData> ls = new ArrayList<>();
-        String sql = ""
-                + "select co.conname " +
-                "       , cf.relname "
-                + "     , co.conkey::int4[] "
-                + "     , co.confkey::int4[] "
-                + "  from pg_constraint co "
-                + "  join pg_namespace n "
-                + "    on co.connamespace = n.oid "
-                + "  join pg_class c "
-                + "    on co.conrelid = c.oid "
-                + "  join pg_class cf "
-                + "    on co.confrelid = cf.oid "
-                + " where co.contype = 'f' "
-                + "   and n.nspname = ? "
-                + "   and c.relname = ?";
 
-        databaseService.getJdbc().query(sql, LanguageUtils.toArray(databaseService.getSchema(), tableName),
-                (rs, rowNum) -> createForeignKeyData(tableName, rs)).forEach(ls::add);
+        databaseService.getJdbc().query(sqlTableForeignKeys, LanguageUtils.toArray(databaseService.getSchema(),
+                tableName), (rs, rowNum) -> createForeignKeyData(tableName, rs)).forEach(ls::add);
         return ls;
     }
 
@@ -144,15 +131,8 @@ public class PostgresInformation implements IDatabaseInformation {
      * @return
      */
     private Integer tableOid(String tableName) {
-        String sql = ""
-                + "select c.oid "
-                + "  from pg_class c "
-                + "  join pg_namespace n "
-                + "    on c.relnamespace = n.oid "
-                + " where c.relkind = 'r' "
-                + "   and n.nspname = ? "
-                + "   and c.relname = ?";
-        return databaseService.getJdbc().queryForObject(sql, LanguageUtils.toArray(databaseService.getSchema(), tableName), Integer.class);
+        return databaseService.getJdbc().queryForObject(sqlTableOid, LanguageUtils.toArray(databaseService.getSchema(),
+                tableName), Integer.class);
     }
 
     /**
@@ -162,40 +142,13 @@ public class PostgresInformation implements IDatabaseInformation {
      * @return A {@link Integer} with column <code>oid</code>
      */
     private Integer columnIndex(String tableName, String columnName) {
-        String sql = ""
-                + "select a.attnum "
-                + "  from pg_attribute a "
-                + "  join pg_class c "
-                + "    on a.attrelid = c.oid "
-                + "  join pg_namespace n "
-                + "    on c.relnamespace = n.oid "
-                + " where c.relkind = 'r' "
-                + "   and n.nspname = ? "
-                + "   and c.relname = ? "
-                + "   and a.attname = ? "
-                + "   and a.attnum > 0";
-
-        return databaseService.getJdbc().queryForObject(sql, LanguageUtils.toArray(databaseService.getSchema(), tableName, columnName), Integer.class);
+        return databaseService.getJdbc().queryForObject(sqlColumnIndex,
+                LanguageUtils.toArray(databaseService.getSchema(), tableName, columnName), Integer.class);
     }
 
     private ColumnData tableColumnByIndex(String tableName, Integer columnIndex) {
-        String sql = ""
-                + "  select a.attname "
-                + "       , t.typname "
-                + "       , a.attnum "
-                + "    from pg_attribute a "
-                + "    join pg_class c "
-                + "      on a.attrelid = c.oid "
-                + "    join pg_type t "
-                + "      on a.atttypid = t.oid "
-                + "    join pg_namespace n "
-                + "      on c.relnamespace = n.oid "
-                + "   where c.relkind = 'r' "
-                + "     and n.nspname = ? "
-                + "     and c.relname = ? "
-                + "     and a.attnum = ? ";
-
-        return databaseService.getJdbc().queryForObject(sql, LanguageUtils.toArray(databaseService.getSchema(), tableName, columnIndex),
+        return databaseService.getJdbc().queryForObject(sqlTableColumnByIndex,
+                LanguageUtils.toArray(databaseService.getSchema(), tableName, columnIndex),
                 (rs, rowNum) -> createColumnData(rs));
     }
 
@@ -239,8 +192,8 @@ public class PostgresInformation implements IDatabaseInformation {
      * @return A {@link String} with object comment
      */
     private String objectDescription(Integer objectOid) {
-        String sql = "select obj_description(?)";
-        return databaseService.getJdbc().queryForObject(sql, LanguageUtils.toArray(objectOid), String.class);
+        return databaseService.getJdbc().queryForObject(sqlObjectDescription, LanguageUtils.toArray(objectOid),
+                String.class);
     }
 
     /**
@@ -250,8 +203,8 @@ public class PostgresInformation implements IDatabaseInformation {
      * @return
      */
     private String columnDescription(Integer tableOid, Integer columnIndex) {
-        String sql = "select col_description(?, ?)";
-        return databaseService.getJdbc().queryForObject(sql, LanguageUtils.toArray(tableOid, columnIndex), String.class);
+        return databaseService.getJdbc().queryForObject(sqlColumnDescription,
+                LanguageUtils.toArray(tableOid, columnIndex), String.class);
     }
 
 }
