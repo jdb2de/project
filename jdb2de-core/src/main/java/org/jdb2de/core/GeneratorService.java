@@ -1,10 +1,9 @@
 package org.jdb2de.core;
 
-import com.google.common.io.Files;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import org.apache.commons.collections4.CollectionUtils;
-import org.jdb2de.core.data.ParametersData;
+import org.jdb2de.core.data.ParameterData;
 import org.jdb2de.core.data.database.ColumnData;
 import org.jdb2de.core.data.database.ForeignKeyData;
 import org.jdb2de.core.data.database.TableData;
@@ -19,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
-import java.nio.charset.Charset;
 import java.util.*;
 
 /**
@@ -27,9 +25,12 @@ import java.util.*;
  * @author  Rodrigo Tavares
  */
 @Service
-public class EntityGeneratorService {
+public class GeneratorService {
 
-    public static final Logger LOG = LoggerFactory.getLogger(EntityGeneratorService.class);
+    public static final Logger LOG = LoggerFactory.getLogger(GeneratorService.class);
+
+    @Autowired
+    private ParameterData parameters;
 
     @Autowired
     private PostgresInformation dbInformation;
@@ -39,7 +40,7 @@ public class EntityGeneratorService {
 
     public void generate() {
 
-        List<String> ls = dbInformation.allTables("public", null);
+        List<String> ls = dbInformation.allTables(null);
         if (ls == null) {
             System.out.println("No tables.....");
             return;
@@ -49,26 +50,26 @@ public class EntityGeneratorService {
         System.out.println("****************");
         ls.forEach((s) -> System.out.println(NameUtils.underscoreToLowerCamelcase(s)));
         System.out.println("****************");
-        System.out.println(dbInformation.checkIfTableExists("public", "staff"));
+        System.out.println(dbInformation.checkIfTableExists("staff"));
         System.out.println("****************");
-        System.out.println(dbInformation.checkIfTableExists("public", "xxx"));
+        System.out.println(dbInformation.checkIfTableExists("xxx"));
         System.out.println("****************");
 
         for (String table : ls) {
             System.out.println("****************");
             System.out.println(table + " Columns");
-            System.out.println("Comment: " + dbInformation.tableComment("public", table));
+            System.out.println("Comment: " + dbInformation.tableComment(table));
             System.out.println("****************");
             System.out.println();
 
-            List<ColumnData> cols = dbInformation.tableColumns("public", table);
+            List<ColumnData> cols = dbInformation.tableColumns(table);
             for (ColumnData col : cols) {
                 System.out.println(col);
-                System.out.println("Comment: " + dbInformation.columnComment("public", table, col.getName()));
+                System.out.println("Comment: " + dbInformation.columnComment(table, col.getName()));
                 System.out.println();
             }
 
-            List<ForeignKeyData> foreignKeys = dbInformation.tableForeignKeys("public", table);
+            List<ForeignKeyData> foreignKeys = dbInformation.tableForeignKeys(table);
 
             if (CollectionUtils.isNotEmpty(foreignKeys)) {
                 System.out.println();
@@ -93,24 +94,19 @@ public class EntityGeneratorService {
     private void entityTemplate() {
 
         try {
-            ParametersData parameters = new ParametersData();
-            parameters.setSchema("public");
-            parameters.setEntityPackage("org.jdb2de.model");
-            parameters.setIdPackage("org.jdb2de.model.pk");
-
-            String schema = "public";
-            List<String> ls = dbInformation.allTables(schema, null);
-            String tableName = ls.get(0);
-            String tableComment = dbInformation.tableComment(schema, tableName);
+            List<String> ls = dbInformation.allTables(null);
+            int idx = (int) (ls.size() * Math.random());
+            String tableName = ls.get(idx);
+            String tableComment = dbInformation.tableComment(tableName);
 
             TableData table = new TableData();
             table.setName(tableName);
             table.setComment(tableComment);
 
-            List<ColumnData> cols = dbInformation.tableColumns(schema, tableName);
+            List<ColumnData> cols = dbInformation.tableColumns(tableName);
             List<FieldData> fields = new ArrayList<>();
             for (ColumnData col : cols) {
-                String columnComment = dbInformation.columnComment(schema, tableName, col.getName());
+                String columnComment = dbInformation.columnComment(tableName, col.getName());
                 col.setComment(columnComment);
 
                 FieldData field = new FieldData();
@@ -123,8 +119,6 @@ public class EntityGeneratorService {
 
             EntityData entity = new EntityData();
             entity.setTable(table);
-            entity.setAuthor("Rodrigo Tavares");
-            entity.setCopyright(Files.readLines(LanguageUtils.fileFromResource("copyright"), Charset.defaultCharset()));
             entity.setFields(fields);
             entity.setName(NameUtils.underscoreToUpperCamelcase(tableName));
 

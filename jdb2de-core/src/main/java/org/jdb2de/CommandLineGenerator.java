@@ -1,7 +1,6 @@
 package org.jdb2de;
 
-import org.jdb2de.core.EntityGeneratorService;
-import org.jdb2de.core.data.ConnectionData;
+import org.jdb2de.core.GeneratorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +9,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 
 /**
  *
@@ -25,10 +25,10 @@ public class CommandLineGenerator implements CommandLineRunner {
     private static final Logger LOG = LoggerFactory.getLogger(CommandLineGenerator.class);
 
     @Autowired
-    private ConnectionData connectionData;
+    private GeneratorService service;
 
     @Autowired
-    private EntityGeneratorService service;
+    private ConfigurableApplicationContext context;
 
     public static void main(String[] args) {
         SpringApplication.run(CommandLineGenerator.class, args);
@@ -40,14 +40,13 @@ public class CommandLineGenerator implements CommandLineRunner {
         LOG.info("=============================");
         LOG.info("Starting Command Line Generator...");
 
-
-        // TODO Remove hard code
-        connectionData.setDriver("org.postgresql.Driver");
-        connectionData.setUrl("jdbc:postgresql://localhost:5432/postgres");
-        connectionData.setUserName("postgres");
-        connectionData.setPassword("postgres");
-
-        service.generate();
+        try {
+            // Start the generation
+            service.generate();
+        } finally {
+            // Close application
+            context.close();
+        }
     }
 }
 

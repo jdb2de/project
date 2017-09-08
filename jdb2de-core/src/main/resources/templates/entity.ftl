@@ -1,4 +1,4 @@
-<#-- @ftlvariable name="param" type="org.jdb2de.core.data.ParametersData" -->
+<#-- @ftlvariable name="param" type="org.jdb2de.core.data.ParameterData" -->
 <#-- @ftlvariable name="entity" type="org.jdb2de.core.data.enitity.EntityData" -->
 <#include "entity-serial-uid.ftl">
 <#include "entity-field.ftl">
@@ -8,7 +8,7 @@
 <#include "entity-equals.ftl">
 <#setting datetime_format="yyyy-MM-dd HH:mm:ss">
 /*
-<#list entity.copyright as line>
+<#list param.copyright as line>
  * ${line}
 </#list>
  */
@@ -21,7 +21,6 @@ import javax.annotation.Generated;
 import java.io.Serializable;
 
 import javax.persistence.*;
-
 <#if entity.table.compositeKey>
 import ${param.idPackage}.${entity.name}PK;
 </#if>
@@ -32,7 +31,7 @@ import ${param.idPackage}.${entity.name}PK;
  *
  * This entity was automatically created by JDB2DE tool
  *
- * @author ${entity.author}
+ * @author ${param.author}
  */
 @Entity
 <#if entity.table.compositeKey>

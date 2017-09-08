@@ -40,6 +40,16 @@ public class ConnectionData implements Serializable {
      */
     private String password;
 
+    /**
+     * Database schema
+     */
+    private String schema;
+
+    /**
+     * Database catalog
+     */
+    private String catalog;
+
     public String getDriver() {
         return driver;
     }
@@ -72,6 +82,22 @@ public class ConnectionData implements Serializable {
         this.password = password;
     }
 
+    public String getSchema() {
+        return schema;
+    }
+
+    public void setSchema(String schema) {
+        this.schema = schema;
+    }
+
+    public String getCatalog() {
+        return catalog;
+    }
+
+    public void setCatalog(String catalog) {
+        this.catalog = catalog;
+    }
+
     @Override
     public boolean equals(Object obj) {
         return Objects.equal(this, obj);
@@ -79,7 +105,7 @@ public class ConnectionData implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(driver, url, userName, password);
+        return Objects.hashCode(driver, url, userName, password, schema, catalog);
     }
 
     @Override
@@ -89,6 +115,8 @@ public class ConnectionData implements Serializable {
                 .add("url", url)
                 .add("userName", userName)
                 .add("password", password)
+                .add("schema", schema)
+                .add("catalog", catalog)
                 .toString();
     }
 }
