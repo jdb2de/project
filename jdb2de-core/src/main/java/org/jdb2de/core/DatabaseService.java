@@ -25,7 +25,7 @@ public class DatabaseService {
     /**
      * Instance to log registration
      */
-    private static Logger LOG = LoggerFactory.getLogger(DatabaseService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DatabaseService.class);
 
     @Autowired
     private ConnectionData connectionData;
