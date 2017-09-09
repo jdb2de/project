@@ -27,7 +27,7 @@ import java.util.*;
 @Service
 public class GeneratorService {
 
-    public static final Logger LOG = LoggerFactory.getLogger(GeneratorService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(GeneratorService.class);
 
     @Autowired
     private ParameterData parameters;
@@ -42,52 +42,52 @@ public class GeneratorService {
 
         List<String> ls = dbInformation.allTables(null);
         if (ls == null) {
-            System.out.println("No tables.....");
+            LOG.info("No tables.....");
             return;
         }
 
-        ls.forEach((s) -> System.out.println(NameUtils.underscoreToUpperCamelcase(s)));
-        System.out.println("****************");
-        ls.forEach((s) -> System.out.println(NameUtils.underscoreToLowerCamelcase(s)));
-        System.out.println("****************");
-        System.out.println(dbInformation.checkIfTableExists("staff"));
-        System.out.println("****************");
-        System.out.println(dbInformation.checkIfTableExists("xxx"));
-        System.out.println("****************");
+        ls.forEach(s -> LOG.info(NameUtils.underscoreToUpperCamelcase(s)));
+        LOG.info("****************");
+        ls.forEach(s -> LOG.info(NameUtils.underscoreToLowerCamelcase(s)));
+        LOG.info("****************");
+        LOG.info(String.valueOf(dbInformation.checkIfTableExists("staff")));
+        LOG.info("****************");
+        LOG.info(String.valueOf(dbInformation.checkIfTableExists("xxx")));
+        LOG.info("****************");
 
         for (String table : ls) {
-            System.out.println("****************");
-            System.out.println(table + " Columns");
-            System.out.println("Comment: " + dbInformation.tableComment(table));
-            System.out.println("****************");
-            System.out.println();
+            LOG.info("****************");
+            LOG.info(table + " Columns");
+            LOG.info("Comment: " + dbInformation.tableComment(table));
+            LOG.info("****************");
+            LOG.info("");
 
             List<ColumnData> cols = dbInformation.tableColumns(table);
             for (ColumnData col : cols) {
-                System.out.println(col);
-                System.out.println("Comment: " + dbInformation.columnComment(table, col.getName()));
-                System.out.println();
+                LOG.info(col.toString());
+                LOG.info("Comment: " + dbInformation.columnComment(table, col.getName()));
+                LOG.info("");
             }
 
             List<ForeignKeyData> foreignKeys = dbInformation.tableForeignKeys(table);
 
             if (CollectionUtils.isNotEmpty(foreignKeys)) {
-                System.out.println();
-                System.out.println("****************");
-                System.out.println("Foreign Keys");
-                System.out.println("****************");
+                LOG.info("");
+                LOG.info("****************");
+                LOG.info("Foreign Keys");
+                LOG.info("****************");
 
-                System.out.println();
+                LOG.info("");
 
                 for (ForeignKeyData foreignKey : foreignKeys) {
-                    System.out.println(foreignKey);
-                    System.out.println();
+                    LOG.info(foreignKey.toString());
+                    LOG.info("");
                 }
             }
 
         }
-        System.out.println("****************");
-        System.out.println();
+        LOG.info("****************");
+        LOG.info("");
         entityTemplate();
     }
 
@@ -132,10 +132,10 @@ public class GeneratorService {
             //freemarkerConfig.setClassForTemplateLoading(this.getClass(), "/templates");
             Template template = freemarkerConfig.getTemplate("entity.ftl");
             String strEntity = FreeMarkerTemplateUtils.processTemplateIntoString(template, params);
-            System.out.println();
-            System.out.println("*************************************");
-            System.out.println(strEntity);
-            System.out.println("*************************************");
+            LOG.info("");
+            LOG.info("*************************************");
+            LOG.info(strEntity);
+            LOG.info("*************************************");
         } catch (Exception e) {
             LOG.error("Fatal error to process template file", e);
         }
