@@ -20,7 +20,7 @@ import java.util.*;
  *
  * @author  Rodrigo Tavares
  */
-@Component
+@Component(value = "PostgresInformation")
 @PropertySource("classpath:/queries/postgresql.properties")
 public class PostgresInformation implements IDatabaseInformation {
 
