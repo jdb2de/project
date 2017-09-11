@@ -23,6 +23,7 @@ public class ParameterData implements Serializable {
 
     private String entityPath;
     private String entityPackage;
+    private String idPath;
     private String idPackage;
     private List<String> copyright;
     private String author;
@@ -43,6 +44,14 @@ public class ParameterData implements Serializable {
         this.entityPackage = entityPackage;
     }
 
+    public String getIdPath() {
+        return idPath;
+    }
+
+    public void setIdPath(String idPath) {
+        this.idPath = idPath;
+    }
+
     public String getIdPackage() {
         return idPackage;
     }
@@ -51,9 +60,6 @@ public class ParameterData implements Serializable {
         this.idPackage = idPackage;
     }
 
-    /**
-     * @return
-     */
     public List<String> getCopyright() {
         return copyright;
     }
@@ -80,6 +86,7 @@ public class ParameterData implements Serializable {
         return Objects.hashCode(
                 entityPath
                 , entityPackage
+                , idPath
                 , idPackage
                 , copyright
                 , author
@@ -91,6 +98,7 @@ public class ParameterData implements Serializable {
         return MoreObjects.toStringHelper(this)
                 .add("entityPath", entityPath)
                 .add("entityPackage", entityPackage)
+                .add("idPath", idPath)
                 .add("idPackage", idPackage)
                 .add("copyright", copyright)
                 .add("author", author)

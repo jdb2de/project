@@ -5,7 +5,7 @@ import org.jdb2de.core.DatabaseService;
 import org.jdb2de.core.data.database.ColumnData;
 import org.jdb2de.core.data.database.ForeignKeyData;
 import org.jdb2de.core.information.IDatabaseInformation;
-import org.jdb2de.core.util.LanguageUtils;
+import org.jdb2de.core.util.GeneratorUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -58,7 +58,7 @@ public class PostgresInformation implements IDatabaseInformation {
     @Override
     public List<String> allTables(String regex) {
         List<String> ls = new ArrayList<>();
-        databaseService.getJdbc().query(sqlAllTables, LanguageUtils.toArray(databaseService.getSchema()),
+        databaseService.getJdbc().query(sqlAllTables, GeneratorUtils.toArray(databaseService.getSchema()),
                 (rs, rowNum) -> rs.getString("relname")).forEach(ls::add);
 
         return ls;
@@ -67,7 +67,7 @@ public class PostgresInformation implements IDatabaseInformation {
     @Override
     public boolean checkIfTableExists(String tableName) {
         int qtd = databaseService.getJdbc().queryForObject(sqlCheckIfTableExists,
-                LanguageUtils.toArray(databaseService.getSchema(), tableName), Integer.class);
+                GeneratorUtils.toArray(databaseService.getSchema(), tableName), Integer.class);
         return qtd > 0;
     }
 
@@ -75,7 +75,7 @@ public class PostgresInformation implements IDatabaseInformation {
     public List<ColumnData> tableColumns(String tableName) {
         List<ColumnData> ls = new ArrayList<>();
 
-        databaseService.getJdbc().query(sqlTableColumns, LanguageUtils.toArray(databaseService.getSchema(), tableName),
+        databaseService.getJdbc().query(sqlTableColumns, GeneratorUtils.toArray(databaseService.getSchema(), tableName),
                 (rs, rowNum) -> createColumnData(rs)).forEach(ls::add);
         return ls;
     }
@@ -97,7 +97,7 @@ public class PostgresInformation implements IDatabaseInformation {
     public List<ForeignKeyData> tableForeignKeys(String tableName) {
         List<ForeignKeyData> ls = new ArrayList<>();
 
-        databaseService.getJdbc().query(sqlTableForeignKeys, LanguageUtils.toArray(databaseService.getSchema(),
+        databaseService.getJdbc().query(sqlTableForeignKeys, GeneratorUtils.toArray(databaseService.getSchema(),
                 tableName), (rs, rowNum) -> createForeignKeyData(tableName, rs)).forEach(ls::add);
         return ls;
     }
@@ -129,7 +129,7 @@ public class PostgresInformation implements IDatabaseInformation {
      * @return
      */
     private Integer tableOid(String tableName) {
-        return databaseService.getJdbc().queryForObject(sqlTableOid, LanguageUtils.toArray(databaseService.getSchema(),
+        return databaseService.getJdbc().queryForObject(sqlTableOid, GeneratorUtils.toArray(databaseService.getSchema(),
                 tableName), Integer.class);
     }
 
@@ -141,12 +141,12 @@ public class PostgresInformation implements IDatabaseInformation {
      */
     private Integer columnIndex(String tableName, String columnName) {
         return databaseService.getJdbc().queryForObject(sqlColumnIndex,
-                LanguageUtils.toArray(databaseService.getSchema(), tableName, columnName), Integer.class);
+                GeneratorUtils.toArray(databaseService.getSchema(), tableName, columnName), Integer.class);
     }
 
     private ColumnData tableColumnByIndex(String tableName, Integer columnIndex) {
         return databaseService.getJdbc().queryForObject(sqlTableColumnByIndex,
-                LanguageUtils.toArray(databaseService.getSchema(), tableName, columnIndex),
+                GeneratorUtils.toArray(databaseService.getSchema(), tableName, columnIndex),
                 (rs, rowNum) -> createColumnData(rs));
     }
 
@@ -190,7 +190,7 @@ public class PostgresInformation implements IDatabaseInformation {
      * @return A {@link String} with object comment
      */
     private String objectDescription(Integer objectOid) {
-        return databaseService.getJdbc().queryForObject(sqlObjectDescription, LanguageUtils.toArray(objectOid),
+        return databaseService.getJdbc().queryForObject(sqlObjectDescription, GeneratorUtils.toArray(objectOid),
                 String.class);
     }
 
@@ -202,7 +202,7 @@ public class PostgresInformation implements IDatabaseInformation {
      */
     private String columnDescription(Integer tableOid, Integer columnIndex) {
         return databaseService.getJdbc().queryForObject(sqlColumnDescription,
-                LanguageUtils.toArray(tableOid, columnIndex), String.class);
+                GeneratorUtils.toArray(tableOid, columnIndex), String.class);
     }
 
 }

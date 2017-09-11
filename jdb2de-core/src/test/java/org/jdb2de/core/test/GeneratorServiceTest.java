@@ -1,6 +1,7 @@
 package org.jdb2de.core.test;
 
 import org.jdb2de.core.GeneratorService;
+import org.jdb2de.core.data.ParameterData;
 import org.jdb2de.core.information.IDatabaseInformation;
 import org.junit.Before;
 import org.junit.Test;
@@ -9,7 +10,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
@@ -17,11 +17,13 @@ import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@DirtiesContext
 public class GeneratorServiceTest {
 
     @Mock
     private IDatabaseInformation information;
+
+    @Mock
+    private ParameterData parameters;
 
     @InjectMocks
     private GeneratorService generatorService;
@@ -36,7 +38,7 @@ public class GeneratorServiceTest {
     }
 
     @Test
-    public void testGeneration() {
+    public void testGeneration() throws Exception {
         generatorService.generate();
     }
 

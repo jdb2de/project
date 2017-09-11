@@ -1,10 +1,8 @@
 package org.jdb2de;
 
-import com.google.common.io.Files;
 import org.jdb2de.core.GeneratorService;
 import org.jdb2de.core.data.ConnectionData;
 import org.jdb2de.core.data.ParameterData;
-import org.jdb2de.core.util.LanguageUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +16,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.PropertySource;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
 
 /**
  *
@@ -33,6 +30,11 @@ public class CommandLineGenerator implements CommandLineRunner {
      * Instance to register log
      */
     private static final Logger LOG = LoggerFactory.getLogger(CommandLineGenerator.class);
+
+    /**
+     * Indicates whether the application is running, avoid running the generator method during unit tests
+     */
+    private static boolean generatorRunning = false;
 
     @Autowired
     private ParameterData parameterData;
@@ -77,21 +79,29 @@ public class CommandLineGenerator implements CommandLineRunner {
     private String databaseCatalog;
 
     public static void main(String[] args) {
+        // Indicates that the generator is running
+        generatorRunning = true;
         SpringApplication.run(CommandLineGenerator.class, args);
     }
 
     @Override
     public void run(String... strings) throws Exception {
+
+        // Checks if application is running by main method
+        if (!generatorRunning) {
+            return;
+        }
+
         LOG.info("Database to Documented Entity");
         LOG.info("=============================");
         LOG.info("Starting Command Line Generator...");
 
-        // Set application configuration
-        applicationConfiguration();
-        // Set database configuration
-        databaseConfiguration();
 
         try {
+            // Set application configuration
+            applicationConfiguration();
+            // Set database configuration
+            databaseConfiguration();
             // Start the generation
             service.generate();
         } finally {
@@ -100,15 +110,20 @@ public class CommandLineGenerator implements CommandLineRunner {
         }
     }
 
+    /**
+     * Load application configuration parameters
+     * @throws IOException Error
+     */
     private void applicationConfiguration() throws IOException {
         parameterData.setEntityPath(configEntityPath);
         parameterData.setEntityPackage(configEntityPackage);
         parameterData.setIdPackage(configIdPackage);
         parameterData.setAuthor(configAuthor);
-        parameterData.setCopyright(Files.readLines(LanguageUtils.fileFromResource("copyright"),
-                Charset.defaultCharset()));
     }
 
+    /**
+     * Load database configuration parameters
+     */
     private void databaseConfiguration() {
         connectionData.setDriver(databaseDriver);
         connectionData.setUrl(databaseUrl);
