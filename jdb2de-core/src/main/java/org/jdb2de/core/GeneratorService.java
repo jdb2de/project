@@ -86,7 +86,7 @@ public class GeneratorService {
         }
 
         Path entityPath = Paths.get(parameters.getEntityPath());
-        if (!Files.exists(entityPath)) {
+        if (!entityPath.toFile().exists()) {
             throw new ValidationException("Entity generation path not found [config.entity.path={}]", entityPath);
         }
 
@@ -106,7 +106,7 @@ public class GeneratorService {
         parameters.setIdPath(parameters.getEntityPath().concat(additionalPath));
 
         Path idPath = Paths.get(parameters.getIdPath());
-        if (!Files.exists(idPath)) {
+        if (!idPath.toFile().exists()) {
             Files.createDirectories(idPath);
         }
     }

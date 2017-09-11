@@ -18,7 +18,7 @@ public final class GeneratorUtils {
     /**
      * Instance to log registration
      */
-    private static Logger LOG = LoggerFactory.getLogger(GeneratorUtils.class);
+    private static final Logger LOG = LoggerFactory.getLogger(GeneratorUtils.class);
 
     /**
      * Omitting the utils constructor
