@@ -174,6 +174,10 @@ public class GeneratorService {
 
         try {
             List<String> ls = information.allTables(null);
+            if (CollectionUtils.isEmpty(ls)) {
+                return;
+            }
+
             int idx = (int) (ls.size() * Math.random());
             String tableName = ls.get(idx);
             String tableComment = information.tableComment(tableName);
