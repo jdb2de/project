@@ -111,7 +111,7 @@ public class GeneratorService {
         }
     }
 
-    public void generate() throws Exception {
+    public void generate() throws ValidationException, IOException {
 
         // Execute a parameter validation
         validateParameters();
@@ -208,7 +208,6 @@ public class GeneratorService {
             params.put("entity", entity);
             params.put("now", new Date());
 
-            //freemarkerConfig.setClassForTemplateLoading(this.getClass(), "/templates");
             Template template = freemarkerConfig.getTemplate("entity.ftl");
             String strEntity = FreeMarkerTemplateUtils.processTemplateIntoString(template, params);
             LOG.info("");

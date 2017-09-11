@@ -3,6 +3,7 @@ package org.jdb2de;
 import org.jdb2de.core.GeneratorService;
 import org.jdb2de.core.data.ConnectionData;
 import org.jdb2de.core.data.ParameterData;
+import org.jdb2de.core.exception.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,7 +86,7 @@ public class CommandLineGenerator implements CommandLineRunner {
     }
 
     @Override
-    public void run(String... strings) throws Exception {
+    public void run(String... strings) throws ValidationException, IOException {
 
         // Checks if application is running by main method
         if (!generatorRunning) {
@@ -114,7 +115,7 @@ public class CommandLineGenerator implements CommandLineRunner {
      * Load application configuration parameters
      * @throws IOException Error
      */
-    private void applicationConfiguration() throws IOException {
+    private void applicationConfiguration() {
         parameterData.setEntityPath(configEntityPath);
         parameterData.setEntityPackage(configEntityPackage);
         parameterData.setIdPackage(configIdPackage);
