@@ -12,6 +12,7 @@ import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +35,12 @@ public class GeneratorServiceTest {
         allTables.add("country");
         allTables.add("state");
         allTables.add("city");
+
         Mockito.when(information.allTables(null)).thenReturn(allTables);
+        Mockito.when(parameters.getEntityPath()).thenReturn(System.getProperty("java.io.tmpdir"));
+        Mockito.when(parameters.getEntityPackage()).thenReturn("temp");
+        Mockito.when(parameters.getIdPath()).thenReturn(System.getProperty("java.io.tmpdir").concat(File.separator).concat("pk"));
+        Mockito.when(parameters.getIdPackage()).thenReturn("temp.pk");
     }
 
     @Test
