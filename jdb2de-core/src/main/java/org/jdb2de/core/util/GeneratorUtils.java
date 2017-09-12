@@ -21,6 +21,11 @@ public final class GeneratorUtils {
     private static final Logger LOG = LoggerFactory.getLogger(GeneratorUtils.class);
 
     /**
+     * Regular expression to validate search string, allowing only letters, asterisks and numbers after first letter
+     */
+    private static final String SEARCH_WILDCARD_REGEX = "^([A-Za-z\\_\\*])+([0-9A-Za-z\\_\\*])*$";
+
+    /**
      * Omitting the utils constructor
      */
     private GeneratorUtils() {
@@ -88,5 +93,56 @@ public final class GeneratorUtils {
         }
 
         return MessageFormat.format(textPattern, params);
+    }
+
+    /**
+     * Validate search string, allowing only letters, asterisks and numbers after first letter.
+     * If empty or null returns <code>true</code>
+     *
+     * <code>
+     * isValidSearchWildcard(null)      = true
+     * isValidSearchWildcard("")        = true
+     * isValidSearchWildcard(" ")       = false
+     * isValidSearchWildcard("0XXX")    = false
+     * isValidSearchWildcard("X00")     = true
+     * isValidSearchWildcard("X_XX")    = true
+     * isValidSearchWildcard("X_X123X") = true
+     * isValidSearchWildcard("*")       = true
+     * isValidSearchWildcard("X_*")     = true
+     * isValidSearchWildcard("*_X_*")   = true
+     * isValidSearchWildcard("*_0X_*")  = true
+     * isValidSearchWildcard("*_0X_*")  = true
+     * </code>
+     *
+     * @param searchString Wildcard search string
+     * @return If is valid <code>true</code>, otherwise <code>false</code>
+     */
+    public static boolean isValidSearchWildcard(String searchString) {
+        if (StringUtils.isEmpty(searchString)) {
+            return true;
+        }
+        return searchString.matches(SEARCH_WILDCARD_REGEX);
+    }
+
+    /**
+     * Replace search wildcard (<code>*</code>) to a regex instruction
+     *
+     * <code>
+     * replaceSearchToRegex(null)  = null
+     * replaceSearchToRegex("")    = ""
+     * replaceSearchToRegex("*")   = "(.)*"
+     * replaceSearchToRegex("X_*") = "X_(.)*"
+     * replaceSearchToRegex("X_")  = "X_"
+     * </code>
+     *
+     * @param searchString Wildcard search string
+     * @return A regular expression instruction
+     */
+    public static String replaceSearchToRegex(String searchString) {
+        if (StringUtils.isEmpty(searchString)) {
+            return searchString;
+        }
+
+        return StringUtils.replace(searchString, "*", "(.)*");
     }
 }

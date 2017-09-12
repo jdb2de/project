@@ -27,6 +27,8 @@ public class ParameterData implements Serializable {
     private String pkPackage;
     private List<String> copyright;
     private String author;
+    private String tableSearch;
+    private String tableName;
 
     public String getEntityPath() {
         return entityPath;
@@ -76,6 +78,22 @@ public class ParameterData implements Serializable {
         this.author = author;
     }
 
+    public String getTableName() {
+        return tableName;
+    }
+
+    public void setTableName(String tableName) {
+        this.tableName = tableName;
+    }
+
+    public String getTableSearch() {
+        return tableSearch;
+    }
+
+    public void setTableSearch(String tableSearch) {
+        this.tableSearch = tableSearch;
+    }
+
     @Override
     public boolean equals(Object obj) {
         return Objects.equal(this, obj);
@@ -90,6 +108,8 @@ public class ParameterData implements Serializable {
                 , pkPackage
                 , copyright
                 , author
+                , tableSearch
+                , tableName
         );
     }
 
@@ -102,6 +122,8 @@ public class ParameterData implements Serializable {
                 .add("pkPackage", pkPackage)
                 .add("copyright", copyright)
                 .add("author", author)
+                .add("tableSearch", tableSearch)
+                .add("tableName", tableName)
                 .toString();
     }
 }

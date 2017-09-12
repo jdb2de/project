@@ -24,7 +24,7 @@ import java.io.IOException;
  */
 @SpringBootApplication
 @EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class})
-@PropertySource("file:jdb2de-command-line.properties")
+@PropertySource(value = "file:jdb2de-command-line.properties", ignoreResourceNotFound = true)
 public class CommandLineGenerator implements CommandLineRunner {
 
     /**
@@ -49,34 +49,40 @@ public class CommandLineGenerator implements CommandLineRunner {
     @Autowired
     private ConfigurableApplicationContext context;
 
-    @Value("${config.entity.path}")
+    @Value("${config.entity.path:#{null}}")
     private String configEntityPath;
 
-    @Value("${config.entity.package}")
+    @Value("${config.entity.package:#{null}}")
     private String configEntityPackage;
 
-    @Value("${config.pk.package}")
+    @Value("${config.pk.package:#{null}}")
     private String configPkPackage;
 
-    @Value("${config.author}")
+    @Value("${config.author:#{null}}")
     private String configAuthor;
 
-    @Value("${database.driver}")
+    @Value("${config.table.search:#{null}}")
+    private String configTableSearch;
+
+    @Value("${config.table.name:#{null}}")
+    private String configTableName;
+
+    @Value("${database.driver:#{null}}")
     private String databaseDriver;
 
-    @Value("${database.url}")
+    @Value("${database.url:#{null}}")
     private String databaseUrl;
 
-    @Value("${database.username}")
+    @Value("${database.username:#{null}}")
     private String databaseUsername;
 
-    @Value("${database.password}")
+    @Value("${database.password:#{null}}")
     private String databasePassword;
 
-    @Value("${database.schema}")
+    @Value("${database.schema:#{null}}")
     private String databaseSchema;
 
-    @Value("${database.catalog}")
+    @Value("${database.catalog:#{null}}")
     private String databaseCatalog;
 
     public static void main(String[] args) {
@@ -96,7 +102,6 @@ public class CommandLineGenerator implements CommandLineRunner {
         LOG.info("Database to Documented Entity");
         LOG.info("=============================");
         LOG.info("Starting Command Line Generator...");
-
 
         try {
             // Set application configuration
@@ -120,6 +125,8 @@ public class CommandLineGenerator implements CommandLineRunner {
         parameterData.setEntityPackage(configEntityPackage);
         parameterData.setPkPackage(configPkPackage);
         parameterData.setAuthor(configAuthor);
+        parameterData.setTableSearch(configTableSearch);
+        parameterData.setTableName(configTableName);
     }
 
     /**
@@ -133,5 +140,7 @@ public class CommandLineGenerator implements CommandLineRunner {
         connectionData.setSchema(databaseSchema);
         connectionData.setCatalog(databaseCatalog);
     }
+
+
 }
 
