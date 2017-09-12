@@ -72,14 +72,6 @@ public class GeneratorService {
             throw new ValidationException(MSG_PARAMETER_NOT_FOUND, "config.entity.package");
         }
 
-        if (StringUtils.isEmpty(parameters.getPkPackage())) {
-            throw new ValidationException(MSG_PARAMETER_NOT_FOUND, "config.pk.package");
-        }
-
-        if (StringUtils.indexOf(parameters.getPkPackage(), parameters.getEntityPackage()) != 0) {
-            throw new ValidationException("Parameter [config.pk.package] is invalid, it must be a substring of [config.entity.package]");
-        }
-
         Path entityPath = Paths.get(parameters.getEntityPath());
         if (!entityPath.toFile().exists()) {
             throw new ValidationException("Entity generation directory not found [config.entity.path={}]", entityPath);
@@ -100,17 +92,29 @@ public class GeneratorService {
         if (StringUtils.isEmpty(parameters.getAuthor())) {
             parameters.setAuthor(System.getProperty("user.name"));
         }
+
+        // If there is no composite primary key package, use the same entity package
+        if (StringUtils.isEmpty(parameters.getPkPackage())) {
+            parameters.setPkPackage(parameters.getEntityPackage());
+        }
+
+        if (StringUtils.indexOf(parameters.getPkPackage(), parameters.getEntityPackage()) != 0) {
+            throw new ValidationException("Parameter [config.pk.package] is invalid, it must be the same or a nested package of [config.entity.package]");
+        }
     }
 
     /**
-     * Set primary key path based on entity path and primary key package
+     * When a table has a composite primary key, a new class is created with only the primary key fields.
+     * This method defines the composite primary key path based on the entity path and primary key package if it is
+     * different from the entity package
      */
-    private void createPkPath() throws IOException {
+    private void createCompositePkPath() throws IOException {
 
         String additionalPath = StringUtils.replace(parameters.getPkPackage(), parameters.getEntityPackage(), "");
         additionalPath = StringUtils.replace(additionalPath, ".", File.separator);
         parameters.setPkPath(parameters.getEntityPath().concat(additionalPath));
 
+        LOG.info("Composite primary key generation directory: {}", parameters.getPkPath());
         Path pkPath = Paths.get(parameters.getPkPath());
         if (!pkPath.toFile().exists()) {
             Files.createDirectories(pkPath);
@@ -124,7 +128,7 @@ public class GeneratorService {
         validateParameters();
 
         // Set primary key path based on entity path and pk package
-        createPkPath();
+        createCompositePkPath();
 
         List<String> ls;
         if (!StringUtils.isEmpty(parameters.getTableName())) {
