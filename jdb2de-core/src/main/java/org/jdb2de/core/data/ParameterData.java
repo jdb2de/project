@@ -23,8 +23,8 @@ public class ParameterData implements Serializable {
 
     private String entityPath;
     private String entityPackage;
-    private String idPath;
-    private String idPackage;
+    private String pkPath;
+    private String pkPackage;
     private List<String> copyright;
     private String author;
 
@@ -44,20 +44,20 @@ public class ParameterData implements Serializable {
         this.entityPackage = entityPackage;
     }
 
-    public String getIdPath() {
-        return idPath;
+    public String getPkPath() {
+        return pkPath;
     }
 
-    public void setIdPath(String idPath) {
-        this.idPath = idPath;
+    public void setPkPath(String pkPath) {
+        this.pkPath = pkPath;
     }
 
-    public String getIdPackage() {
-        return idPackage;
+    public String getPkPackage() {
+        return pkPackage;
     }
 
-    public void setIdPackage(String idPackage) {
-        this.idPackage = idPackage;
+    public void setPkPackage(String pkPackage) {
+        this.pkPackage = pkPackage;
     }
 
     public List<String> getCopyright() {
@@ -86,8 +86,8 @@ public class ParameterData implements Serializable {
         return Objects.hashCode(
                 entityPath
                 , entityPackage
-                , idPath
-                , idPackage
+                , pkPath
+                , pkPackage
                 , copyright
                 , author
         );
@@ -98,8 +98,8 @@ public class ParameterData implements Serializable {
         return MoreObjects.toStringHelper(this)
                 .add("entityPath", entityPath)
                 .add("entityPackage", entityPackage)
-                .add("idPath", idPath)
-                .add("idPackage", idPackage)
+                .add("pkPath", pkPath)
+                .add("pkPackage", pkPackage)
                 .add("copyright", copyright)
                 .add("author", author)
                 .toString();

@@ -22,7 +22,7 @@ import java.io.Serializable;
 
 import javax.persistence.*;
 <#if entity.table.compositeKey>
-import ${param.idPackage}.${entity.name}PK;
+import ${param.pkPackage}.${entity.name}PK;
 </#if>
 
 /**

@@ -77,12 +77,12 @@ public class GeneratorService {
             throw new ValidationException(MSG_PARAMETER_NOT_FOUND, "config.entity.package");
         }
 
-        if (StringUtils.isEmpty(parameters.getIdPackage())) {
-            throw new ValidationException(MSG_PARAMETER_NOT_FOUND, "config.id.package");
+        if (StringUtils.isEmpty(parameters.getPkPackage())) {
+            throw new ValidationException(MSG_PARAMETER_NOT_FOUND, "config.pk.package");
         }
 
-        if (StringUtils.indexOf(parameters.getIdPackage(), parameters.getEntityPackage()) != 0) {
-            throw new ValidationException("Parameter [config.id.package] is invalid, it must be a substring of [config.entity.package]");
+        if (StringUtils.indexOf(parameters.getPkPackage(), parameters.getEntityPackage()) != 0) {
+            throw new ValidationException("Parameter [config.pk.package] is invalid, it must be a substring of [config.entity.package]");
         }
 
         Path entityPath = Paths.get(parameters.getEntityPath());
@@ -99,15 +99,15 @@ public class GeneratorService {
     /**
      * Set primary key path based on entity path and id package
      */
-    private void createIdPath() throws IOException {
+    private void createPkPath() throws IOException {
 
-        String additionalPath = StringUtils.replace(parameters.getIdPackage(), parameters.getEntityPackage(), "");
+        String additionalPath = StringUtils.replace(parameters.getPkPackage(), parameters.getEntityPackage(), "");
         additionalPath = StringUtils.replace(additionalPath, ".", File.separator);
-        parameters.setIdPath(parameters.getEntityPath().concat(additionalPath));
+        parameters.setPkPath(parameters.getEntityPath().concat(additionalPath));
 
-        Path idPath = Paths.get(parameters.getIdPath());
-        if (!idPath.toFile().exists()) {
-            Files.createDirectories(idPath);
+        Path pkPath = Paths.get(parameters.getPkPath());
+        if (!pkPath.toFile().exists()) {
+            Files.createDirectories(pkPath);
         }
     }
 
@@ -116,8 +116,8 @@ public class GeneratorService {
         // Execute a parameter validation
         validateParameters();
 
-        // Set primary key path based on entity path and id package
-        createIdPath();
+        // Set primary key path based on entity path and pk package
+        createPkPath();
 
         List<String> ls = information.allTables(null);
         if (ls == null) {

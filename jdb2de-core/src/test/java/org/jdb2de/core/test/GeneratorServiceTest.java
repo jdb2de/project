@@ -39,8 +39,8 @@ public class GeneratorServiceTest {
         Mockito.when(information.allTables(null)).thenReturn(allTables);
         Mockito.when(parameters.getEntityPath()).thenReturn(System.getProperty("java.io.tmpdir"));
         Mockito.when(parameters.getEntityPackage()).thenReturn("temp");
-        Mockito.when(parameters.getIdPath()).thenReturn(System.getProperty("java.io.tmpdir").concat(File.separator).concat("pk"));
-        Mockito.when(parameters.getIdPackage()).thenReturn("temp.pk");
+        Mockito.when(parameters.getPkPath()).thenReturn(System.getProperty("java.io.tmpdir").concat(File.separator).concat("pk"));
+        Mockito.when(parameters.getPkPackage()).thenReturn("temp.pk");
     }
 
     @Test

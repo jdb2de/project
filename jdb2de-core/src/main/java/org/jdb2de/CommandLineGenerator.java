@@ -55,8 +55,8 @@ public class CommandLineGenerator implements CommandLineRunner {
     @Value("${config.entity.package}")
     private String configEntityPackage;
 
-    @Value("${config.id.package}")
-    private String configIdPackage;
+    @Value("${config.pk.package}")
+    private String configPkPackage;
 
     @Value("${config.author}")
     private String configAuthor;
@@ -118,7 +118,7 @@ public class CommandLineGenerator implements CommandLineRunner {
     private void applicationConfiguration() {
         parameterData.setEntityPath(configEntityPath);
         parameterData.setEntityPackage(configEntityPackage);
-        parameterData.setIdPackage(configIdPackage);
+        parameterData.setPkPackage(configPkPackage);
         parameterData.setAuthor(configAuthor);
     }
 
