@@ -9,16 +9,17 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
+/**
+ *
+ * @author Rodrigo Tavares
+ */
 @Component
 @PropertySource(value = "file:jdb2de-command-line.properties", ignoreResourceNotFound = true)
 public class StartupListener {
 
-    @Autowired
-    private ParameterData parameterData;
+    private final ParameterData parameterData;
 
-    @Autowired
-    private ConnectionData connectionData;
-
+    private final ConnectionData connectionData;
 
     @Value("${config.entity.path:#{null}}")
     private String configEntityPath;
@@ -56,8 +57,17 @@ public class StartupListener {
     @Value("${database.catalog:#{null}}")
     private String databaseCatalog;
 
+    @Autowired
+    public StartupListener(ParameterData parameterData, ConnectionData connectionData) {
+        this.parameterData = parameterData;
+        this.connectionData = connectionData;
+    }
+
+    /**
+     * Listener method executed on application startup
+     */
     @EventListener(ContextRefreshedEvent.class)
-    public void onApplicationEvent() {
+    private void onApplicationEvent() {
         // Set generation parameters
         loadGenerationParameters();
         // Set database parameters
@@ -70,7 +80,7 @@ public class StartupListener {
     private void loadGenerationParameters() {
         parameterData.setEntityPath(configEntityPath);
         parameterData.setEntityPackage(configEntityPackage);
-        parameterData.setPkPackage(configPkPackage);
+        parameterData.setCompositePkPackage(configPkPackage);
         parameterData.setAuthor(configAuthor);
         parameterData.setTableSearch(configTableSearch);
         parameterData.setTableName(configTableName);

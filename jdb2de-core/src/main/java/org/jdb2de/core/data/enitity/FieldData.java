@@ -1,5 +1,7 @@
 package org.jdb2de.core.data.enitity;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Objects;
 import org.jdb2de.core.data.database.ColumnData;
 
 import java.io.Serializable;
@@ -50,5 +52,25 @@ public class FieldData implements Serializable {
 
     public void setColumn(ColumnData column) {
         this.column = column;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return Objects.equal(this, obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(name, upperName, type, column);
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("name", name)
+                .add("upperName", upperName)
+                .add("type", type)
+                .add("column", column)
+                .toString();
     }
 }

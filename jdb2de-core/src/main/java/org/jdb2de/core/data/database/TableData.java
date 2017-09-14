@@ -5,6 +5,7 @@ import com.google.common.base.Objects;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  *
@@ -20,6 +21,7 @@ public class TableData implements Serializable {
     private String name;
     private String comment;
     private boolean compositeKey;
+    private List<ColumnData> columns;
 
     public String getName() {
         return name;
@@ -45,6 +47,14 @@ public class TableData implements Serializable {
         this.compositeKey = compositeKey;
     }
 
+    public List<ColumnData> getColumns() {
+        return columns;
+    }
+
+    public void setColumns(List<ColumnData> columns) {
+        this.columns = columns;
+    }
+
     @Override
     public boolean equals(Object obj) {
         return Objects.equal(this, obj);
@@ -52,7 +62,7 @@ public class TableData implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(name, comment);
+        return Objects.hashCode(name, comment, compositeKey, columns);
     }
 
 
@@ -62,6 +72,7 @@ public class TableData implements Serializable {
                 .add("name", name)
                 .add("comment", comment)
                 .add("compositeKey", compositeKey)
+                .add("columns", columns)
                 .toString();
     }
 }

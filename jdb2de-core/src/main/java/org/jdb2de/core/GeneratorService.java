@@ -4,8 +4,12 @@ import freemarker.template.Configuration;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jdb2de.core.data.ParameterData;
+import org.jdb2de.core.data.database.ColumnData;
+import org.jdb2de.core.data.database.TableData;
+import org.jdb2de.core.data.enitity.EntityData;
 import org.jdb2de.core.exception.ValidationException;
 import org.jdb2de.core.information.IDatabaseInformation;
+import org.jdb2de.core.util.GeneratorFactory;
 import org.jdb2de.core.util.GeneratorUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +53,8 @@ public class GeneratorService {
 
     @Autowired
     private Configuration freemarkerConfig;
+
+    private String compositePkPath;
 
     private String searchRegex;
 
@@ -94,12 +100,12 @@ public class GeneratorService {
         }
 
         // If there is no composite primary key package, use the same entity package
-        if (StringUtils.isEmpty(parameters.getPkPackage())) {
-            parameters.setPkPackage(parameters.getEntityPackage());
+        if (StringUtils.isEmpty(parameters.getCompositePkPackage())) {
+            parameters.setCompositePkPackage(parameters.getEntityPackage());
         }
 
-        if (StringUtils.indexOf(parameters.getPkPackage(), parameters.getEntityPackage()) != 0) {
-            throw new ValidationException("Parameter [config.pk.package] is invalid, it must be the same or a nested package of [config.entity.package]");
+        if (StringUtils.indexOf(parameters.getCompositePkPackage(), parameters.getEntityPackage()) != 0) {
+            throw new ValidationException("Parameter [config.composite.pk.package] is invalid, it must be the same or a nested package of [config.entity.package]");
         }
     }
 
@@ -110,14 +116,14 @@ public class GeneratorService {
      */
     private void createCompositePkPath() throws IOException {
 
-        String additionalPath = StringUtils.replace(parameters.getPkPackage(), parameters.getEntityPackage(), "");
+        String additionalPath = StringUtils.replace(parameters.getCompositePkPackage(), parameters.getEntityPackage(), "");
         additionalPath = StringUtils.replace(additionalPath, ".", File.separator);
-        parameters.setPkPath(parameters.getEntityPath().concat(additionalPath));
+        compositePkPath = parameters.getEntityPath().concat(additionalPath);
 
-        LOG.info("Composite primary key generation directory: {}", parameters.getPkPath());
-        Path pkPath = Paths.get(parameters.getPkPath());
-        if (!pkPath.toFile().exists()) {
-            Files.createDirectories(pkPath);
+        LOG.info("Composite primary key generation directory: {}", compositePkPath);
+        Path path = Paths.get(compositePkPath);
+        if (!path.toFile().exists()) {
+            Files.createDirectories(path);
         }
     }
 
@@ -130,21 +136,36 @@ public class GeneratorService {
         // Set primary key path based on entity path and pk package
         createCompositePkPath();
 
-        List<String> ls;
+        List<String> tableNames;
         if (!StringUtils.isEmpty(parameters.getTableName())) {
-            ls = querySingleTable(parameters.getTableName());
+            tableNames = querySingleTable(parameters.getTableName());
         } else {
-            ls = information.allTables(searchRegex);
+            tableNames = information.allTables(searchRegex);
         }
 
-        if (CollectionUtils.isEmpty(ls)) {
+        if (CollectionUtils.isEmpty(tableNames)) {
             LOG.info("No tables found.....");
             return;
         }
 
-        LOG.info("Found {} tables", ls.size());
+        LOG.info("Found {} tables", tableNames.size());
+        for (String tableName : tableNames) {
+            LOG.info("Querying table [{}] columns", tableName);
 
+            String comment = information.tableComment(tableName);
 
+            List<ColumnData> columns = information.tableColumns(tableName);
+            if (CollectionUtils.isEmpty(columns)) {
+                LOG.info("No columns found for table [{}]", tableName);
+                continue;
+            }
+
+            LOG.info("Found {} columns for table {}", columns.size(), tableName);
+            TableData table = GeneratorFactory.createTableData(tableName, comment, columns);
+            EntityData entityData = GeneratorFactory.createEntityData(table, parameters.getEntityPackage(), null);
+
+            LOG.info("Entity Data: {}", entityData);
+        }
     }
 
     private List<String> querySingleTable(String tableName) {

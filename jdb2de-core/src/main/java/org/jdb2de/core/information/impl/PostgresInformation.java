@@ -1,6 +1,7 @@
 package org.jdb2de.core.information.impl;
 
 import com.google.common.base.Preconditions;
+import org.apache.commons.lang3.StringUtils;
 import org.jdb2de.core.DatabaseService;
 import org.jdb2de.core.data.database.ColumnData;
 import org.jdb2de.core.data.database.ForeignKeyData;
@@ -15,6 +16,7 @@ import java.sql.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -23,6 +25,9 @@ import java.util.*;
 @Component(value = "PostgresInformation")
 @PropertySource("classpath:/queries/postgresql.properties")
 public class PostgresInformation implements IDatabaseInformation {
+
+    @Autowired
+    private DatabaseService databaseService;
 
     @Value("${pg.all.tables}")
     private String sqlAllTables;
@@ -51,8 +56,6 @@ public class PostgresInformation implements IDatabaseInformation {
     @Value("${pg.column.description}")
     private String sqlColumnDescription;
 
-    @Autowired
-    private DatabaseService databaseService;
     private Map<String, String> types;
 
     @Override
@@ -60,6 +63,10 @@ public class PostgresInformation implements IDatabaseInformation {
         List<String> ls = new ArrayList<>();
         databaseService.getJdbc().query(sqlAllTables, GeneratorUtils.toArray(databaseService.getSchema()),
                 (rs, rowNum) -> rs.getString("relname")).forEach(ls::add);
+
+        if (StringUtils.isNotEmpty(regex)) {
+            ls = ls.stream().filter(s -> s.matches(regex)).collect(Collectors.toList());
+        }
 
         return ls;
     }

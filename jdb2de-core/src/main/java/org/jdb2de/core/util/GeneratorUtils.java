@@ -1,5 +1,7 @@
 package org.jdb2de.core.util;
 
+import com.google.common.base.CaseFormat;
+import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +31,44 @@ public final class GeneratorUtils {
      * Omitting the utils constructor
      */
     private GeneratorUtils() {
+    }
+
+    /**
+     *
+     * @param value
+     * @return
+     */
+    public static String underscoreToUpperCamelcase(String value) {
+        return underscoreToCamelcase(value, CaseFormat.UPPER_CAMEL);
+    }
+
+    /**
+     *
+     * @param value
+     * @return
+     */
+    public static String underscoreToLowerCamelcase(String value) {
+        return underscoreToCamelcase(value, CaseFormat.LOWER_CAMEL);
+    }
+
+    /**
+     * Convert the {@link String} value to a camelcase format
+     * @param value A {@link String} value in the underscore format, if <code>null</code> or <code>empty</code> returns
+     *              itself
+     * @param caseFormat Indicate if return a {@link String} with the first letter uppercase
+     *                   {@link CaseFormat#UPPER_CAMEL} or lowercase {@link CaseFormat#LOWER_CAMEL}
+     * @return A {@link String} in the camelcase format
+     */
+    private static String underscoreToCamelcase(String value, CaseFormat caseFormat) {
+        Preconditions.checkNotNull(caseFormat, "[caseFormat] can not be null");
+        Preconditions.checkArgument(CaseFormat.LOWER_CAMEL.equals(caseFormat) ||
+                CaseFormat.UPPER_CAMEL.equals(caseFormat), "[caseFormat] must be LOWER_CAMEL or UPPER_CAMEL");
+
+        if (StringUtils.isEmpty(value)) {
+            return value;
+        }
+
+        return CaseFormat.LOWER_UNDERSCORE.to(caseFormat, value.toLowerCase());
     }
 
     /**
@@ -145,4 +185,5 @@ public final class GeneratorUtils {
 
         return StringUtils.replace(searchString, "*", "(.)*");
     }
+
 }

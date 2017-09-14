@@ -23,8 +23,7 @@ public class ParameterData implements Serializable {
 
     private String entityPath;
     private String entityPackage;
-    private String pkPath;
-    private String pkPackage;
+    private String compositePkPackage;
     private List<String> copyright;
     private String author;
     private String tableSearch;
@@ -46,20 +45,12 @@ public class ParameterData implements Serializable {
         this.entityPackage = entityPackage;
     }
 
-    public String getPkPath() {
-        return pkPath;
+    public String getCompositePkPackage() {
+        return compositePkPackage;
     }
 
-    public void setPkPath(String pkPath) {
-        this.pkPath = pkPath;
-    }
-
-    public String getPkPackage() {
-        return pkPackage;
-    }
-
-    public void setPkPackage(String pkPackage) {
-        this.pkPackage = pkPackage;
+    public void setCompositePkPackage(String compositePkPackage) {
+        this.compositePkPackage = compositePkPackage;
     }
 
     public List<String> getCopyright() {
@@ -104,8 +95,7 @@ public class ParameterData implements Serializable {
         return Objects.hashCode(
                 entityPath
                 , entityPackage
-                , pkPath
-                , pkPackage
+                , compositePkPackage
                 , copyright
                 , author
                 , tableSearch
@@ -118,8 +108,7 @@ public class ParameterData implements Serializable {
         return MoreObjects.toStringHelper(this)
                 .add("entityPath", entityPath)
                 .add("entityPackage", entityPackage)
-                .add("pkPath", pkPath)
-                .add("pkPackage", pkPackage)
+                .add("compositePkPackage", compositePkPackage)
                 .add("copyright", copyright)
                 .add("author", author)
                 .add("tableSearch", tableSearch)

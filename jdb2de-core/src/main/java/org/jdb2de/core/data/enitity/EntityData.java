@@ -1,5 +1,7 @@
 package org.jdb2de.core.data.enitity;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Objects;
 import org.jdb2de.core.data.database.TableData;
 
 import java.io.Serializable;
@@ -12,10 +14,19 @@ public class EntityData implements Serializable {
      */
     private static final long serialVersionUID = -5480509444982670622L;
 
+    private String packageName;
     private String serialUid;
     private String name;
     private TableData table;
     private List<FieldData> fields;
+
+    public String getPackageName() {
+        return packageName;
+    }
+
+    public void setPackageName(String packageName) {
+        this.packageName = packageName;
+    }
 
     public TableData getTable() {
         return table;
@@ -49,5 +60,24 @@ public class EntityData implements Serializable {
         this.fields = fields;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        return Objects.equal(this, obj);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(packageName, serialUid, name, table, fields);
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("packageName", packageName)
+                .add("serialUid", serialUid)
+                .add("name", name)
+                .add("table", table)
+                .add("fields", fields)
+                .toString();
+    }
 }
