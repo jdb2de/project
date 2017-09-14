@@ -1,4 +1,4 @@
-<#-- @ftlvariable name="fields" type="java.util.List<org.jdb2de.core.data.enitity.FieldData>" -->
+<#-- @ftlvariable name="fields" type="java.util.List<org.jdb2de.core.data.FieldData>" -->
 <#macro entity_to_string fields>
 
     @Override

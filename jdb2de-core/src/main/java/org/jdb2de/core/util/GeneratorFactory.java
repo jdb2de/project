@@ -1,10 +1,10 @@
 package org.jdb2de.core.util;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jdb2de.core.data.database.ColumnData;
-import org.jdb2de.core.data.database.TableData;
-import org.jdb2de.core.data.enitity.EntityData;
-import org.jdb2de.core.data.enitity.FieldData;
+import org.jdb2de.core.data.EntityData;
+import org.jdb2de.core.data.FieldData;
+import org.jdb2de.core.model.ColumnModel;
+import org.jdb2de.core.model.TableModel;
 
 import java.util.List;
 
@@ -15,15 +15,15 @@ import java.util.List;
 public final class GeneratorFactory {
 
     /**
-     * Create a new instance of {@link TableData}
+     * Create a new instance of {@link TableModel}
      *
      * @param tableName Table name
      * @param comment Table comment
      * @param columns Table columns
-     * @return A new instance of {@link TableData}
+     * @return A new instance of {@link TableModel}
      */
-    public static TableData createTableData(String tableName, String comment, List<ColumnData> columns) {
-        TableData table = new TableData();
+    public static TableModel createTableData(String tableName, String comment, List<ColumnModel> columns) {
+        TableModel table = new TableModel();
         table.setName(tableName);
         table.setComment(comment);
         table.setColumns(columns);
@@ -37,7 +37,7 @@ public final class GeneratorFactory {
      * @param fields List of {@link FieldData}
      * @return A new instance of {@link EntityData}
      */
-    public static EntityData createEntityData(TableData table, String packageName, List<FieldData> fields) {
+    public static EntityData createEntityData(TableModel table, String packageName, List<FieldData> fields) {
 
         EntityData entity = new EntityData();
         entity.setPackageName(packageName);

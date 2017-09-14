@@ -3,9 +3,9 @@ package org.jdb2de.core.information.impl;
 import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.StringUtils;
 import org.jdb2de.core.DatabaseService;
-import org.jdb2de.core.data.database.ColumnData;
-import org.jdb2de.core.data.database.ForeignKeyData;
 import org.jdb2de.core.information.IDatabaseInformation;
+import org.jdb2de.core.model.ColumnModel;
+import org.jdb2de.core.model.ForeignKeyModel;
 import org.jdb2de.core.util.GeneratorUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -79,8 +79,8 @@ public class PostgresInformation implements IDatabaseInformation {
     }
 
     @Override
-    public List<ColumnData> tableColumns(String tableName) {
-        List<ColumnData> ls = new ArrayList<>();
+    public List<ColumnModel> tableColumns(String tableName) {
+        List<ColumnModel> ls = new ArrayList<>();
 
         databaseService.getJdbc().query(sqlTableColumns, GeneratorUtils.toArray(databaseService.getSchema(), tableName),
                 (rs, rowNum) -> createColumnData(rs)).forEach(ls::add);
@@ -101,8 +101,8 @@ public class PostgresInformation implements IDatabaseInformation {
     }
 
     @Override
-    public List<ForeignKeyData> tableForeignKeys(String tableName) {
-        List<ForeignKeyData> ls = new ArrayList<>();
+    public List<ForeignKeyModel> tableForeignKeys(String tableName) {
+        List<ForeignKeyModel> ls = new ArrayList<>();
 
         databaseService.getJdbc().query(sqlTableForeignKeys, GeneratorUtils.toArray(databaseService.getSchema(),
                 tableName), (rs, rowNum) -> createForeignKeyData(tableName, rs)).forEach(ls::add);
@@ -151,44 +151,44 @@ public class PostgresInformation implements IDatabaseInformation {
                 GeneratorUtils.toArray(databaseService.getSchema(), tableName, columnName), Integer.class);
     }
 
-    private ColumnData tableColumnByIndex(String tableName, Integer columnIndex) {
+    private ColumnModel tableColumnByIndex(String tableName, Integer columnIndex) {
         return databaseService.getJdbc().queryForObject(sqlTableColumnByIndex,
                 GeneratorUtils.toArray(databaseService.getSchema(), tableName, columnIndex),
                 (rs, rowNum) -> createColumnData(rs));
     }
 
-    private ColumnData createColumnData(ResultSet rs) throws SQLException {
-        ColumnData columnData = new ColumnData();
-        columnData.setName(rs.getString("attname"));
-        columnData.setType(rs.getString("typname"));
-        columnData.setIndex(rs.getInt("attnum"));
-        return columnData;
+    private ColumnModel createColumnData(ResultSet rs) throws SQLException {
+        ColumnModel columnModel = new ColumnModel();
+        columnModel.setName(rs.getString("attname"));
+        columnModel.setType(rs.getString("typname"));
+        columnModel.setIndex(rs.getInt("attnum"));
+        return columnModel;
     }
 
-    private ForeignKeyData createForeignKeyData(String tableName, ResultSet rs) throws SQLException {
+    private ForeignKeyModel createForeignKeyData(String tableName, ResultSet rs) throws SQLException {
 
-        ForeignKeyData foreignKeyData = new ForeignKeyData();
-        foreignKeyData.setName(rs.getString("conname"));
-        foreignKeyData.setTable(tableName);
-        foreignKeyData.setReferenceTable(rs.getString("relname"));
+        ForeignKeyModel foreignKeyModel = new ForeignKeyModel();
+        foreignKeyModel.setName(rs.getString("conname"));
+        foreignKeyModel.setTable(tableName);
+        foreignKeyModel.setReferenceTable(rs.getString("relname"));
 
         Array columnsArray = rs.getArray("conkey");
         Integer[] columnsIndexes = (Integer[]) columnsArray.getArray();
 
         for (int idx : columnsIndexes) {
-            ColumnData columnData = tableColumnByIndex(tableName, idx);
-            foreignKeyData.getColumns().add(columnData.getName());
+            ColumnModel columnModel = tableColumnByIndex(tableName, idx);
+            foreignKeyModel.getColumns().add(columnModel.getName());
         }
 
         Array referenceColumnsArray = rs.getArray("confkey");
         Integer[] referenceColumnsIndexes = (Integer[]) referenceColumnsArray.getArray();
         for (int idx : referenceColumnsIndexes) {
-            ColumnData columnData = tableColumnByIndex(tableName, idx);
-            foreignKeyData.getReferenceColumns().add(columnData.getName());
+            ColumnModel columnModel = tableColumnByIndex(tableName, idx);
+            foreignKeyModel.getReferenceColumns().add(columnModel.getName());
         }
 
 
-        return foreignKeyData;
+        return foreignKeyModel;
     }
 
     /**

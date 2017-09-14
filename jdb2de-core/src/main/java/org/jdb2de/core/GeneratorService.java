@@ -3,12 +3,12 @@ package org.jdb2de.core;
 import freemarker.template.Configuration;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jdb2de.core.data.EntityData;
 import org.jdb2de.core.data.ParameterData;
-import org.jdb2de.core.data.database.ColumnData;
-import org.jdb2de.core.data.database.TableData;
-import org.jdb2de.core.data.enitity.EntityData;
 import org.jdb2de.core.exception.ValidationException;
 import org.jdb2de.core.information.IDatabaseInformation;
+import org.jdb2de.core.model.ColumnModel;
+import org.jdb2de.core.model.TableModel;
 import org.jdb2de.core.util.GeneratorFactory;
 import org.jdb2de.core.util.GeneratorUtils;
 import org.slf4j.Logger;
@@ -154,14 +154,14 @@ public class GeneratorService {
 
             String comment = information.tableComment(tableName);
 
-            List<ColumnData> columns = information.tableColumns(tableName);
+            List<ColumnModel> columns = information.tableColumns(tableName);
             if (CollectionUtils.isEmpty(columns)) {
                 LOG.info("No columns found for table [{}]", tableName);
                 continue;
             }
 
             LOG.info("Found {} columns for table {}", columns.size(), tableName);
-            TableData table = GeneratorFactory.createTableData(tableName, comment, columns);
+            TableModel table = GeneratorFactory.createTableData(tableName, comment, columns);
             EntityData entityData = GeneratorFactory.createEntityData(table, parameters.getEntityPackage(), null);
 
             LOG.info("Entity Data: {}", entityData);

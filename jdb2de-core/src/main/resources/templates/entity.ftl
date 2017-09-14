@@ -1,5 +1,5 @@
 <#-- @ftlvariable name="param" type="org.jdb2de.core.data.ParameterData" -->
-<#-- @ftlvariable name="entity" type="org.jdb2de.core.data.enitity.EntityData" -->
+<#-- @ftlvariable name="entity" type="org.jdb2de.core.data.EntityData" -->
 <#include "entity-serial-uid.ftl">
 <#include "entity-field.ftl">
 <#include "entity-method.ftl">

@@ -1,4 +1,4 @@
-package org.jdb2de.core.data.database;
+package org.jdb2de.core.model;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
@@ -11,7 +11,7 @@ import java.util.List;
  *
  * @author Rodrigo Tavares
  */
-public class TableData implements Serializable {
+public class TableModel implements Serializable {
 
     /**
      * Serial Version UID
@@ -21,7 +21,7 @@ public class TableData implements Serializable {
     private String name;
     private String comment;
     private boolean compositeKey;
-    private List<ColumnData> columns;
+    private List<ColumnModel> columns;
 
     public String getName() {
         return name;
@@ -47,11 +47,11 @@ public class TableData implements Serializable {
         this.compositeKey = compositeKey;
     }
 
-    public List<ColumnData> getColumns() {
+    public List<ColumnModel> getColumns() {
         return columns;
     }
 
-    public void setColumns(List<ColumnData> columns) {
+    public void setColumns(List<ColumnModel> columns) {
         this.columns = columns;
     }
 

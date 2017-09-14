@@ -1,8 +1,8 @@
-package org.jdb2de.core.data.enitity;
+package org.jdb2de.core.data;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
-import org.jdb2de.core.data.database.TableData;
+import org.jdb2de.core.model.TableModel;
 
 import java.io.Serializable;
 import java.util.List;
@@ -17,7 +17,7 @@ public class EntityData implements Serializable {
     private String packageName;
     private String serialUid;
     private String name;
-    private TableData table;
+    private TableModel table;
     private List<FieldData> fields;
 
     public String getPackageName() {
@@ -28,11 +28,11 @@ public class EntityData implements Serializable {
         this.packageName = packageName;
     }
 
-    public TableData getTable() {
+    public TableModel getTable() {
         return table;
     }
 
-    public void setTable(TableData table) {
+    public void setTable(TableModel table) {
         this.table = table;
     }
 

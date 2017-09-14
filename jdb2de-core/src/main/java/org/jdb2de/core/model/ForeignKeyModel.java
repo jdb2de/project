@@ -1,4 +1,4 @@
-package org.jdb2de.core.data.database;
+package org.jdb2de.core.model;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
@@ -11,7 +11,7 @@ import java.util.List;
  *
  * @author  Rodrigo Tavares
  */
-public class ForeignKeyData implements Serializable {
+public class ForeignKeyModel implements Serializable {
 
     /**
      * Serial Version UID

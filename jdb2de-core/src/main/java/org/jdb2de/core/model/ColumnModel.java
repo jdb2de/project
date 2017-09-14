@@ -1,4 +1,4 @@
-package org.jdb2de.core.data.database;
+package org.jdb2de.core.model;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
@@ -6,7 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 
-public class ColumnData implements Serializable {
+public class ColumnModel implements Serializable {
 
     /**
      * Serial Version UID

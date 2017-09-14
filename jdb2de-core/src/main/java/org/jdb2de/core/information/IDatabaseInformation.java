@@ -1,7 +1,7 @@
 package org.jdb2de.core.information;
 
-import org.jdb2de.core.data.database.ColumnData;
-import org.jdb2de.core.data.database.ForeignKeyData;
+import org.jdb2de.core.model.ColumnModel;
+import org.jdb2de.core.model.ForeignKeyModel;
 
 import java.util.List;
 
@@ -29,9 +29,9 @@ public interface IDatabaseInformation {
     /**
      *
      * @param tableName
-     * @return A list of {@link ColumnData}
+     * @return A list of {@link ColumnModel}
      */
-    List<ColumnData> tableColumns(String tableName);
+    List<ColumnModel> tableColumns(String tableName);
 
     /**
      *
@@ -53,7 +53,7 @@ public interface IDatabaseInformation {
      * @param tableName
      * @return
      */
-    List<ForeignKeyData> tableForeignKeys(String tableName);
+    List<ForeignKeyModel> tableForeignKeys(String tableName);
 
     /**
      *

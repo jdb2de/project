@@ -1,8 +1,8 @@
-package org.jdb2de.core.data.enitity;
+package org.jdb2de.core.data;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
-import org.jdb2de.core.data.database.ColumnData;
+import org.jdb2de.core.model.ColumnModel;
 
 import java.io.Serializable;
 
@@ -16,7 +16,7 @@ public class FieldData implements Serializable {
     private String name;
     private String upperName;
     private String type;
-    private ColumnData column;
+    private ColumnModel column;
 
     public String getName() {
         return name;
@@ -46,11 +46,11 @@ public class FieldData implements Serializable {
         this.type = type;
     }
 
-    public ColumnData getColumn() {
+    public ColumnModel getColumn() {
         return column;
     }
 
-    public void setColumn(ColumnData column) {
+    public void setColumn(ColumnModel column) {
         this.column = column;
     }
 

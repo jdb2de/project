@@ -1,4 +1,4 @@
-<#-- @ftlvariable name="field" type="org.jdb2de.core.data.enitity.FieldData" -->
+<#-- @ftlvariable name="field" type="org.jdb2de.core.data.FieldData" -->
 <#macro entity_method fields>
     <#list fields as field>
     /**
