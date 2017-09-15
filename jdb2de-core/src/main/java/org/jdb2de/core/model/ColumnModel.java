@@ -17,9 +17,8 @@ public class ColumnModel implements Serializable {
     private String type;
     private Integer index;
     private String comment;
-    private int size;
-    private boolean nullable;
     private boolean primaryKey;
+    private ColumnParameterModel columnParameter;
 
     public String getName() {
         return name;
@@ -49,22 +48,6 @@ public class ColumnModel implements Serializable {
         return StringUtils.trimToEmpty(comment);
     }
 
-    public int getSize() {
-        return size;
-    }
-
-    public boolean isNullable() {
-        return nullable;
-    }
-
-    public void setNullable(boolean nullable) {
-        this.nullable = nullable;
-    }
-
-    public void setSize(int size) {
-        this.size = size;
-    }
-
     public boolean isPrimaryKey() {
         return primaryKey;
     }
@@ -73,12 +56,16 @@ public class ColumnModel implements Serializable {
         this.primaryKey = primaryKey;
     }
 
-    /**
-     *
-     * @param comment
-     */
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public ColumnParameterModel getColumnParameter() {
+        return columnParameter;
+    }
+
+    public void setColumnParameter(ColumnParameterModel columnParameter) {
+        this.columnParameter = columnParameter;
     }
 
     @Override
@@ -88,7 +75,7 @@ public class ColumnModel implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(name, type, index, comment, size, nullable, primaryKey);
+        return Objects.hashCode(name, type, index, comment, primaryKey, columnParameter);
     }
 
     @Override
@@ -98,9 +85,8 @@ public class ColumnModel implements Serializable {
                 .add("type", type)
                 .add("index", index)
                 .add("comment", comment)
-                .add("size", size)
-                .add("nullable", nullable)
                 .add("primaryKey", primaryKey)
+                .add("columnParameter", columnParameter)
                 .toString();
     }
 }

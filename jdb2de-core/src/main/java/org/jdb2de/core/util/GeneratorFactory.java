@@ -15,6 +15,12 @@ import java.util.List;
 public final class GeneratorFactory {
 
     /**
+     * Constructor omitted
+     */
+    private GeneratorFactory() {
+    }
+
+    /**
      * Create a new instance of {@link TableModel}
      *
      * @param tableName Table name

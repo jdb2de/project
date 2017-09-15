@@ -1,4 +1,4 @@
-package org.jdb2de.core;
+package org.jdb2de.core.component;
 
 import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.StringUtils;
@@ -20,14 +20,18 @@ import java.sql.SQLException;
  */
 @Component
 @Scope(value = "singleton")
-public class DatabaseService {
+public class DatabaseConnection {
 
     /**
      * Instance to log registration
      */
-    private static final Logger LOG = LoggerFactory.getLogger(DatabaseService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DatabaseConnection.class);
 
     @Autowired
+    public DatabaseConnection(ConnectionData connectionData) {
+        this.connectionData = connectionData;
+    }
+
     private ConnectionData connectionData;
     private Connection connection;
     private JdbcTemplate jdbcTemplate;

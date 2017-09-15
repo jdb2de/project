@@ -1,6 +1,7 @@
 package org.jdb2de.core.information;
 
 import org.jdb2de.core.model.ColumnModel;
+import org.jdb2de.core.model.ColumnParameterModel;
 import org.jdb2de.core.model.ForeignKeyModel;
 
 import java.util.List;
@@ -20,6 +21,13 @@ public interface IDatabaseInformation {
     List<String> allTables(String regex);
 
     /**
+     *
+     * @param tableName Table name
+     * @return A list of columns
+     */
+    List<String> tablePrimaryKeyColumns(String tableName);
+
+    /**
      * Check if a table exists
      * @param tableName The name of a table
      * @return If table exists <code>true</code>, otherwise <code>false</code>
@@ -32,6 +40,14 @@ public interface IDatabaseInformation {
      * @return A list of {@link ColumnModel}
      */
     List<ColumnModel> tableColumns(String tableName);
+
+    /**
+     *
+     * @param tableName Table Name
+     * @param columnName Column name
+     * @return
+     */
+    ColumnParameterModel columnParameters(String tableName, String columnName);
 
     /**
      *

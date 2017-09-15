@@ -1,6 +1,5 @@
 package org.jdb2de.core;
 
-import freemarker.template.Configuration;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jdb2de.core.data.EntityData;
@@ -8,6 +7,7 @@ import org.jdb2de.core.data.ParameterData;
 import org.jdb2de.core.exception.ValidationException;
 import org.jdb2de.core.information.IDatabaseInformation;
 import org.jdb2de.core.model.ColumnModel;
+import org.jdb2de.core.model.ColumnParameterModel;
 import org.jdb2de.core.model.TableModel;
 import org.jdb2de.core.util.GeneratorFactory;
 import org.jdb2de.core.util.GeneratorUtils;
@@ -33,6 +33,12 @@ import java.util.List;
 @Service
 public class GeneratorService {
 
+    @Autowired
+    public GeneratorService(IDatabaseInformation information, ParameterData parameters) {
+        this.information = information;
+        this.parameters = parameters;
+    }
+
     private static final Logger LOG = LoggerFactory.getLogger(GeneratorService.class);
 
     /**
@@ -45,14 +51,9 @@ public class GeneratorService {
      */
     private static final String MSG_PARAMETER_NOT_FOUND = "Required parameter [{}] not found";
 
-    @Autowired
-    private IDatabaseInformation information;
+    private final IDatabaseInformation information;
 
-    @Autowired
-    private ParameterData parameters;
-
-    @Autowired
-    private Configuration freemarkerConfig;
+    private final ParameterData parameters;
 
     private String compositePkPath;
 
@@ -110,7 +111,7 @@ public class GeneratorService {
     }
 
     /**
-     * When a table has a composite primary key, a new class is created with only the primary key fields.
+     * When a table has a composite primary key, a new class is created with the primary key fields only.
      * This method defines the composite primary key path based on the entity path and primary key package if it is
      * different from the entity package
      */
@@ -119,6 +120,10 @@ public class GeneratorService {
         String additionalPath = StringUtils.replace(parameters.getCompositePkPackage(), parameters.getEntityPackage(), "");
         additionalPath = StringUtils.replace(additionalPath, ".", File.separator);
         compositePkPath = parameters.getEntityPath().concat(additionalPath);
+
+        if (!parameters.getEntityPackage().equals(parameters.getCompositePkPackage())) {
+            return;
+        }
 
         LOG.info("Composite primary key generation directory: {}", compositePkPath);
         Path path = Paths.get(compositePkPath);
@@ -150,21 +155,31 @@ public class GeneratorService {
 
         LOG.info("Found {} tables", tableNames.size());
         for (String tableName : tableNames) {
-            LOG.info("Querying table [{}] columns", tableName);
+
+            LOG.info("Querying table [{}] details", tableName);
 
             String comment = information.tableComment(tableName);
 
             List<ColumnModel> columns = information.tableColumns(tableName);
             if (CollectionUtils.isEmpty(columns)) {
-                LOG.info("No columns found for table [{}]", tableName);
+                LOG.info("No columns found");
                 continue;
             }
 
-            LOG.info("Found {} columns for table {}", columns.size(), tableName);
+            List<String> primaryKey = information.tablePrimaryKeyColumns(tableName);
+
+            LOG.info("Found {} columns", columns.size(), tableName);
+            for (ColumnModel column : columns) {
+                String columnComment = information.columnComment(tableName, column.getName());
+                ColumnParameterModel columnParameter = information.columnParameters(tableName, column.getName());
+
+                column.setPrimaryKey(primaryKey.contains(column.getName()));
+                column.setComment(columnComment);
+                column.setColumnParameter(columnParameter);
+            }
+
             TableModel table = GeneratorFactory.createTableData(tableName, comment, columns);
             EntityData entityData = GeneratorFactory.createEntityData(table, parameters.getEntityPackage(), null);
-
-            LOG.info("Entity Data: {}", entityData);
         }
     }
 

@@ -1,10 +1,12 @@
 package org.jdb2de.core.information.impl;
 
 import com.google.common.base.Preconditions;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jdb2de.core.DatabaseService;
+import org.jdb2de.core.component.DatabaseConnection;
 import org.jdb2de.core.information.IDatabaseInformation;
 import org.jdb2de.core.model.ColumnModel;
+import org.jdb2de.core.model.ColumnParameterModel;
 import org.jdb2de.core.model.ForeignKeyModel;
 import org.jdb2de.core.util.GeneratorUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,17 +28,25 @@ import java.util.stream.Collectors;
 @PropertySource("classpath:/queries/postgresql.properties")
 public class PostgresInformation implements IDatabaseInformation {
 
+    public static final String NULLABLE_FALSE = "YES";
+
     @Autowired
-    private DatabaseService databaseService;
+    private DatabaseConnection databaseConnection;
 
     @Value("${pg.all.tables}")
     private String sqlAllTables;
+
+    @Value("${pg.table.primary.key.columns}")
+    private String sqlTablePrimaryKeyColumns;
 
     @Value("${pg.check.if.table.exists}")
     private String sqlCheckIfTableExists;
 
     @Value("${pg.table.columns}")
     private String sqlTableColumns;
+
+    @Value("${pg.table.column.parameters}")
+    private String sqlTableColumnParameters;
 
     @Value("${pg.table.foreign.keys}")
     private String sqlTableForeignKeys;
@@ -61,7 +71,7 @@ public class PostgresInformation implements IDatabaseInformation {
     @Override
     public List<String> allTables(String regex) {
         List<String> ls = new ArrayList<>();
-        databaseService.getJdbc().query(sqlAllTables, GeneratorUtils.toArray(databaseService.getSchema()),
+        databaseConnection.getJdbc().query(sqlAllTables, GeneratorUtils.toArray(databaseConnection.getSchema()),
                 (rs, rowNum) -> rs.getString("relname")).forEach(ls::add);
 
         if (StringUtils.isNotEmpty(regex)) {
@@ -72,9 +82,19 @@ public class PostgresInformation implements IDatabaseInformation {
     }
 
     @Override
+    public List<String> tablePrimaryKeyColumns(String tableName) {
+        List<String> ls = new ArrayList<>();
+        databaseConnection.getJdbc().query(sqlTablePrimaryKeyColumns,
+                GeneratorUtils.toArray(databaseConnection.getSchema(), tableName),
+                (rs, rowNum) -> rs.getString("attname")).forEach(ls::add);
+
+        return ls;
+    }
+
+    @Override
     public boolean checkIfTableExists(String tableName) {
-        int qtd = databaseService.getJdbc().queryForObject(sqlCheckIfTableExists,
-                GeneratorUtils.toArray(databaseService.getSchema(), tableName), Integer.class);
+        int qtd = databaseConnection.getJdbc().queryForObject(sqlCheckIfTableExists,
+                GeneratorUtils.toArray(databaseConnection.getSchema(), tableName), Integer.class);
         return qtd > 0;
     }
 
@@ -82,9 +102,36 @@ public class PostgresInformation implements IDatabaseInformation {
     public List<ColumnModel> tableColumns(String tableName) {
         List<ColumnModel> ls = new ArrayList<>();
 
-        databaseService.getJdbc().query(sqlTableColumns, GeneratorUtils.toArray(databaseService.getSchema(), tableName),
+        databaseConnection.getJdbc().query(sqlTableColumns, GeneratorUtils.toArray(databaseConnection.getSchema(), tableName),
                 (rs, rowNum) -> createColumnData(rs)).forEach(ls::add);
         return ls;
+    }
+
+    @Override
+    public ColumnParameterModel columnParameters(String tableName, String columnName) {
+        return databaseConnection.getJdbc().queryForObject(sqlTableColumnParameters,
+                GeneratorUtils.toArray(databaseConnection.getSchema(), tableName, columnName),
+                (rs, rowNum) -> createColumnParameterModel(rs));
+    }
+
+    private ColumnParameterModel createColumnParameterModel(ResultSet rs) throws SQLException {
+
+        String nullable = rs.getString("is_nullable");
+
+        Integer charSize = rs.getInt("character_maximum_length");
+        if (rs.wasNull()) {
+            charSize = null;
+        }
+
+        Integer numSize = rs.getInt("numeric_precision");
+        Integer numPrecision = rs.getInt("numeric_scale");
+
+        ColumnParameterModel columnParameter = new ColumnParameterModel();
+        columnParameter.setNullable(NULLABLE_FALSE.equals(nullable));
+        columnParameter.setSize(ObjectUtils.defaultIfNull(charSize, numSize));
+        columnParameter.setPrecision(ObjectUtils.defaultIfNull(numPrecision, 0));
+
+        return columnParameter;
     }
 
     @Override
@@ -104,7 +151,7 @@ public class PostgresInformation implements IDatabaseInformation {
     public List<ForeignKeyModel> tableForeignKeys(String tableName) {
         List<ForeignKeyModel> ls = new ArrayList<>();
 
-        databaseService.getJdbc().query(sqlTableForeignKeys, GeneratorUtils.toArray(databaseService.getSchema(),
+        databaseConnection.getJdbc().query(sqlTableForeignKeys, GeneratorUtils.toArray(databaseConnection.getSchema(),
                 tableName), (rs, rowNum) -> createForeignKeyData(tableName, rs)).forEach(ls::add);
         return ls;
     }
@@ -136,7 +183,7 @@ public class PostgresInformation implements IDatabaseInformation {
      * @return
      */
     private Integer tableOid(String tableName) {
-        return databaseService.getJdbc().queryForObject(sqlTableOid, GeneratorUtils.toArray(databaseService.getSchema(),
+        return databaseConnection.getJdbc().queryForObject(sqlTableOid, GeneratorUtils.toArray(databaseConnection.getSchema(),
                 tableName), Integer.class);
     }
 
@@ -147,13 +194,13 @@ public class PostgresInformation implements IDatabaseInformation {
      * @return A {@link Integer} with column <code>oid</code>
      */
     private Integer columnIndex(String tableName, String columnName) {
-        return databaseService.getJdbc().queryForObject(sqlColumnIndex,
-                GeneratorUtils.toArray(databaseService.getSchema(), tableName, columnName), Integer.class);
+        return databaseConnection.getJdbc().queryForObject(sqlColumnIndex,
+                GeneratorUtils.toArray(databaseConnection.getSchema(), tableName, columnName), Integer.class);
     }
 
     private ColumnModel tableColumnByIndex(String tableName, Integer columnIndex) {
-        return databaseService.getJdbc().queryForObject(sqlTableColumnByIndex,
-                GeneratorUtils.toArray(databaseService.getSchema(), tableName, columnIndex),
+        return databaseConnection.getJdbc().queryForObject(sqlTableColumnByIndex,
+                GeneratorUtils.toArray(databaseConnection.getSchema(), tableName, columnIndex),
                 (rs, rowNum) -> createColumnData(rs));
     }
 
@@ -197,7 +244,7 @@ public class PostgresInformation implements IDatabaseInformation {
      * @return A {@link String} with object comment
      */
     private String objectDescription(Integer objectOid) {
-        return databaseService.getJdbc().queryForObject(sqlObjectDescription, GeneratorUtils.toArray(objectOid),
+        return databaseConnection.getJdbc().queryForObject(sqlObjectDescription, GeneratorUtils.toArray(objectOid),
                 String.class);
     }
 
@@ -208,7 +255,7 @@ public class PostgresInformation implements IDatabaseInformation {
      * @return
      */
     private String columnDescription(Integer tableOid, Integer columnIndex) {
-        return databaseService.getJdbc().queryForObject(sqlColumnDescription,
+        return databaseConnection.getJdbc().queryForObject(sqlColumnDescription,
                 GeneratorUtils.toArray(tableOid, columnIndex), String.class);
     }
 
