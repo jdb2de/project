@@ -1,10 +1,11 @@
-package org.jdb2de.core.util;
+package org.jdb2de.core.factory;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jdb2de.core.data.EntityData;
 import org.jdb2de.core.data.FieldData;
 import org.jdb2de.core.model.ColumnModel;
 import org.jdb2de.core.model.TableModel;
+import org.jdb2de.core.util.GeneratorUtils;
 
 import java.util.List;
 

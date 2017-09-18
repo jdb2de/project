@@ -9,7 +9,7 @@ import org.jdb2de.core.information.IDatabaseInformation;
 import org.jdb2de.core.model.ColumnModel;
 import org.jdb2de.core.model.ColumnParameterModel;
 import org.jdb2de.core.model.TableModel;
-import org.jdb2de.core.util.GeneratorFactory;
+import org.jdb2de.core.factory.GeneratorFactory;
 import org.jdb2de.core.util.GeneratorUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
