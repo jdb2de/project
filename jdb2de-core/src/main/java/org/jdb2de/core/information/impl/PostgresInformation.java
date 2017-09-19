@@ -208,7 +208,7 @@ public class PostgresInformation implements IDatabaseInformation {
         ColumnModel columnModel = new ColumnModel();
         columnModel.setName(rs.getString("attname"));
         columnModel.setType(rs.getString("typname"));
-        columnModel.setIndex(rs.getInt("attnum"));
+        columnModel.setOrder(rs.getInt("attnum"));
         return columnModel;
     }
 

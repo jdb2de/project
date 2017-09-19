@@ -1,15 +1,16 @@
 package org.jdb2de.core;
 
+import com.google.common.base.Preconditions;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jdb2de.core.data.EntityData;
+import org.jdb2de.core.component.EntityCreator;
 import org.jdb2de.core.data.ParameterData;
 import org.jdb2de.core.exception.ValidationException;
+import org.jdb2de.core.factory.GeneratorFactory;
 import org.jdb2de.core.information.IDatabaseInformation;
 import org.jdb2de.core.model.ColumnModel;
 import org.jdb2de.core.model.ColumnParameterModel;
 import org.jdb2de.core.model.TableModel;
-import org.jdb2de.core.factory.GeneratorFactory;
 import org.jdb2de.core.util.GeneratorUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,12 +34,6 @@ import java.util.List;
 @Service
 public class GeneratorService {
 
-    @Autowired
-    public GeneratorService(IDatabaseInformation information, ParameterData parameters) {
-        this.information = information;
-        this.parameters = parameters;
-    }
-
     private static final Logger LOG = LoggerFactory.getLogger(GeneratorService.class);
 
     /**
@@ -55,9 +50,18 @@ public class GeneratorService {
 
     private final ParameterData parameters;
 
-    private String compositePkPath;
+    private final EntityCreator entityCreator;
 
     private String searchRegex;
+
+    private String compositePkPath;
+
+    @Autowired
+    public GeneratorService(ParameterData parameters, IDatabaseInformation information, EntityCreator entityCreator) {
+        this.information = information;
+        this.parameters = parameters;
+        this.entityCreator = entityCreator;
+    }
 
     @PostConstruct
     private void init() throws IOException {
@@ -120,7 +124,6 @@ public class GeneratorService {
         String additionalPath = StringUtils.replace(parameters.getCompositePkPackage(), parameters.getEntityPackage(), "");
         additionalPath = StringUtils.replace(additionalPath, ".", File.separator);
         compositePkPath = parameters.getEntityPath().concat(additionalPath);
-
         if (!parameters.getEntityPackage().equals(parameters.getCompositePkPackage())) {
             return;
         }
@@ -154,33 +157,8 @@ public class GeneratorService {
         }
 
         LOG.info("Found {} tables", tableNames.size());
-        for (String tableName : tableNames) {
+        List<TableModel> tables = populateTableModel(tableNames);
 
-            LOG.info("Querying table [{}] details", tableName);
-
-            String comment = information.tableComment(tableName);
-
-            List<ColumnModel> columns = information.tableColumns(tableName);
-            if (CollectionUtils.isEmpty(columns)) {
-                LOG.info("No columns found");
-                continue;
-            }
-
-            List<String> primaryKey = information.tablePrimaryKeyColumns(tableName);
-
-            LOG.info("Found {} columns", columns.size(), tableName);
-            for (ColumnModel column : columns) {
-                String columnComment = information.columnComment(tableName, column.getName());
-                ColumnParameterModel columnParameter = information.columnParameters(tableName, column.getName());
-
-                column.setPrimaryKey(primaryKey.contains(column.getName()));
-                column.setComment(columnComment);
-                column.setColumnParameter(columnParameter);
-            }
-
-            TableModel table = GeneratorFactory.createTableData(tableName, comment, columns);
-            EntityData entityData = GeneratorFactory.createEntityData(table, parameters.getEntityPackage(), null);
-        }
     }
 
     private List<String> querySingleTable(String tableName) {
@@ -192,5 +170,39 @@ public class GeneratorService {
         return ls;
     }
 
+    private List<TableModel> populateTableModel(final List<String> tableNames) {
+        List<TableModel> tables = new ArrayList<>();
+        // For each table name create a new TableModel instance
+        tableNames.forEach(tableName -> {
+            TableModel table = createTableModel(tableName);
+            Preconditions.checkNotNull(table, "Error to create a model to table %s", tableName);
+            tables.add(table);
+        });
 
+        return tables;
+    }
+
+    private TableModel createTableModel(String tableName) {
+
+        LOG.info("Querying table [{}] details", tableName);
+        String comment = information.tableComment(tableName);
+
+        List<ColumnModel> columns = information.tableColumns(tableName);
+        if (CollectionUtils.isEmpty(columns)) {
+            LOG.info("No columns found");
+            return null;
+        }
+
+        List<String> primaryKeyColumns = information.tablePrimaryKeyColumns(tableName);
+        LOG.info("Found {} columns", columns.size(), tableName);
+        for (ColumnModel column : columns) {
+            String columnComment = information.columnComment(tableName, column.getName());
+            ColumnParameterModel columnParameter = information.columnParameters(tableName, column.getName());
+            column.setPrimaryKey(primaryKeyColumns.contains(column.getName()));
+            column.setComment(columnComment);
+            column.setColumnParameter(columnParameter);
+        }
+
+        return GeneratorFactory.createTableData(tableName, comment, primaryKeyColumns, columns);
+    }
 }

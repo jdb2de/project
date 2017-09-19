@@ -26,14 +26,16 @@ public final class GeneratorFactory {
      *
      * @param tableName Table name
      * @param comment Table comment
+     * @param primaryKeyColumn A list of primary key columns
      * @param columns Table columns
      * @return A new instance of {@link TableModel}
      */
-    public static TableModel createTableData(String tableName, String comment, List<ColumnModel> columns) {
+    public static TableModel createTableData(String tableName, String comment, List<String> primaryKeyColumn, List<ColumnModel> columns) {
         TableModel table = new TableModel();
         table.setName(tableName);
         table.setComment(comment);
         table.setColumns(columns);
+        table.setCompositeKey(primaryKeyColumn.size() > 1);
         return table;
     }
 

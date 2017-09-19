@@ -15,7 +15,7 @@ public class ColumnModel implements Serializable {
 
     private String name;
     private String type;
-    private Integer index;
+    private Integer order;
     private String comment;
     private boolean primaryKey;
     private ColumnParameterModel columnParameter;
@@ -36,12 +36,12 @@ public class ColumnModel implements Serializable {
         this.type = type;
     }
 
-    public Integer getIndex() {
-        return index;
+    public Integer getOrder() {
+        return order;
     }
 
-    public void setIndex(Integer index) {
-        this.index = index;
+    public void setOrder(Integer order) {
+        this.order = order;
     }
 
     public String getComment() {
@@ -75,7 +75,7 @@ public class ColumnModel implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(name, type, index, comment, primaryKey, columnParameter);
+        return Objects.hashCode(name, type, order, comment, primaryKey, columnParameter);
     }
 
     @Override
@@ -83,7 +83,7 @@ public class ColumnModel implements Serializable {
         return MoreObjects.toStringHelper(this)
                 .add("name", name)
                 .add("type", type)
-                .add("index", index)
+                .add("order", order)
                 .add("comment", comment)
                 .add("primaryKey", primaryKey)
                 .add("columnParameter", columnParameter)
