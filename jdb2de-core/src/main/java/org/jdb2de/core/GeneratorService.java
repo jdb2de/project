@@ -159,6 +159,8 @@ public class GeneratorService {
         LOG.info("Found {} tables", tableNames.size());
         List<TableModel> tables = populateTableModel(tableNames);
 
+        // Create the classes
+        entityCreator.create(compositePkPath, tables);
     }
 
     private List<String> querySingleTable(String tableName) {

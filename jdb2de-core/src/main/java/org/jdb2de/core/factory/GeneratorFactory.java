@@ -61,4 +61,15 @@ public final class GeneratorFactory {
         return entity;
     }
 
+    public static FieldData createFieldData(ColumnModel column) {
+
+        FieldData field = new FieldData();
+        field.setColumn(column);
+        field.setName(GeneratorUtils.underscoreToLowerCamelcase(column.getName()));
+        field.setUpperName(GeneratorUtils.underscoreToUpperCamelcase(column.getName()));
+        field.setType(String.class.getSimpleName());
+
+        return field;
+    }
+
 }

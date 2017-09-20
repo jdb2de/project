@@ -1,4 +1,5 @@
 <#-- @ftlvariable name="fields" type="java.util.List<org.jdb2de.core.data.FieldData>" -->
+<#-- @ftlvariable name="field" type="org.jdb2de.core.data.FieldData" -->
 <#macro entity_field fields>
     <#list fields as field>
     /**
@@ -10,7 +11,7 @@
     <#else>
     @Basic
     </#if>
-    @Column(name = "${field.column.name}", nullable = ${field.column.nullable?string('true', 'false')}<#if field.column.size gt 0 >, length = ${field.column.size}</#if>)
+    @Column(name = "${field.column.name}", nullable = ${field.column.columnParameter.nullable?string('true', 'false')}<#if field.column.columnParameter.size gt 0 >, length = ${field.column.columnParameter.size}</#if>)
     private ${field.type} ${field.name};
 
     </#list>
