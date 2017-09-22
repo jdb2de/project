@@ -11,7 +11,10 @@
     <#else>
     @Basic
     </#if>
-    @Column(name = "${field.column.name}", nullable = ${field.column.columnParameter.nullable?string('true', 'false')}<#if field.column.columnParameter.size gt 0 >, length = ${field.column.columnParameter.size}</#if>)
+    <#if field.column.translatedType.lob >
+    @Lob
+    </#if>
+    @Column(name = "${field.column.name}"<#if !field.column.columnParameter.nullable >, nullable = ${field.column.columnParameter.nullable?string('true', 'false')}</#if><#if field.column.columnParameter.size gt 0 >, length = ${field.column.columnParameter.size}</#if>)
     private ${field.type} ${field.name};
 
     </#list>

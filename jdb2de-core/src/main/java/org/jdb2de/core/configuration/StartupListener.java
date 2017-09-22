@@ -27,6 +27,9 @@ public class StartupListener {
     @Value("${config.entity.package:#{null}}")
     private String configEntityPackage;
 
+    @Value("${config.entity.suffix:#{null}}")
+    private String configEntitySuffix;
+
     @Value("${config.pk.package:#{null}}")
     private String configPkPackage;
 
@@ -80,6 +83,7 @@ public class StartupListener {
     private void loadGenerationParameters() {
         parameterData.setEntityPath(configEntityPath);
         parameterData.setEntityPackage(configEntityPackage);
+        parameterData.setEntitySuffix(configEntitySuffix);
         parameterData.setCompositePkPackage(configPkPackage);
         parameterData.setAuthor(configAuthor);
         parameterData.setTableSearch(configTableSearch);

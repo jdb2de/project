@@ -24,43 +24,51 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
 import javax.annotation.Generated;
-import java.io.Serializable;
-
 import javax.persistence.*;
+import java.io.Serializable;
+import java.util.Date;
 
 /**
- * Movie categories
- * <b>TABLE:</b> category
+ * Actor list
+ * <b>TABLE:</b> actor
  *
  * This entity was automatically created by JDB2DE tool
  *
  * @author Rodrigo Tavares
  */
 @Entity
-@Table(name = "category", schema = "public")
-@Generated(value = "jdb2de", date = "2017-09-07 15:23:25", comments = "You should not modify it by hand")
-public class Category implements Serializable {
+@Table(name = "actor")
+@Generated(value = "jdb2de", date = "2017-09-22 00:02:49", comments = "You should not modify it by hand")
+public class ActorModel implements Serializable {
 
     /**
      * Serial Version UID
      */
-    private static final long serialVersionUID = 521682778L;
+    private static final long serialVersionUID = 2134291576L;
 
     /**
-     * Category identification
-     * <b>FIELD: </b>category_id, <b>TYPE: </b>int4,
+     * Actor identification
+     * <b>FIELD: </b>actor_id, <b>TYPE: </b>int4,
      */
-    @Basic
-    @Column(name = "category_id", nullable = false)
-    private Integer categoryId;
+    @Id
+    @Column(name = "actor_id", nullable = false, length = 32)
+    private Integer actorId;
 
     /**
-     * Category name
-     * <b>FIELD: </b>name, <b>TYPE: </b>varchar,
+     * Actor fist name
+     * <b>FIELD: </b>first_name, <b>TYPE: </b>varchar,
      */
     @Basic
-    @Column(name = "name", nullable = false)
-    private String name;
+    @Column(name = "first_name", nullable = false, length = 45)
+    private String firstName;
+
+    /**
+     * Actor last name
+     * <b>FIELD: </b>last_name, <b>TYPE: </b>varchar,
+     */
+    @Basic
+    @Column(name = "last_name", nullable = false, length = 45)
+    private String lastName;
 
     /**
      * Last update
@@ -68,59 +76,77 @@ public class Category implements Serializable {
      */
     @Basic
     @Column(name = "last_update", nullable = false)
-    private java.util.Date lastUpdate;
+    private Date lastUpdate;
 
     /**
-     * Category identification
-     * <b>FIELD: </b>category_id
+     * Actor identification
+     * <b>FIELD: </b>actor_id
      * @return A {@link Integer} value
      */
-    public Integer getCategoryId() {
-        return categoryId;
+    public Integer getActorId() {
+        return actorId;
     }
 
     /**
-     * Category identification
-     * <b>FIELD: </b>category_id
-     * @param categoryId A {@link Integer} value
+     * Actor identification
+     * <b>FIELD: </b>actor_id
+     * @param actorId A {@link Integer} value
      */
-    public void setCategoryId(Integer categoryId) {
-        this.categoryId = categoryId;
+    public void setActorId(Integer actorId) {
+        this.actorId = actorId;
     }
 
     /**
-     * Category name
-     * <b>FIELD: </b>name
+     * Actor fist name
+     * <b>FIELD: </b>first_name
      * @return A {@link String} value
      */
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return firstName;
     }
 
     /**
-     * Category name
-     * <b>FIELD: </b>name
-     * @param name A {@link String} value
+     * Actor fist name
+     * <b>FIELD: </b>first_name
+     * @param firstName A {@link String} value
      */
-    public void setName(String name) {
-        this.name = name;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    /**
+     * Actor last name
+     * <b>FIELD: </b>last_name
+     * @return A {@link String} value
+     */
+    public String getLastName() {
+        return lastName;
+    }
+
+    /**
+     * Actor last name
+     * <b>FIELD: </b>last_name
+     * @param lastName A {@link String} value
+     */
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     /**
      * Last update
      * <b>FIELD: </b>last_update
-     * @return A {@link java.util.Date} value
+     * @return A {@link Date} value
      */
-    public java.util.Date getLastUpdate() {
+    public Date getLastUpdate() {
         return lastUpdate;
     }
 
     /**
      * Last update
      * <b>FIELD: </b>last_update
-     * @param lastUpdate A {@link java.util.Date} value
+     * @param lastUpdate A {@link Date} value
      */
-    public void setLastUpdate(java.util.Date lastUpdate) {
+    public void setLastUpdate(Date lastUpdate) {
         this.lastUpdate = lastUpdate;
     }
 
@@ -132,8 +158,9 @@ public class Category implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hashCode(
-            categoryId
-            ,name
+            actorId
+            ,firstName
+            ,lastName
             ,lastUpdate
         );
     }
@@ -141,8 +168,9 @@ public class Category implements Serializable {
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("categoryId", categoryId)
-                .add("name", name)
+                .add("actorId", actorId)
+                .add("firstName", firstName)
+                .add("lastName", lastName)
                 .add("lastUpdate", lastUpdate)
                 .toString();
     }

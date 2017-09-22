@@ -18,10 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -53,8 +51,6 @@ public class GeneratorService {
     private final EntityCreator entityCreator;
 
     private String searchRegex;
-
-    private String compositePkPath;
 
     @Autowired
     public GeneratorService(ParameterData parameters, IDatabaseInformation information, EntityCreator entityCreator) {
@@ -114,35 +110,11 @@ public class GeneratorService {
         }
     }
 
-    /**
-     * When a table has a composite primary key, a new class is created with the primary key fields only.
-     * This method defines the composite primary key path based on the entity path and primary key package if it is
-     * different from the entity package
-     */
-    private void createCompositePkPath() throws IOException {
-
-        String additionalPath = StringUtils.replace(parameters.getCompositePkPackage(), parameters.getEntityPackage(), "");
-        additionalPath = StringUtils.replace(additionalPath, ".", File.separator);
-        compositePkPath = parameters.getEntityPath().concat(additionalPath);
-        if (!parameters.getEntityPackage().equals(parameters.getCompositePkPackage())) {
-            return;
-        }
-
-        LOG.info("Composite primary key generation directory: {}", compositePkPath);
-        Path path = Paths.get(compositePkPath);
-        if (!path.toFile().exists()) {
-            Files.createDirectories(path);
-        }
-    }
-
     public void generate() throws ValidationException, IOException {
 
         LOG.info("Initializing entity generation");
         // Execute a parameter validation
         validateParameters();
-
-        // Set primary key path based on entity path and pk package
-        createCompositePkPath();
 
         List<String> tableNames;
         if (!StringUtils.isEmpty(parameters.getTableName())) {
@@ -160,7 +132,7 @@ public class GeneratorService {
         List<TableModel> tables = populateTableModel(tableNames);
 
         // Create the classes
-        entityCreator.create(compositePkPath, tables);
+        entityCreator.create(tables);
     }
 
     private List<String> querySingleTable(String tableName) {
@@ -203,8 +175,11 @@ public class GeneratorService {
             column.setPrimaryKey(primaryKeyColumns.contains(column.getName()));
             column.setComment(columnComment);
             column.setColumnParameter(columnParameter);
+            column.setTranslatedType(information.translateDatabaseType(column.getType()));
+
+            LOG.info("  {}: type={}, java-type={}", column.getName(), column.getType(), column.getTranslatedType().getTargetType());
         }
 
-        return GeneratorFactory.createTableData(tableName, comment, primaryKeyColumns, columns);
+        return GeneratorFactory.createTableModel(tableName, comment, primaryKeyColumns, columns);
     }
 }

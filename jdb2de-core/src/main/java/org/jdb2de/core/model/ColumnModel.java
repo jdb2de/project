@@ -15,6 +15,7 @@ public class ColumnModel implements Serializable {
 
     private String name;
     private String type;
+    private TranslateTypeModel translatedType;
     private Integer order;
     private String comment;
     private boolean primaryKey;
@@ -34,6 +35,14 @@ public class ColumnModel implements Serializable {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public TranslateTypeModel getTranslatedType() {
+        return translatedType;
+    }
+
+    public void setTranslatedType(TranslateTypeModel translatedType) {
+        this.translatedType = translatedType;
     }
 
     public Integer getOrder() {
@@ -75,7 +84,7 @@ public class ColumnModel implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(name, type, order, comment, primaryKey, columnParameter);
+        return Objects.hashCode(name, type, translatedType, order, comment, primaryKey, columnParameter);
     }
 
     @Override
@@ -83,6 +92,7 @@ public class ColumnModel implements Serializable {
         return MoreObjects.toStringHelper(this)
                 .add("name", name)
                 .add("type", type)
+                .add("translatedType", translatedType)
                 .add("order", order)
                 .add("comment", comment)
                 .add("primaryKey", primaryKey)

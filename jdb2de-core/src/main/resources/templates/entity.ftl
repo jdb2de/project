@@ -1,3 +1,4 @@
+<#-- @ftlvariable name="imports" type="java.util.Set<String>" -->
 <#-- @ftlvariable name="param" type="org.jdb2de.core.data.ParameterData" -->
 <#-- @ftlvariable name="entity" type="org.jdb2de.core.data.EntityData" -->
 <#include "entity-serial-uid.ftl">
@@ -24,6 +25,9 @@ import javax.persistence.*;
 <#if entity.table.compositeKey>
 import ${param.compositePkPackage}.${entity.name}PK;
 </#if>
+<#list imports as import>
+import ${import};
+</#list>
 
 /**
  * ${entity.table.comment}

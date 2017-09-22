@@ -1,19 +1,23 @@
 package org.jdb2de.core.information.impl;
 
-import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jdb2de.core.component.DatabaseConnection;
+import org.jdb2de.core.factory.GeneratorFactory;
 import org.jdb2de.core.information.IDatabaseInformation;
 import org.jdb2de.core.model.ColumnModel;
 import org.jdb2de.core.model.ColumnParameterModel;
 import org.jdb2de.core.model.ForeignKeyModel;
+import org.jdb2de.core.model.TranslateTypeModel;
 import org.jdb2de.core.util.GeneratorUtils;
+import org.postgresql.geometric.*;
+import org.postgresql.util.PGInterval;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.sql.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -66,7 +70,7 @@ public class PostgresInformation implements IDatabaseInformation {
     @Value("${pg.column.description}")
     private String sqlColumnDescription;
 
-    private Map<String, String> types;
+    private Map<String, TranslateTypeModel> types;
 
     @Override
     public List<String> allTables(String regex) {
@@ -157,22 +161,65 @@ public class PostgresInformation implements IDatabaseInformation {
     }
 
     @Override
-    public String translateDbType(String databaseType) {
-        String result = getTypes().get(databaseType);
-        Preconditions.checkNotNull(result, "Database type %s not mapped", databaseType);
+    public TranslateTypeModel translateDatabaseType(String databaseType) {
+        final TranslateTypeModel objectType = GeneratorFactory.createTranslateTypeModel(Object.class.getSimpleName());
+        TranslateTypeModel result = getTypes().get(databaseType);
+        // Undefined type
+        if (result == null) {
+            result = objectType;
+        }
         return result;
     }
 
-    private Map<String, String> getTypes() {
+    private Map<String, TranslateTypeModel> getTypes() {
         if (types == null) {
+            final TranslateTypeModel stringType = GeneratorFactory.createTranslateTypeModel(String.class.getSimpleName());
+            final TranslateTypeModel integerType = GeneratorFactory.createTranslateTypeModel(Integer.class.getSimpleName());
+            final TranslateTypeModel longType = GeneratorFactory.createTranslateTypeModel(Long.class.getSimpleName());
+            final TranslateTypeModel booleanType = GeneratorFactory.createTranslateTypeModel(Boolean.class.getSimpleName());
+            final TranslateTypeModel bigDecimalType = GeneratorFactory.createTranslateTypeModel(BigDecimal.class.getSimpleName(), BigDecimal.class.getName());
+            final TranslateTypeModel dateType = GeneratorFactory.createTranslateTypeModel(Date.class.getSimpleName(), Date.class.getName());
+
             types = new HashMap<>();
-            types.put("varchar", String.class.getSimpleName());
-            types.put("int2", Integer.class.getSimpleName());
-            types.put("int4", Integer.class.getSimpleName());
-            types.put("bool", Boolean.class.getSimpleName());
-            types.put("timestamp", Date.class.getName());
-            types.put("text", String.class.getSimpleName());
-            types.put("bytea", "int[]");
+
+            // Basic types
+            types.put("varchar", stringType);
+            types.put("bpchar", stringType);
+            types.put("int2", integerType);
+            types.put("int4", integerType);
+            types.put("int8", longType);
+            types.put("year", integerType);
+            types.put("float4", bigDecimalType);
+            types.put("float8", bigDecimalType);
+            types.put("numeric", bigDecimalType);
+            types.put("money", bigDecimalType);
+            types.put("bool", booleanType);
+            types.put("bit", booleanType);
+            types.put("timestamp", dateType);
+            types.put("date", dateType);
+            types.put("time", dateType);
+            types.put("timetz", dateType);
+            types.put("timestamptz", dateType);
+            types.put("text", stringType);
+            types.put("_text", stringType);
+            types.put("tsvector", stringType);
+            types.put("json", stringType);
+            types.put("xml", stringType);
+            types.put("tsquery", stringType);
+
+            // Bob type
+            types.put("bytea", GeneratorFactory.createTranslateTypeModel("byte[]", true));
+
+            // Specific postgre types
+            types.put("interval", GeneratorFactory.createTranslateTypeModel(PGInterval.class.getSimpleName(), PGInterval.class.getName()));
+            types.put("box", GeneratorFactory.createTranslateTypeModel(PGbox.class.getSimpleName(), PGbox.class.getName()));
+            types.put("circle", GeneratorFactory.createTranslateTypeModel(PGcircle.class.getSimpleName(), PGcircle.class.getName()));
+            types.put("polygon", GeneratorFactory.createTranslateTypeModel(PGpolygon.class.getSimpleName(), PGpolygon.class.getName()));
+            types.put("line", GeneratorFactory.createTranslateTypeModel(PGline.class.getSimpleName(), PGline.class.getName()));
+            types.put("point", GeneratorFactory.createTranslateTypeModel(PGpoint.class.getSimpleName(), PGpoint.class.getName()));
+            types.put("lseg", GeneratorFactory.createTranslateTypeModel(PGlseg.class.getSimpleName(), PGlseg.class.getName()));
+            types.put("path", GeneratorFactory.createTranslateTypeModel(PGpath.class.getSimpleName(), PGpath.class.getName()));
+            types.put("uuid", GeneratorFactory.createTranslateTypeModel(UUID.class.getSimpleName(), UUID.class.getName()));
         }
         return types;
     }

@@ -23,6 +23,7 @@ public class ParameterData implements Serializable {
 
     private String entityPath;
     private String entityPackage;
+    private String entitySuffix;
     private String compositePkPackage;
     private List<String> copyright;
     private String author;
@@ -43,6 +44,14 @@ public class ParameterData implements Serializable {
 
     public void setEntityPackage(String entityPackage) {
         this.entityPackage = entityPackage;
+    }
+
+    public String getEntitySuffix() {
+        return entitySuffix;
+    }
+
+    public void setEntitySuffix(String entitySuffix) {
+        this.entitySuffix = entitySuffix;
     }
 
     public String getCompositePkPackage() {
@@ -95,6 +104,7 @@ public class ParameterData implements Serializable {
         return Objects.hashCode(
                 entityPath
                 , entityPackage
+                , entitySuffix
                 , compositePkPackage
                 , copyright
                 , author
@@ -108,6 +118,7 @@ public class ParameterData implements Serializable {
         return MoreObjects.toStringHelper(this)
                 .add("entityPath", entityPath)
                 .add("entityPackage", entityPackage)
+                .add("entitySuffix", entitySuffix)
                 .add("compositePkPackage", compositePkPackage)
                 .add("copyright", copyright)
                 .add("author", author)

@@ -2,12 +2,17 @@ package org.jdb2de.core.util;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Preconditions;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jdb2de.core.model.ColumnModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.text.MessageFormat;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -69,6 +74,19 @@ public final class GeneratorUtils {
         }
 
         return CaseFormat.LOWER_UNDERSCORE.to(caseFormat, value.toLowerCase());
+    }
+
+    public static Set<String> createImportList(List<ColumnModel> columns) {
+
+        Set<String> imports = new HashSet<>();
+        if (CollectionUtils.isEmpty(columns)) {
+            return imports;
+        }
+
+        // Generate a list only with not null imports
+        columns.stream().filter(c -> StringUtils.isNotEmpty(c.getTranslatedType().getTargetImport())).
+                forEach(c -> imports.add(c.getTranslatedType().getTargetImport()));
+        return imports;
     }
 
     /**

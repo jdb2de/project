@@ -24,51 +24,51 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
 import javax.annotation.Generated;
-import java.io.Serializable;
-
 import javax.persistence.*;
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 
- * <b>TABLE:</b> inventory
+ * <b>TABLE:</b> store
  *
  * This entity was automatically created by JDB2DE tool
  *
  * @author Rodrigo Tavares
  */
 @Entity
-@Table(name = "inventory", schema = "public")
-@Generated(value = "jdb2de", date = "2017-09-07 15:34:13", comments = "You should not modify it by hand")
-public class Inventory implements Serializable {
+@Table(name = "store")
+@Generated(value = "jdb2de", date = "2017-09-22 00:02:50", comments = "You should not modify it by hand")
+public class StoreModel implements Serializable {
 
     /**
      * Serial Version UID
      */
-    private static final long serialVersionUID = 409344282L;
+    private static final long serialVersionUID = -1931674208L;
 
     /**
      * 
-     * <b>FIELD: </b>inventory_id, <b>TYPE: </b>int4,
+     * <b>FIELD: </b>store_id, <b>TYPE: </b>int4,
      */
-    @Basic
-    @Column(name = "inventory_id", nullable = false)
-    private Integer inventoryId;
-
-    /**
-     * 
-     * <b>FIELD: </b>film_id, <b>TYPE: </b>int2,
-     */
-    @Basic
-    @Column(name = "film_id", nullable = false)
-    private Integer filmId;
-
-    /**
-     * 
-     * <b>FIELD: </b>store_id, <b>TYPE: </b>int2,
-     */
-    @Basic
-    @Column(name = "store_id", nullable = false)
+    @Id
+    @Column(name = "store_id", nullable = false, length = 32)
     private Integer storeId;
+
+    /**
+     * 
+     * <b>FIELD: </b>manager_staff_id, <b>TYPE: </b>int2,
+     */
+    @Basic
+    @Column(name = "manager_staff_id", nullable = false, length = 16)
+    private Integer managerStaffId;
+
+    /**
+     * 
+     * <b>FIELD: </b>address_id, <b>TYPE: </b>int2,
+     */
+    @Basic
+    @Column(name = "address_id", nullable = false, length = 16)
+    private Integer addressId;
 
     /**
      * 
@@ -76,43 +76,7 @@ public class Inventory implements Serializable {
      */
     @Basic
     @Column(name = "last_update", nullable = false)
-    private java.util.Date lastUpdate;
-
-    /**
-     * 
-     * <b>FIELD: </b>inventory_id
-     * @return A {@link Integer} value
-     */
-    public Integer getInventoryId() {
-        return inventoryId;
-    }
-
-    /**
-     * 
-     * <b>FIELD: </b>inventory_id
-     * @param inventoryId A {@link Integer} value
-     */
-    public void setInventoryId(Integer inventoryId) {
-        this.inventoryId = inventoryId;
-    }
-
-    /**
-     * 
-     * <b>FIELD: </b>film_id
-     * @return A {@link Integer} value
-     */
-    public Integer getFilmId() {
-        return filmId;
-    }
-
-    /**
-     * 
-     * <b>FIELD: </b>film_id
-     * @param filmId A {@link Integer} value
-     */
-    public void setFilmId(Integer filmId) {
-        this.filmId = filmId;
-    }
+    private Date lastUpdate;
 
     /**
      * 
@@ -134,19 +98,55 @@ public class Inventory implements Serializable {
 
     /**
      * 
-     * <b>FIELD: </b>last_update
-     * @return A {@link java.util.Date} value
+     * <b>FIELD: </b>manager_staff_id
+     * @return A {@link Integer} value
      */
-    public java.util.Date getLastUpdate() {
+    public Integer getManagerStaffId() {
+        return managerStaffId;
+    }
+
+    /**
+     * 
+     * <b>FIELD: </b>manager_staff_id
+     * @param managerStaffId A {@link Integer} value
+     */
+    public void setManagerStaffId(Integer managerStaffId) {
+        this.managerStaffId = managerStaffId;
+    }
+
+    /**
+     * 
+     * <b>FIELD: </b>address_id
+     * @return A {@link Integer} value
+     */
+    public Integer getAddressId() {
+        return addressId;
+    }
+
+    /**
+     * 
+     * <b>FIELD: </b>address_id
+     * @param addressId A {@link Integer} value
+     */
+    public void setAddressId(Integer addressId) {
+        this.addressId = addressId;
+    }
+
+    /**
+     * 
+     * <b>FIELD: </b>last_update
+     * @return A {@link Date} value
+     */
+    public Date getLastUpdate() {
         return lastUpdate;
     }
 
     /**
      * 
      * <b>FIELD: </b>last_update
-     * @param lastUpdate A {@link java.util.Date} value
+     * @param lastUpdate A {@link Date} value
      */
-    public void setLastUpdate(java.util.Date lastUpdate) {
+    public void setLastUpdate(Date lastUpdate) {
         this.lastUpdate = lastUpdate;
     }
 
@@ -158,9 +158,9 @@ public class Inventory implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hashCode(
-            inventoryId
-            ,filmId
-            ,storeId
+            storeId
+            ,managerStaffId
+            ,addressId
             ,lastUpdate
         );
     }
@@ -168,9 +168,9 @@ public class Inventory implements Serializable {
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("inventoryId", inventoryId)
-                .add("filmId", filmId)
                 .add("storeId", storeId)
+                .add("managerStaffId", managerStaffId)
+                .add("addressId", addressId)
                 .add("lastUpdate", lastUpdate)
                 .toString();
     }

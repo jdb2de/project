@@ -3,6 +3,7 @@ package org.jdb2de.core.information;
 import org.jdb2de.core.model.ColumnModel;
 import org.jdb2de.core.model.ColumnParameterModel;
 import org.jdb2de.core.model.ForeignKeyModel;
+import org.jdb2de.core.model.TranslateTypeModel;
 
 import java.util.List;
 
@@ -76,6 +77,6 @@ public interface IDatabaseInformation {
      * @param databaseType
      * @return
      */
-    String translateDbType(String databaseType);
+    TranslateTypeModel translateDatabaseType(String databaseType);
 
 }
