@@ -38,7 +38,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "inventory")
-@Generated(value = "jdb2de", date = "2017-09-22 00:02:50", comments = "You should not modify it by hand")
+@Generated(value = "jdb2de", date = "2017-09-24 02:13:32", comments = "You should not modify it by hand")
 public class InventoryModel implements Serializable {
 
     /**
@@ -77,6 +77,10 @@ public class InventoryModel implements Serializable {
     @Basic
     @Column(name = "last_update", nullable = false)
     private Date lastUpdate;
+
+    @ManyToOne
+    @JoinColumn(name="film_id", referencedColumnName="film_id")
+    private FilmModel film;
 
     /**
      * 
@@ -150,6 +154,14 @@ public class InventoryModel implements Serializable {
         this.lastUpdate = lastUpdate;
     }
 
+    public FilmModel getFilm() {
+        return film;
+    }
+
+    public void setFilm(FilmModel film) {
+        this.film = film;
+    }
+
     @Override
     public boolean equals(Object obj) {
         return Objects.equal(this, obj);
@@ -162,6 +174,7 @@ public class InventoryModel implements Serializable {
             ,filmId
             ,storeId
             ,lastUpdate
+            ,film
         );
     }
 
@@ -172,6 +185,7 @@ public class InventoryModel implements Serializable {
                 .add("filmId", filmId)
                 .add("storeId", storeId)
                 .add("lastUpdate", lastUpdate)
+                .add("film", film)
                 .toString();
     }
 }

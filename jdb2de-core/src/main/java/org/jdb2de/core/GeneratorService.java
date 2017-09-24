@@ -10,6 +10,7 @@ import org.jdb2de.core.factory.GeneratorFactory;
 import org.jdb2de.core.information.IDatabaseInformation;
 import org.jdb2de.core.model.ColumnModel;
 import org.jdb2de.core.model.ColumnParameterModel;
+import org.jdb2de.core.model.ForeignKeyModel;
 import org.jdb2de.core.model.TableModel;
 import org.jdb2de.core.util.GeneratorUtils;
 import org.slf4j.Logger;
@@ -168,7 +169,7 @@ public class GeneratorService {
         }
 
         List<String> primaryKeyColumns = information.tablePrimaryKeyColumns(tableName);
-        LOG.info("Found {} columns", columns.size(), tableName);
+        LOG.info("Found {} columns", columns.size());
         for (ColumnModel column : columns) {
             String columnComment = information.columnComment(tableName, column.getName());
             ColumnParameterModel columnParameter = information.columnParameters(tableName, column.getName());
@@ -180,6 +181,13 @@ public class GeneratorService {
             LOG.info("  {}: type={}, java-type={}", column.getName(), column.getType(), column.getTranslatedType().getTargetType());
         }
 
-        return GeneratorFactory.createTableModel(tableName, comment, primaryKeyColumns, columns);
+        TableModel table = GeneratorFactory.createTableModel(tableName, comment, primaryKeyColumns, columns);
+
+        // Query table foreign keys
+        List<ForeignKeyModel> foreignKeys = information.tableForeignKeys(tableName);
+        table.setForeignKeys(foreignKeys);
+        LOG.info("Found {} foreign keys", foreignKeys.size());
+
+        return table;
     }
 }

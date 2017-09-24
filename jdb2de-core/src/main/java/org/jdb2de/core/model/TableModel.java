@@ -5,6 +5,7 @@ import com.google.common.base.Objects;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,6 +23,7 @@ public class TableModel implements Serializable {
     private String comment;
     private boolean compositeKey;
     private List<ColumnModel> columns;
+    private List<ForeignKeyModel> foreignKeys;
 
     public String getName() {
         return name;
@@ -48,11 +50,25 @@ public class TableModel implements Serializable {
     }
 
     public List<ColumnModel> getColumns() {
+        if (columns == null) {
+            columns = new ArrayList<>();
+        }
         return columns;
     }
 
     public void setColumns(List<ColumnModel> columns) {
         this.columns = columns;
+    }
+
+    public List<ForeignKeyModel> getForeignKeys() {
+        if (foreignKeys == null) {
+            foreignKeys = new ArrayList<>();
+        }
+        return foreignKeys;
+    }
+
+    public void setForeignKeys(List<ForeignKeyModel> foreignKeys) {
+        this.foreignKeys = foreignKeys;
     }
 
     @Override

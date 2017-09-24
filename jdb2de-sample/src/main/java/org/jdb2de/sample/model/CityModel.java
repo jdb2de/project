@@ -38,7 +38,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "city")
-@Generated(value = "jdb2de", date = "2017-09-22 00:02:50", comments = "You should not modify it by hand")
+@Generated(value = "jdb2de", date = "2017-09-24 02:13:32", comments = "You should not modify it by hand")
 public class CityModel implements Serializable {
 
     /**
@@ -77,6 +77,10 @@ public class CityModel implements Serializable {
     @Basic
     @Column(name = "last_update", nullable = false)
     private Date lastUpdate;
+
+    @ManyToOne
+    @JoinColumn(name="country_id", referencedColumnName="country_id")
+    private CountryModel country;
 
     /**
      * 
@@ -150,6 +154,14 @@ public class CityModel implements Serializable {
         this.lastUpdate = lastUpdate;
     }
 
+    public CountryModel getCountry() {
+        return country;
+    }
+
+    public void setCountry(CountryModel country) {
+        this.country = country;
+    }
+
     @Override
     public boolean equals(Object obj) {
         return Objects.equal(this, obj);
@@ -162,6 +174,7 @@ public class CityModel implements Serializable {
             ,city
             ,countryId
             ,lastUpdate
+            ,country
         );
     }
 
@@ -172,6 +185,7 @@ public class CityModel implements Serializable {
                 .add("city", city)
                 .add("countryId", countryId)
                 .add("lastUpdate", lastUpdate)
+                .add("country", country)
                 .toString();
     }
 }

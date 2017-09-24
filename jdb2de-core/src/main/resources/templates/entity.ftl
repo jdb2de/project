@@ -7,6 +7,8 @@
 <#include "entity-hash-code.ftl">
 <#include "entity-to-string.ftl">
 <#include "entity-equals.ftl">
+<#include "entity-relation-field.ftl">
+<#include "entity-relation-method.ftl">
 <#setting datetime_format="yyyy-MM-dd HH:mm:ss">
 /*
 <#list param.copyright as line>
@@ -46,8 +48,10 @@ import ${import};
 public class ${entity.name} implements Serializable {
 <@entity_serial_uid uid=entity.serialUid />
 <@entity_field fields=entity.fields />
+<@entity_relation_field relations=entity.relations />
 <@entity_method fields=entity.fields />
+<@entity_relation_method relations=entity.relations />
 <@entity_equals />
-<@entity_hash_code fields=entity.fields />
-<@entity_to_string fields=entity.fields />
+<@entity_hash_code fields=entity.fields relations=entity.relations />
+<@entity_to_string fields=entity.fields relations=entity.relations />
 }

@@ -38,7 +38,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "customer")
-@Generated(value = "jdb2de", date = "2017-09-22 00:02:49", comments = "You should not modify it by hand")
+@Generated(value = "jdb2de", date = "2017-09-24 02:13:32", comments = "You should not modify it by hand")
 public class CustomerModel implements Serializable {
 
     /**
@@ -125,6 +125,10 @@ public class CustomerModel implements Serializable {
     @Basic
     @Column(name = "active", length = 32)
     private Integer active;
+
+    @ManyToOne
+    @JoinColumn(name="address_id", referencedColumnName="address_id")
+    private AddressModel address;
 
     /**
      * Customer identification
@@ -306,6 +310,14 @@ public class CustomerModel implements Serializable {
         this.active = active;
     }
 
+    public AddressModel getAddress() {
+        return address;
+    }
+
+    public void setAddress(AddressModel address) {
+        this.address = address;
+    }
+
     @Override
     public boolean equals(Object obj) {
         return Objects.equal(this, obj);
@@ -324,6 +336,7 @@ public class CustomerModel implements Serializable {
             ,createDate
             ,lastUpdate
             ,active
+            ,address
         );
     }
 
@@ -340,6 +353,7 @@ public class CustomerModel implements Serializable {
                 .add("createDate", createDate)
                 .add("lastUpdate", lastUpdate)
                 .add("active", active)
+                .add("address", address)
                 .toString();
     }
 }

@@ -269,18 +269,21 @@ public class PostgresInformation implements IDatabaseInformation {
         Array columnsArray = rs.getArray("conkey");
         Integer[] columnsIndexes = (Integer[]) columnsArray.getArray();
 
+        List<String> columns = new ArrayList<>();
         for (int idx : columnsIndexes) {
-            ColumnModel columnModel = tableColumnByIndex(tableName, idx);
-            foreignKeyModel.getColumns().add(columnModel.getName());
+            ColumnModel columnModel = tableColumnByIndex(foreignKeyModel.getTable(), idx);
+            columns.add(columnModel.getName());
         }
+        foreignKeyModel.setColumns(columns);
 
         Array referenceColumnsArray = rs.getArray("confkey");
         Integer[] referenceColumnsIndexes = (Integer[]) referenceColumnsArray.getArray();
+        List<String> referenceColumns = new ArrayList<>();
         for (int idx : referenceColumnsIndexes) {
-            ColumnModel columnModel = tableColumnByIndex(tableName, idx);
-            foreignKeyModel.getReferenceColumns().add(columnModel.getName());
+            ColumnModel columnModel = tableColumnByIndex(foreignKeyModel.getReferenceTable(), idx);
+            referenceColumns.add(columnModel.getName());
         }
-
+        foreignKeyModel.setReferenceColumns(referenceColumns);
 
         return foreignKeyModel;
     }

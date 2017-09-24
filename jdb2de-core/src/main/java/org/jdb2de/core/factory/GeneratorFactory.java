@@ -1,14 +1,19 @@
 package org.jdb2de.core.factory;
 
 import com.google.common.base.CaseFormat;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jdb2de.core.data.EntityData;
 import org.jdb2de.core.data.FieldData;
+import org.jdb2de.core.data.RelationData;
+import org.jdb2de.core.data.RelationReferenceData;
 import org.jdb2de.core.model.ColumnModel;
+import org.jdb2de.core.model.ForeignKeyModel;
 import org.jdb2de.core.model.TableModel;
 import org.jdb2de.core.model.TranslateTypeModel;
 import org.jdb2de.core.util.GeneratorUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -86,6 +91,22 @@ public final class GeneratorFactory {
     }
 
     /**
+     *
+     * @param tableName Table name
+     * @param suffix Entity name suffix
+     * @return A {@link String} with type name
+     */
+    private static String tableToType(String tableName, String suffix) {
+        String typeName = GeneratorUtils.underscoreToUpperCamelcase(tableName);
+        if (StringUtils.isNotEmpty(suffix)) {
+            String entitySuffix = CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, suffix);
+            typeName = typeName.concat(entitySuffix);
+        }
+
+        return typeName;
+    }
+
+    /**
      * Create a new instance of {@link EntityData}
      * @param table Table name
      * @param packageName Package name
@@ -98,16 +119,18 @@ public final class GeneratorFactory {
         EntityData entity = new EntityData();
         entity.setPackageName(packageName);
         entity.setTable(table);
-        entity.setName(GeneratorUtils.underscoreToUpperCamelcase(table.getName()));
-        if (StringUtils.isNotEmpty(suffix)) {
-            String entitySuffix = CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, suffix);
-            entity.setName(entity.getName().concat(entitySuffix));
-        }
+        entity.setName(tableToType(table.getName(), suffix));
         entity.setFields(fields);
 
         String typeName = StringUtils.trim(entity.getPackageName()).concat(".");
         typeName += StringUtils.trim(entity.getName());
         entity.setSerialUid(GeneratorUtils.generateSerialVersionUUID(entity.getName(), typeName));
+
+        if (CollectionUtils.isNotEmpty(table.getForeignKeys())) {
+            List<RelationData> relations = new ArrayList<>();
+            table.getForeignKeys().forEach(f -> relations.add(createRelationData(f, suffix)));
+            entity.setRelations(relations);
+        }
 
         return entity;
     }
@@ -121,6 +144,29 @@ public final class GeneratorFactory {
         field.setType(column.getTranslatedType().getTargetType());
 
         return field;
+    }
+
+    public static RelationData createRelationData(ForeignKeyModel foreignKey, String suffix) {
+
+        RelationData relation = new RelationData();
+        relation.setUpperName(GeneratorUtils.underscoreToUpperCamelcase(foreignKey.getReferenceTable()));
+        relation.setName(GeneratorUtils.underscoreToLowerCamelcase(foreignKey.getReferenceTable()));
+        relation.setType(tableToType(foreignKey.getReferenceTable(), suffix));
+
+        List<RelationReferenceData> relationReferences = new ArrayList<>();
+        for (int i = 0; i < foreignKey.getColumns().size(); i++) {
+            String column = foreignKey.getColumns().get(i);
+            String referenceColumn = foreignKey.getReferenceColumns().get(i);
+
+            RelationReferenceData relationReference = new RelationReferenceData();
+            relationReference.setSource(column);
+            relationReference.setTarget(referenceColumn);
+
+            relationReferences.add(relationReference);
+        }
+        relation.setColumns(relationReferences);
+
+        return relation;
     }
 
 }

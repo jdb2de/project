@@ -39,7 +39,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "payment")
-@Generated(value = "jdb2de", date = "2017-09-22 00:02:49", comments = "You should not modify it by hand")
+@Generated(value = "jdb2de", date = "2017-09-24 02:13:32", comments = "You should not modify it by hand")
 public class PaymentModel implements Serializable {
 
     /**
@@ -94,6 +94,18 @@ public class PaymentModel implements Serializable {
     @Basic
     @Column(name = "payment_date", nullable = false)
     private Date paymentDate;
+
+    @ManyToOne
+    @JoinColumn(name="customer_id", referencedColumnName="customer_id")
+    private CustomerModel customer;
+
+    @ManyToOne
+    @JoinColumn(name="rental_id", referencedColumnName="rental_id")
+    private RentalModel rental;
+
+    @ManyToOne
+    @JoinColumn(name="staff_id", referencedColumnName="staff_id")
+    private StaffModel staff;
 
     /**
      * 
@@ -203,6 +215,30 @@ public class PaymentModel implements Serializable {
         this.paymentDate = paymentDate;
     }
 
+    public CustomerModel getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(CustomerModel customer) {
+        this.customer = customer;
+    }
+
+    public RentalModel getRental() {
+        return rental;
+    }
+
+    public void setRental(RentalModel rental) {
+        this.rental = rental;
+    }
+
+    public StaffModel getStaff() {
+        return staff;
+    }
+
+    public void setStaff(StaffModel staff) {
+        this.staff = staff;
+    }
+
     @Override
     public boolean equals(Object obj) {
         return Objects.equal(this, obj);
@@ -217,6 +253,9 @@ public class PaymentModel implements Serializable {
             ,rentalId
             ,amount
             ,paymentDate
+            ,customer
+            ,rental
+            ,staff
         );
     }
 
@@ -229,6 +268,9 @@ public class PaymentModel implements Serializable {
                 .add("rentalId", rentalId)
                 .add("amount", amount)
                 .add("paymentDate", paymentDate)
+                .add("customer", customer)
+                .add("rental", rental)
+                .add("staff", staff)
                 .toString();
     }
 }

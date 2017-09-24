@@ -38,7 +38,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "address")
-@Generated(value = "jdb2de", date = "2017-09-22 00:02:49", comments = "You should not modify it by hand")
+@Generated(value = "jdb2de", date = "2017-09-24 02:13:32", comments = "You should not modify it by hand")
 public class AddressModel implements Serializable {
 
     /**
@@ -109,6 +109,10 @@ public class AddressModel implements Serializable {
     @Basic
     @Column(name = "last_update", nullable = false)
     private Date lastUpdate;
+
+    @ManyToOne
+    @JoinColumn(name="city_id", referencedColumnName="city_id")
+    private CityModel city;
 
     /**
      * 
@@ -254,6 +258,14 @@ public class AddressModel implements Serializable {
         this.lastUpdate = lastUpdate;
     }
 
+    public CityModel getCity() {
+        return city;
+    }
+
+    public void setCity(CityModel city) {
+        this.city = city;
+    }
+
     @Override
     public boolean equals(Object obj) {
         return Objects.equal(this, obj);
@@ -270,6 +282,7 @@ public class AddressModel implements Serializable {
             ,postalCode
             ,phone
             ,lastUpdate
+            ,city
         );
     }
 
@@ -284,6 +297,7 @@ public class AddressModel implements Serializable {
                 .add("postalCode", postalCode)
                 .add("phone", phone)
                 .add("lastUpdate", lastUpdate)
+                .add("city", city)
                 .toString();
     }
 }

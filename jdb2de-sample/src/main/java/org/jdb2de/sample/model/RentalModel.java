@@ -38,7 +38,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "rental")
-@Generated(value = "jdb2de", date = "2017-09-22 00:02:50", comments = "You should not modify it by hand")
+@Generated(value = "jdb2de", date = "2017-09-24 02:13:32", comments = "You should not modify it by hand")
 public class RentalModel implements Serializable {
 
     /**
@@ -101,6 +101,18 @@ public class RentalModel implements Serializable {
     @Basic
     @Column(name = "last_update", nullable = false)
     private Date lastUpdate;
+
+    @ManyToOne
+    @JoinColumn(name="customer_id", referencedColumnName="customer_id")
+    private CustomerModel customer;
+
+    @ManyToOne
+    @JoinColumn(name="inventory_id", referencedColumnName="inventory_id")
+    private InventoryModel inventory;
+
+    @ManyToOne
+    @JoinColumn(name="staff_id", referencedColumnName="staff_id")
+    private StaffModel staff;
 
     /**
      * 
@@ -228,6 +240,30 @@ public class RentalModel implements Serializable {
         this.lastUpdate = lastUpdate;
     }
 
+    public CustomerModel getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(CustomerModel customer) {
+        this.customer = customer;
+    }
+
+    public InventoryModel getInventory() {
+        return inventory;
+    }
+
+    public void setInventory(InventoryModel inventory) {
+        this.inventory = inventory;
+    }
+
+    public StaffModel getStaff() {
+        return staff;
+    }
+
+    public void setStaff(StaffModel staff) {
+        this.staff = staff;
+    }
+
     @Override
     public boolean equals(Object obj) {
         return Objects.equal(this, obj);
@@ -243,6 +279,9 @@ public class RentalModel implements Serializable {
             ,returnDate
             ,staffId
             ,lastUpdate
+            ,customer
+            ,inventory
+            ,staff
         );
     }
 
@@ -256,6 +295,9 @@ public class RentalModel implements Serializable {
                 .add("returnDate", returnDate)
                 .add("staffId", staffId)
                 .add("lastUpdate", lastUpdate)
+                .add("customer", customer)
+                .add("inventory", inventory)
+                .add("staff", staff)
                 .toString();
     }
 }

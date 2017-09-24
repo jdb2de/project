@@ -38,7 +38,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "language")
-@Generated(value = "jdb2de", date = "2017-09-22 00:02:49", comments = "You should not modify it by hand")
+@Generated(value = "jdb2de", date = "2017-09-24 02:13:32", comments = "You should not modify it by hand")
 public class LanguageModel implements Serializable {
 
     /**

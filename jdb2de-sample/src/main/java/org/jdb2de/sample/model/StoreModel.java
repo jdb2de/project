@@ -38,7 +38,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "store")
-@Generated(value = "jdb2de", date = "2017-09-22 00:02:50", comments = "You should not modify it by hand")
+@Generated(value = "jdb2de", date = "2017-09-24 02:13:32", comments = "You should not modify it by hand")
 public class StoreModel implements Serializable {
 
     /**
@@ -77,6 +77,14 @@ public class StoreModel implements Serializable {
     @Basic
     @Column(name = "last_update", nullable = false)
     private Date lastUpdate;
+
+    @ManyToOne
+    @JoinColumn(name="address_id", referencedColumnName="address_id")
+    private AddressModel address;
+
+    @ManyToOne
+    @JoinColumn(name="manager_staff_id", referencedColumnName="staff_id")
+    private StaffModel staff;
 
     /**
      * 
@@ -150,6 +158,22 @@ public class StoreModel implements Serializable {
         this.lastUpdate = lastUpdate;
     }
 
+    public AddressModel getAddress() {
+        return address;
+    }
+
+    public void setAddress(AddressModel address) {
+        this.address = address;
+    }
+
+    public StaffModel getStaff() {
+        return staff;
+    }
+
+    public void setStaff(StaffModel staff) {
+        this.staff = staff;
+    }
+
     @Override
     public boolean equals(Object obj) {
         return Objects.equal(this, obj);
@@ -162,6 +186,8 @@ public class StoreModel implements Serializable {
             ,managerStaffId
             ,addressId
             ,lastUpdate
+            ,address
+            ,staff
         );
     }
 
@@ -172,6 +198,8 @@ public class StoreModel implements Serializable {
                 .add("managerStaffId", managerStaffId)
                 .add("addressId", addressId)
                 .add("lastUpdate", lastUpdate)
+                .add("address", address)
+                .add("staff", staff)
                 .toString();
     }
 }

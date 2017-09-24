@@ -1,11 +1,15 @@
-<#-- @ftlvariable name="fields" type="java.util.List<org.jdb2de.core.data.FieldData>" -->
-<#macro entity_to_string fields>
+<#-- @ftlvariable name="field" type="org.jdb2de.core.data.FieldData" -->
+<#-- @ftlvariable name="relation" type="org.jdb2de.core.data.RelationData" -->
+<#macro entity_to_string fields relations>
 
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
         <#list fields as field>
                 .add("${field.name}", ${field.name})
+        </#list>
+        <#list relations as relation>
+                .add("${relation.name}", ${relation.name})
         </#list>
                 .toString();
     }

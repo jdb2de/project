@@ -5,6 +5,7 @@ import com.google.common.base.Objects;
 import org.jdb2de.core.model.TableModel;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class EntityData implements Serializable {
@@ -19,6 +20,7 @@ public class EntityData implements Serializable {
     private String name;
     private TableModel table;
     private List<FieldData> fields;
+    private List<RelationData> relations;
 
     public String getPackageName() {
         return packageName;
@@ -53,11 +55,26 @@ public class EntityData implements Serializable {
     }
 
     public List<FieldData> getFields() {
+        if (fields == null) {
+            fields = new ArrayList<>();
+        }
+
         return fields;
     }
 
     public void setFields(List<FieldData> fields) {
         this.fields = fields;
+    }
+
+    public List<RelationData> getRelations() {
+        if (relations == null) {
+            relations = new ArrayList<>();
+        }
+        return relations;
+    }
+
+    public void setRelations(List<RelationData> relations) {
+        this.relations = relations;
     }
 
     @Override
@@ -67,7 +84,7 @@ public class EntityData implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(packageName, serialUid, name, table, fields);
+        return Objects.hashCode(packageName, serialUid, name, table, fields, relations);
     }
 
     @Override
@@ -78,6 +95,7 @@ public class EntityData implements Serializable {
                 .add("name", name)
                 .add("table", table)
                 .add("fields", fields)
+                .add("relations", relations)
                 .toString();
     }
 }

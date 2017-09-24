@@ -38,7 +38,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "staff")
-@Generated(value = "jdb2de", date = "2017-09-22 00:02:50", comments = "You should not modify it by hand")
+@Generated(value = "jdb2de", date = "2017-09-24 02:13:32", comments = "You should not modify it by hand")
 public class StaffModel implements Serializable {
 
     /**
@@ -134,6 +134,10 @@ public class StaffModel implements Serializable {
     @Lob
     @Column(name = "picture")
     private byte[] picture;
+
+    @ManyToOne
+    @JoinColumn(name="address_id", referencedColumnName="address_id")
+    private AddressModel address;
 
     /**
      * 
@@ -333,6 +337,14 @@ public class StaffModel implements Serializable {
         this.picture = picture;
     }
 
+    public AddressModel getAddress() {
+        return address;
+    }
+
+    public void setAddress(AddressModel address) {
+        this.address = address;
+    }
+
     @Override
     public boolean equals(Object obj) {
         return Objects.equal(this, obj);
@@ -352,6 +364,7 @@ public class StaffModel implements Serializable {
             ,password
             ,lastUpdate
             ,picture
+            ,address
         );
     }
 
@@ -369,6 +382,7 @@ public class StaffModel implements Serializable {
                 .add("password", password)
                 .add("lastUpdate", lastUpdate)
                 .add("picture", picture)
+                .add("address", address)
                 .toString();
     }
 }

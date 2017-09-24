@@ -34,12 +34,11 @@ public class EntityCreator {
      * Instance for log registration
      */
     private static final Logger LOG = LoggerFactory.getLogger(EntityCreator.class);
-    public static final String ENTITY_NAME_PATTERN = "{}.java";
+    private static final String ENTITY_NAME_PATTERN = "{}.java";
 
     private String compositePkPath;
     private final ParameterData parameters;
     private final Configuration freemarkerConfig;
-
 
     @Autowired
     public EntityCreator(ParameterData parameters, Configuration freemarkerConfig) {

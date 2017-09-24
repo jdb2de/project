@@ -42,7 +42,7 @@ import java.util.UUID;
  */
 @Entity
 @Table(name = "data_types")
-@Generated(value = "jdb2de", date = "2017-09-22 00:02:50", comments = "You should not modify it by hand")
+@Generated(value = "jdb2de", date = "2017-09-24 02:13:32", comments = "You should not modify it by hand")
 public class DataTypesModel implements Serializable {
 
     /**

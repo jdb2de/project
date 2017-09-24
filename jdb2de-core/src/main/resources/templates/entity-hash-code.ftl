@@ -1,13 +1,18 @@
-<#-- @ftlvariable name="fields" type="java.util.List<org.jdb2de.core.data.FieldData>" -->
-<#macro entity_hash_code fields>
+<#-- @ftlvariable name="field" type="org.jdb2de.core.data.FieldData" -->
+<#-- @ftlvariable name="relation" type="org.jdb2de.core.data.RelationData" -->
+<#macro entity_hash_code fields relations>
     @Override
     public int hashCode() {
         return Objects.hashCode(
-<#assign comma = "">
-<#list fields as field>
+        <#assign comma = "">
+        <#list fields as field>
             ${comma}${field.name}
             <#assign comma = ",">
-</#list>
+        </#list>
+        <#list relations as relation>
+            ${comma}${relation.name}
+            <#assign comma = ",">
+        </#list>
         );
     }
 </#macro>

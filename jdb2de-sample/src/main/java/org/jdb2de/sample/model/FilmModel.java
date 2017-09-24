@@ -39,7 +39,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "film")
-@Generated(value = "jdb2de", date = "2017-09-22 00:02:50", comments = "You should not modify it by hand")
+@Generated(value = "jdb2de", date = "2017-09-24 02:13:32", comments = "You should not modify it by hand")
 public class FilmModel implements Serializable {
 
     /**
@@ -150,6 +150,10 @@ public class FilmModel implements Serializable {
     @Basic
     @Column(name = "fulltext", nullable = false)
     private String fulltext;
+
+    @ManyToOne
+    @JoinColumn(name="language_id", referencedColumnName="language_id")
+    private LanguageModel language;
 
     /**
      * Film identification
@@ -385,6 +389,14 @@ public class FilmModel implements Serializable {
         this.fulltext = fulltext;
     }
 
+    public LanguageModel getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(LanguageModel language) {
+        this.language = language;
+    }
+
     @Override
     public boolean equals(Object obj) {
         return Objects.equal(this, obj);
@@ -406,6 +418,7 @@ public class FilmModel implements Serializable {
             ,lastUpdate
             ,specialFeatures
             ,fulltext
+            ,language
         );
     }
 
@@ -425,6 +438,7 @@ public class FilmModel implements Serializable {
                 .add("lastUpdate", lastUpdate)
                 .add("specialFeatures", specialFeatures)
                 .add("fulltext", fulltext)
+                .add("language", language)
                 .toString();
     }
 }
