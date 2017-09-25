@@ -168,8 +168,14 @@ public class GeneratorService {
             return null;
         }
 
+        // Query table columns
         List<String> primaryKeyColumns = information.tablePrimaryKeyColumns(tableName);
         LOG.info("Found {} columns", columns.size());
+
+        // Query table foreign keys
+        List<ForeignKeyModel> foreignKeys = information.tableForeignKeys(tableName);
+        LOG.info("Found {} foreign keys", foreignKeys.size());
+
         for (ColumnModel column : columns) {
             String columnComment = information.columnComment(tableName, column.getName());
             ColumnParameterModel columnParameter = information.columnParameters(tableName, column.getName());
@@ -181,12 +187,9 @@ public class GeneratorService {
             LOG.info("  {}: type={}, java-type={}", column.getName(), column.getType(), column.getTranslatedType().getTargetType());
         }
 
+        // Create table model
         TableModel table = GeneratorFactory.createTableModel(tableName, comment, primaryKeyColumns, columns);
-
-        // Query table foreign keys
-        List<ForeignKeyModel> foreignKeys = information.tableForeignKeys(tableName);
         table.setForeignKeys(foreignKeys);
-        LOG.info("Found {} foreign keys", foreignKeys.size());
 
         return table;
     }

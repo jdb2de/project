@@ -10,9 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.text.MessageFormat;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -76,16 +74,20 @@ public final class GeneratorUtils {
         return CaseFormat.LOWER_UNDERSCORE.to(caseFormat, value.toLowerCase());
     }
 
-    public static Set<String> createImportList(List<ColumnModel> columns) {
+    public static List<String> createImportList(List<ColumnModel> columns) {
 
-        Set<String> imports = new HashSet<>();
+        List<String> imports = new ArrayList<>();
         if (CollectionUtils.isEmpty(columns)) {
             return imports;
         }
 
         // Generate a list only with not null imports
+        Set<String> uniqueImports = new HashSet<>();
         columns.stream().filter(c -> StringUtils.isNotEmpty(c.getTranslatedType().getTargetImport())).
                 forEach(c -> imports.add(c.getTranslatedType().getTargetImport()));
+
+        imports.addAll(uniqueImports);
+        Collections.sort(imports);
         return imports;
     }
 

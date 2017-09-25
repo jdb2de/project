@@ -27,6 +27,7 @@ import javax.annotation.Generated;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Set;
 
 /**
  * Customer registration
@@ -38,7 +39,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "customer")
-@Generated(value = "jdb2de", date = "2017-09-24 02:13:32", comments = "You should not modify it by hand")
+@Generated(value = "jdb2de", date = "2017-09-24 20:44:38", comments = "You should not modify it by hand")
 public class CustomerModel implements Serializable {
 
     /**
@@ -126,9 +127,15 @@ public class CustomerModel implements Serializable {
     @Column(name = "active", length = 32)
     private Integer active;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="address_id", referencedColumnName="address_id")
     private AddressModel address;
+
+    @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)
+    private Set<PaymentModel> paymentList;
+
+    @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)
+    private Set<RentalModel> rentalList;
 
     /**
      * Customer identification
@@ -318,6 +325,22 @@ public class CustomerModel implements Serializable {
         this.address = address;
     }
 
+    public Set<PaymentModel> getPaymentList() {
+        return paymentList;
+    }
+
+    public void setPaymentList(Set<PaymentModel> paymentList) {
+        this.paymentList = paymentList;
+    }
+
+    public Set<RentalModel> getRentalList() {
+        return rentalList;
+    }
+
+    public void setRentalList(Set<RentalModel> rentalList) {
+        this.rentalList = rentalList;
+    }
+
     @Override
     public boolean equals(Object obj) {
         return Objects.equal(this, obj);
@@ -337,6 +360,8 @@ public class CustomerModel implements Serializable {
             ,lastUpdate
             ,active
             ,address
+            ,paymentList
+            ,rentalList
         );
     }
 
@@ -354,6 +379,8 @@ public class CustomerModel implements Serializable {
                 .add("lastUpdate", lastUpdate)
                 .add("active", active)
                 .add("address", address)
+                .add("paymentList", paymentList)
+                .add("rentalList", rentalList)
                 .toString();
     }
 }

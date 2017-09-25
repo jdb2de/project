@@ -27,6 +27,7 @@ import javax.annotation.Generated;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Set;
 
 /**
  * 
@@ -38,7 +39,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "address")
-@Generated(value = "jdb2de", date = "2017-09-24 02:13:32", comments = "You should not modify it by hand")
+@Generated(value = "jdb2de", date = "2017-09-24 20:44:38", comments = "You should not modify it by hand")
 public class AddressModel implements Serializable {
 
     /**
@@ -110,9 +111,18 @@ public class AddressModel implements Serializable {
     @Column(name = "last_update", nullable = false)
     private Date lastUpdate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="city_id", referencedColumnName="city_id")
     private CityModel city;
+
+    @OneToMany(mappedBy = "address", fetch = FetchType.LAZY)
+    private Set<CustomerModel> customerList;
+
+    @OneToMany(mappedBy = "address", fetch = FetchType.LAZY)
+    private Set<StaffModel> staffList;
+
+    @OneToMany(mappedBy = "address", fetch = FetchType.LAZY)
+    private Set<StoreModel> storeList;
 
     /**
      * 
@@ -266,6 +276,30 @@ public class AddressModel implements Serializable {
         this.city = city;
     }
 
+    public Set<CustomerModel> getCustomerList() {
+        return customerList;
+    }
+
+    public void setCustomerList(Set<CustomerModel> customerList) {
+        this.customerList = customerList;
+    }
+
+    public Set<StaffModel> getStaffList() {
+        return staffList;
+    }
+
+    public void setStaffList(Set<StaffModel> staffList) {
+        this.staffList = staffList;
+    }
+
+    public Set<StoreModel> getStoreList() {
+        return storeList;
+    }
+
+    public void setStoreList(Set<StoreModel> storeList) {
+        this.storeList = storeList;
+    }
+
     @Override
     public boolean equals(Object obj) {
         return Objects.equal(this, obj);
@@ -283,6 +317,9 @@ public class AddressModel implements Serializable {
             ,phone
             ,lastUpdate
             ,city
+            ,customerList
+            ,staffList
+            ,storeList
         );
     }
 
@@ -298,6 +335,9 @@ public class AddressModel implements Serializable {
                 .add("phone", phone)
                 .add("lastUpdate", lastUpdate)
                 .add("city", city)
+                .add("customerList", customerList)
+                .add("staffList", staffList)
+                .add("storeList", storeList)
                 .toString();
     }
 }

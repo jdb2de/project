@@ -27,6 +27,7 @@ import javax.annotation.Generated;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Set;
 
 /**
  * 
@@ -38,7 +39,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "country")
-@Generated(value = "jdb2de", date = "2017-09-24 02:13:32", comments = "You should not modify it by hand")
+@Generated(value = "jdb2de", date = "2017-09-24 20:44:38", comments = "You should not modify it by hand")
 public class CountryModel implements Serializable {
 
     /**
@@ -69,6 +70,9 @@ public class CountryModel implements Serializable {
     @Basic
     @Column(name = "last_update", nullable = false)
     private Date lastUpdate;
+
+    @OneToMany(mappedBy = "country", fetch = FetchType.LAZY)
+    private Set<CityModel> cityList;
 
     /**
      * 
@@ -124,6 +128,14 @@ public class CountryModel implements Serializable {
         this.lastUpdate = lastUpdate;
     }
 
+    public Set<CityModel> getCityList() {
+        return cityList;
+    }
+
+    public void setCityList(Set<CityModel> cityList) {
+        this.cityList = cityList;
+    }
+
     @Override
     public boolean equals(Object obj) {
         return Objects.equal(this, obj);
@@ -135,6 +147,7 @@ public class CountryModel implements Serializable {
             countryId
             ,country
             ,lastUpdate
+            ,cityList
         );
     }
 
@@ -144,6 +157,7 @@ public class CountryModel implements Serializable {
                 .add("countryId", countryId)
                 .add("country", country)
                 .add("lastUpdate", lastUpdate)
+                .add("cityList", cityList)
                 .toString();
     }
 }

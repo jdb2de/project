@@ -27,6 +27,7 @@ import javax.annotation.Generated;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Set;
 
 /**
  * 
@@ -38,7 +39,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "rental")
-@Generated(value = "jdb2de", date = "2017-09-24 02:13:32", comments = "You should not modify it by hand")
+@Generated(value = "jdb2de", date = "2017-09-24 20:44:38", comments = "You should not modify it by hand")
 public class RentalModel implements Serializable {
 
     /**
@@ -102,17 +103,20 @@ public class RentalModel implements Serializable {
     @Column(name = "last_update", nullable = false)
     private Date lastUpdate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="customer_id", referencedColumnName="customer_id")
     private CustomerModel customer;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="inventory_id", referencedColumnName="inventory_id")
     private InventoryModel inventory;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="staff_id", referencedColumnName="staff_id")
     private StaffModel staff;
+
+    @OneToMany(mappedBy = "rental", fetch = FetchType.LAZY)
+    private Set<PaymentModel> paymentList;
 
     /**
      * 
@@ -264,6 +268,14 @@ public class RentalModel implements Serializable {
         this.staff = staff;
     }
 
+    public Set<PaymentModel> getPaymentList() {
+        return paymentList;
+    }
+
+    public void setPaymentList(Set<PaymentModel> paymentList) {
+        this.paymentList = paymentList;
+    }
+
     @Override
     public boolean equals(Object obj) {
         return Objects.equal(this, obj);
@@ -282,6 +294,7 @@ public class RentalModel implements Serializable {
             ,customer
             ,inventory
             ,staff
+            ,paymentList
         );
     }
 
@@ -298,6 +311,7 @@ public class RentalModel implements Serializable {
                 .add("customer", customer)
                 .add("inventory", inventory)
                 .add("staff", staff)
+                .add("paymentList", paymentList)
                 .toString();
     }
 }

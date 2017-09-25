@@ -22,6 +22,8 @@ import java.util.List;
  */
 public final class GeneratorFactory {
 
+    private static final String RELATION_MANY_SUFFIX = "List";
+
     /**
      * Constructor omitted
      */
@@ -129,7 +131,7 @@ public final class GeneratorFactory {
         if (CollectionUtils.isNotEmpty(table.getForeignKeys())) {
             List<RelationData> relations = new ArrayList<>();
             table.getForeignKeys().forEach(f -> relations.add(createRelationData(f, suffix)));
-            entity.setRelations(relations);
+            entity.setOneRelations(relations);
         }
 
         return entity;
@@ -146,7 +148,31 @@ public final class GeneratorFactory {
         return field;
     }
 
-    public static RelationData createRelationData(ForeignKeyModel foreignKey, String suffix) {
+    public static List<RelationData> createManyRelations(EntityData entity, List<EntityData> entities) {
+        List<RelationData> relationsMany = new ArrayList<>();
+        for (EntityData entityRelation : entities) {
+            for (RelationData relationOne : entityRelation.getOneRelations()) {
+
+                String entityType = entity.getName();
+                if (!entityType.equals(relationOne.getType())) {
+                    continue;
+                }
+
+                RelationData relationMany = new RelationData();
+                relationMany.setUpperName(GeneratorUtils.underscoreToUpperCamelcase(entityRelation.getTable().getName())
+                        .concat(RELATION_MANY_SUFFIX));
+                relationMany.setName(CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, relationMany.getUpperName()));
+                relationMany.setType(entityRelation.getName());
+                relationMany.setMappedBy(relationOne.getName());
+
+                relationsMany.add(relationMany);
+            }
+        }
+
+        return relationsMany;
+    }
+
+    private static RelationData createRelationData(ForeignKeyModel foreignKey, String suffix) {
 
         RelationData relation = new RelationData();
         relation.setUpperName(GeneratorUtils.underscoreToUpperCamelcase(foreignKey.getReferenceTable()));

@@ -1,4 +1,3 @@
-<#-- @ftlvariable name="imports" type="java.util.Set<String>" -->
 <#-- @ftlvariable name="param" type="org.jdb2de.core.data.ParameterData" -->
 <#-- @ftlvariable name="entity" type="org.jdb2de.core.data.EntityData" -->
 <#include "entity-serial-uid.ftl">
@@ -7,8 +6,10 @@
 <#include "entity-hash-code.ftl">
 <#include "entity-to-string.ftl">
 <#include "entity-equals.ftl">
-<#include "entity-relation-field.ftl">
-<#include "entity-relation-method.ftl">
+<#include "entity-relation-one-field.ftl">
+<#include "entity-relation-one-method.ftl">
+<#include "entity-relation-many-field.ftl">
+<#include "entity-relation-many-method.ftl">
 <#setting datetime_format="yyyy-MM-dd HH:mm:ss">
 /*
 <#list param.copyright as line>
@@ -22,12 +23,15 @@ import com.google.common.base.Objects;
 
 import javax.annotation.Generated;
 import java.io.Serializable;
+<#if (entity.manyRelations?size >0)>
+import java.util.Set;
+</#if>
 
 import javax.persistence.*;
 <#if entity.table.compositeKey>
 import ${param.compositePkPackage}.${entity.name}PK;
 </#if>
-<#list imports as import>
+<#list entity.imports as import>
 import ${import};
 </#list>
 
@@ -48,10 +52,12 @@ import ${import};
 public class ${entity.name} implements Serializable {
 <@entity_serial_uid uid=entity.serialUid />
 <@entity_field fields=entity.fields />
-<@entity_relation_field relations=entity.relations />
+<@entity_relation_one_field oneRelations=entity.oneRelations />
+<@entity_relation_many_field manyRelations=entity.manyRelations />
 <@entity_method fields=entity.fields />
-<@entity_relation_method relations=entity.relations />
+<@entity_relation_one_method oneRelations=entity.oneRelations />
+<@entity_relation_many_method manyRelations=entity.manyRelations />
 <@entity_equals />
-<@entity_hash_code fields=entity.fields relations=entity.relations />
-<@entity_to_string fields=entity.fields relations=entity.relations />
+<@entity_hash_code fields=entity.fields oneRelations=entity.oneRelations manyRelations=entity.manyRelations />
+<@entity_to_string fields=entity.fields oneRelations=entity.oneRelations manyRelations=entity.manyRelations />
 }

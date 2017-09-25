@@ -38,7 +38,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "store")
-@Generated(value = "jdb2de", date = "2017-09-24 02:13:32", comments = "You should not modify it by hand")
+@Generated(value = "jdb2de", date = "2017-09-24 20:44:38", comments = "You should not modify it by hand")
 public class StoreModel implements Serializable {
 
     /**
@@ -78,11 +78,11 @@ public class StoreModel implements Serializable {
     @Column(name = "last_update", nullable = false)
     private Date lastUpdate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="address_id", referencedColumnName="address_id")
     private AddressModel address;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="manager_staff_id", referencedColumnName="staff_id")
     private StaffModel staff;
 

@@ -1,7 +1,7 @@
 <#-- @ftlvariable name="relation" type="org.jdb2de.core.data.RelationData" -->
-<#macro entity_relation_field relations>
-    <#list relations as relation>
-    @ManyToOne
+<#macro entity_relation_one_field oneRelations>
+    <#list oneRelations as relation>
+    @ManyToOne(fetch = FetchType.LAZY)
     <#if (relation.columns?size > 1) >
     @JoinColumns({
         <#list relation.columns as column>

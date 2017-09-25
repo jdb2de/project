@@ -28,6 +28,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Set;
 
 /**
  * Available film
@@ -39,7 +40,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "film")
-@Generated(value = "jdb2de", date = "2017-09-24 02:13:32", comments = "You should not modify it by hand")
+@Generated(value = "jdb2de", date = "2017-09-24 20:44:38", comments = "You should not modify it by hand")
 public class FilmModel implements Serializable {
 
     /**
@@ -151,9 +152,12 @@ public class FilmModel implements Serializable {
     @Column(name = "fulltext", nullable = false)
     private String fulltext;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="language_id", referencedColumnName="language_id")
     private LanguageModel language;
+
+    @OneToMany(mappedBy = "film", fetch = FetchType.LAZY)
+    private Set<InventoryModel> inventoryList;
 
     /**
      * Film identification
@@ -397,6 +401,14 @@ public class FilmModel implements Serializable {
         this.language = language;
     }
 
+    public Set<InventoryModel> getInventoryList() {
+        return inventoryList;
+    }
+
+    public void setInventoryList(Set<InventoryModel> inventoryList) {
+        this.inventoryList = inventoryList;
+    }
+
     @Override
     public boolean equals(Object obj) {
         return Objects.equal(this, obj);
@@ -419,6 +431,7 @@ public class FilmModel implements Serializable {
             ,specialFeatures
             ,fulltext
             ,language
+            ,inventoryList
         );
     }
 
@@ -439,6 +452,7 @@ public class FilmModel implements Serializable {
                 .add("specialFeatures", specialFeatures)
                 .add("fulltext", fulltext)
                 .add("language", language)
+                .add("inventoryList", inventoryList)
                 .toString();
     }
 }

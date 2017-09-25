@@ -27,6 +27,7 @@ import javax.annotation.Generated;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Set;
 
 /**
  * 
@@ -38,7 +39,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "inventory")
-@Generated(value = "jdb2de", date = "2017-09-24 02:13:32", comments = "You should not modify it by hand")
+@Generated(value = "jdb2de", date = "2017-09-24 20:44:38", comments = "You should not modify it by hand")
 public class InventoryModel implements Serializable {
 
     /**
@@ -78,9 +79,12 @@ public class InventoryModel implements Serializable {
     @Column(name = "last_update", nullable = false)
     private Date lastUpdate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="film_id", referencedColumnName="film_id")
     private FilmModel film;
+
+    @OneToMany(mappedBy = "inventory", fetch = FetchType.LAZY)
+    private Set<RentalModel> rentalList;
 
     /**
      * 
@@ -162,6 +166,14 @@ public class InventoryModel implements Serializable {
         this.film = film;
     }
 
+    public Set<RentalModel> getRentalList() {
+        return rentalList;
+    }
+
+    public void setRentalList(Set<RentalModel> rentalList) {
+        this.rentalList = rentalList;
+    }
+
     @Override
     public boolean equals(Object obj) {
         return Objects.equal(this, obj);
@@ -175,6 +187,7 @@ public class InventoryModel implements Serializable {
             ,storeId
             ,lastUpdate
             ,film
+            ,rentalList
         );
     }
 
@@ -186,6 +199,7 @@ public class InventoryModel implements Serializable {
                 .add("storeId", storeId)
                 .add("lastUpdate", lastUpdate)
                 .add("film", film)
+                .add("rentalList", rentalList)
                 .toString();
     }
 }

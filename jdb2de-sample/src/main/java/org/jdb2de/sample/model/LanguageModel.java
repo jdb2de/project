@@ -27,6 +27,7 @@ import javax.annotation.Generated;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Set;
 
 /**
  * 
@@ -38,7 +39,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "language")
-@Generated(value = "jdb2de", date = "2017-09-24 02:13:32", comments = "You should not modify it by hand")
+@Generated(value = "jdb2de", date = "2017-09-24 20:44:38", comments = "You should not modify it by hand")
 public class LanguageModel implements Serializable {
 
     /**
@@ -69,6 +70,9 @@ public class LanguageModel implements Serializable {
     @Basic
     @Column(name = "last_update", nullable = false)
     private Date lastUpdate;
+
+    @OneToMany(mappedBy = "language", fetch = FetchType.LAZY)
+    private Set<FilmModel> filmList;
 
     /**
      * 
@@ -124,6 +128,14 @@ public class LanguageModel implements Serializable {
         this.lastUpdate = lastUpdate;
     }
 
+    public Set<FilmModel> getFilmList() {
+        return filmList;
+    }
+
+    public void setFilmList(Set<FilmModel> filmList) {
+        this.filmList = filmList;
+    }
+
     @Override
     public boolean equals(Object obj) {
         return Objects.equal(this, obj);
@@ -135,6 +147,7 @@ public class LanguageModel implements Serializable {
             languageId
             ,name
             ,lastUpdate
+            ,filmList
         );
     }
 
@@ -144,6 +157,7 @@ public class LanguageModel implements Serializable {
                 .add("languageId", languageId)
                 .add("name", name)
                 .add("lastUpdate", lastUpdate)
+                .add("filmList", filmList)
                 .toString();
     }
 }

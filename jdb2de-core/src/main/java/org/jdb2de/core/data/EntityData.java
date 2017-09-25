@@ -16,11 +16,13 @@ public class EntityData implements Serializable {
     private static final long serialVersionUID = -5480509444982670622L;
 
     private String packageName;
+    private List<String> imports;
     private String serialUid;
     private String name;
     private TableModel table;
     private List<FieldData> fields;
-    private List<RelationData> relations;
+    private List<RelationData> oneRelations;
+    private List<RelationData> manyRelations;
 
     public String getPackageName() {
         return packageName;
@@ -28,6 +30,17 @@ public class EntityData implements Serializable {
 
     public void setPackageName(String packageName) {
         this.packageName = packageName;
+    }
+
+    public List<String> getImports() {
+        if (imports == null) {
+            imports = new ArrayList<>();
+        }
+        return imports;
+    }
+
+    public void setImports(List<String> imports) {
+        this.imports = imports;
     }
 
     public TableModel getTable() {
@@ -66,15 +79,26 @@ public class EntityData implements Serializable {
         this.fields = fields;
     }
 
-    public List<RelationData> getRelations() {
-        if (relations == null) {
-            relations = new ArrayList<>();
+    public List<RelationData> getOneRelations() {
+        if (oneRelations == null) {
+            oneRelations = new ArrayList<>();
         }
-        return relations;
+        return oneRelations;
     }
 
-    public void setRelations(List<RelationData> relations) {
-        this.relations = relations;
+    public List<RelationData> getManyRelations() {
+        if (manyRelations == null) {
+            manyRelations = new ArrayList<>();
+        }
+        return manyRelations;
+    }
+
+    public void setManyRelations(List<RelationData> manyRelations) {
+        this.manyRelations = manyRelations;
+    }
+
+    public void setOneRelations(List<RelationData> oneRelations) {
+        this.oneRelations = oneRelations;
     }
 
     @Override
@@ -84,7 +108,7 @@ public class EntityData implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(packageName, serialUid, name, table, fields, relations);
+        return Objects.hashCode(packageName, serialUid, name, table, fields, oneRelations, manyRelations);
     }
 
     @Override
@@ -95,7 +119,8 @@ public class EntityData implements Serializable {
                 .add("name", name)
                 .add("table", table)
                 .add("fields", fields)
-                .add("relations", relations)
+                .add("oneRelations", oneRelations)
+                .add("manyRelations", manyRelations)
                 .toString();
     }
 }

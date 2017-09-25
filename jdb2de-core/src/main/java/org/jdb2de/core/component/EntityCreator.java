@@ -34,6 +34,7 @@ public class EntityCreator {
      * Instance for log registration
      */
     private static final Logger LOG = LoggerFactory.getLogger(EntityCreator.class);
+    private static final String ENTITY_KEY = "entity";
     private static final String ENTITY_NAME_PATTERN = "{}.java";
 
     private String compositePkPath;
@@ -77,6 +78,7 @@ public class EntityCreator {
         Map<String, Object> params = new HashMap<>();
         params.put("param", parameters);
 
+        List<EntityData> entities = new ArrayList<>();
         for (TableModel table : tables) {
             // TODO Implements composite key generation
             if (table.isCompositeKey()) {
@@ -90,33 +92,35 @@ public class EntityCreator {
             // Create entity instance
             EntityData entity = GeneratorFactory.createEntityData(table, parameters.getEntityPackage(),
                     parameters.getEntitySuffix(), fields);
-            // Update Freemarker params
-            params.put("imports", GeneratorUtils.createImportList(table.getColumns()));
-            params.put("entity", entity);
+            entity.setImports(GeneratorUtils.createImportList(table.getColumns()));
+            entities.add(entity);
+        }
 
-            String strEntity;
-            try {
-                Template template = freemarkerConfig.getTemplate("entity.ftl");
-                strEntity = FreeMarkerTemplateUtils.processTemplateIntoString(template, params);
-            } catch (IOException | TemplateException e) {
-                throw new RuntimeException("Error to generate Entity content", e);
-            }
-
-            // Save class to file
-            saveFile(entity.getName(), strEntity);
+        // Generate many relations and save file
+        for (EntityData entity : entities) {
+            entity.setManyRelations(GeneratorFactory.createManyRelations(entity, entities));
+            params.put(ENTITY_KEY, entity);
+            saveFile(params);
         }
     }
 
     /**
      *
-     * @param entityName Entity name
-     * @param strEntity Entity content
+     * @param params Entity content
      */
-    private void saveFile(String entityName, String strEntity) {
-
-        String fileName = GeneratorUtils.messageFormat(ENTITY_NAME_PATTERN, entityName);
+    private void saveFile(Map<String, Object> params) {
+        String strEntity;
         try {
-            LOG.info("Saving entity {}", entityName);
+            Template template = freemarkerConfig.getTemplate("entity.ftl");
+            strEntity = FreeMarkerTemplateUtils.processTemplateIntoString(template, params);
+        } catch (IOException | TemplateException e) {
+            throw new RuntimeException("Error to generate Entity content", e);
+        }
+
+        EntityData entity = (EntityData)params.get(ENTITY_KEY);
+        String fileName = GeneratorUtils.messageFormat(ENTITY_NAME_PATTERN, entity.getName());
+        try {
+            LOG.info("Saving entity {}", entity.getName());
             LOG.debug("Entity content:\n{}", strEntity);
 
             Path entityPath = Paths.get(parameters.getEntityPath(), fileName);

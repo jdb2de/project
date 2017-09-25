@@ -38,7 +38,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "actor")
-@Generated(value = "jdb2de", date = "2017-09-24 02:13:32", comments = "You should not modify it by hand")
+@Generated(value = "jdb2de", date = "2017-09-24 20:44:38", comments = "You should not modify it by hand")
 public class ActorModel implements Serializable {
 
     /**

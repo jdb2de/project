@@ -27,6 +27,7 @@ import javax.annotation.Generated;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Set;
 
 /**
  * 
@@ -38,7 +39,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "staff")
-@Generated(value = "jdb2de", date = "2017-09-24 02:13:32", comments = "You should not modify it by hand")
+@Generated(value = "jdb2de", date = "2017-09-24 20:44:38", comments = "You should not modify it by hand")
 public class StaffModel implements Serializable {
 
     /**
@@ -135,9 +136,18 @@ public class StaffModel implements Serializable {
     @Column(name = "picture")
     private byte[] picture;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="address_id", referencedColumnName="address_id")
     private AddressModel address;
+
+    @OneToMany(mappedBy = "staff", fetch = FetchType.LAZY)
+    private Set<PaymentModel> paymentList;
+
+    @OneToMany(mappedBy = "staff", fetch = FetchType.LAZY)
+    private Set<RentalModel> rentalList;
+
+    @OneToMany(mappedBy = "staff", fetch = FetchType.LAZY)
+    private Set<StoreModel> storeList;
 
     /**
      * 
@@ -345,6 +355,30 @@ public class StaffModel implements Serializable {
         this.address = address;
     }
 
+    public Set<PaymentModel> getPaymentList() {
+        return paymentList;
+    }
+
+    public void setPaymentList(Set<PaymentModel> paymentList) {
+        this.paymentList = paymentList;
+    }
+
+    public Set<RentalModel> getRentalList() {
+        return rentalList;
+    }
+
+    public void setRentalList(Set<RentalModel> rentalList) {
+        this.rentalList = rentalList;
+    }
+
+    public Set<StoreModel> getStoreList() {
+        return storeList;
+    }
+
+    public void setStoreList(Set<StoreModel> storeList) {
+        this.storeList = storeList;
+    }
+
     @Override
     public boolean equals(Object obj) {
         return Objects.equal(this, obj);
@@ -365,6 +399,9 @@ public class StaffModel implements Serializable {
             ,lastUpdate
             ,picture
             ,address
+            ,paymentList
+            ,rentalList
+            ,storeList
         );
     }
 
@@ -383,6 +420,9 @@ public class StaffModel implements Serializable {
                 .add("lastUpdate", lastUpdate)
                 .add("picture", picture)
                 .add("address", address)
+                .add("paymentList", paymentList)
+                .add("rentalList", rentalList)
+                .add("storeList", storeList)
                 .toString();
     }
 }

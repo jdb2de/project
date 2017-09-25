@@ -39,7 +39,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "payment")
-@Generated(value = "jdb2de", date = "2017-09-24 02:13:32", comments = "You should not modify it by hand")
+@Generated(value = "jdb2de", date = "2017-09-24 20:44:38", comments = "You should not modify it by hand")
 public class PaymentModel implements Serializable {
 
     /**
@@ -95,15 +95,15 @@ public class PaymentModel implements Serializable {
     @Column(name = "payment_date", nullable = false)
     private Date paymentDate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="customer_id", referencedColumnName="customer_id")
     private CustomerModel customer;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="rental_id", referencedColumnName="rental_id")
     private RentalModel rental;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="staff_id", referencedColumnName="staff_id")
     private StaffModel staff;
 

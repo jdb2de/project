@@ -15,6 +15,7 @@ public class RelationData extends AbstractFieldData implements Serializable {
     private static final long serialVersionUID = -6145705843655597612L;
 
     private List<RelationReferenceData> columns;
+    private String mappedBy;
 
     public List<RelationReferenceData> getColumns() {
         if (columns == null) {
@@ -27,6 +28,14 @@ public class RelationData extends AbstractFieldData implements Serializable {
         this.columns = columns;
     }
 
+    public String getMappedBy() {
+        return mappedBy;
+    }
+
+    public void setMappedBy(String mappedBy) {
+        this.mappedBy = mappedBy;
+    }
+
     @Override
     public boolean equals(Object obj) {
         return Objects.equal(this, obj);
@@ -34,7 +43,7 @@ public class RelationData extends AbstractFieldData implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getName(), getUpperName(), getType(), columns);
+        return Objects.hashCode(getName(), getUpperName(), getType(), columns, mappedBy);
     }
 
     @Override
@@ -44,6 +53,7 @@ public class RelationData extends AbstractFieldData implements Serializable {
                 .add("upperName", getUpperName())
                 .add("type", getType())
                 .add("columns", columns)
+                .add("mappedBy", mappedBy)
                 .toString();
     }
 }
