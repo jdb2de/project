@@ -29,7 +29,7 @@ import java.util.Set;
 
 import javax.persistence.*;
 <#if entity.table.compositeKey>
-import ${param.compositePkPackage}.${entity.name}PK;
+import ${param.compositePrimaryKeyPackage}.${entity.name}PK;
 </#if>
 <#list entity.imports as import>
 import ${import};

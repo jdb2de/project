@@ -102,11 +102,11 @@ public class GeneratorService {
         }
 
         // If there is no composite primary key package, use the same entity package
-        if (StringUtils.isEmpty(parameters.getCompositePkPackage())) {
-            parameters.setCompositePkPackage(parameters.getEntityPackage());
+        if (StringUtils.isEmpty(parameters.getCompositePrimaryKeyPackage())) {
+            parameters.setCompositePrimaryKeyPackage(parameters.getEntityPackage());
         }
 
-        if (StringUtils.indexOf(parameters.getCompositePkPackage(), parameters.getEntityPackage()) != 0) {
+        if (StringUtils.indexOf(parameters.getCompositePrimaryKeyPackage(), parameters.getEntityPackage()) != 0) {
             throw new ValidationException("Parameter [config.composite.pk.package] is invalid, it must be the same or a nested package of [config.entity.package]");
         }
     }

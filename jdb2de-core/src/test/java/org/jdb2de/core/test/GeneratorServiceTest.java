@@ -39,7 +39,7 @@ public class GeneratorServiceTest {
 
         Mockito.when(parameters.getEntityPath()).thenReturn(System.getProperty("java.io.tmpdir"));
         Mockito.when(parameters.getEntityPackage()).thenReturn("temp");
-        Mockito.when(parameters.getCompositePkPackage()).thenReturn("temp.pk");
+        Mockito.when(parameters.getCompositePrimaryKeyPackage()).thenReturn("temp.pk");
     }
 
     @Test

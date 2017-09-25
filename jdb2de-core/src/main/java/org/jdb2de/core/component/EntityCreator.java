@@ -54,10 +54,10 @@ public class EntityCreator {
      */
     private void createCompositePkPath() throws IOException {
 
-        String additionalPath = StringUtils.replace(parameters.getCompositePkPackage(), parameters.getEntityPackage(), "");
+        String additionalPath = StringUtils.replace(parameters.getCompositePrimaryKeyPackage(), parameters.getEntityPackage(), "");
         additionalPath = StringUtils.replace(additionalPath, ".", File.separator);
         compositePkPath = parameters.getEntityPath().concat(additionalPath);
-        if (!parameters.getEntityPackage().equals(parameters.getCompositePkPackage())) {
+        if (!parameters.getEntityPackage().equals(parameters.getCompositePrimaryKeyPackage())) {
             return;
         }
 

@@ -31,7 +31,7 @@ public class StartupListener {
     private String configEntitySuffix;
 
     @Value("${config.pk.package:#{null}}")
-    private String configPkPackage;
+    private String configPrimaryKeyPackage;
 
     @Value("${config.author:#{null}}")
     private String configAuthor;
@@ -41,6 +41,9 @@ public class StartupListener {
 
     @Value("${config.table.name:#{null}}")
     private String configTableName;
+
+    @Value("${config.pk.name.regex:#{null}}")
+    private String confiPrimaryKeyNameRegex;
 
     @Value("${database.driver:#{null}}")
     private String databaseDriver;
@@ -84,7 +87,7 @@ public class StartupListener {
         parameterData.setEntityPath(configEntityPath);
         parameterData.setEntityPackage(configEntityPackage);
         parameterData.setEntitySuffix(configEntitySuffix);
-        parameterData.setCompositePkPackage(configPkPackage);
+        parameterData.setCompositePrimaryKeyPackage(configPrimaryKeyPackage);
         parameterData.setAuthor(configAuthor);
         parameterData.setTableSearch(configTableSearch);
         parameterData.setTableName(configTableName);

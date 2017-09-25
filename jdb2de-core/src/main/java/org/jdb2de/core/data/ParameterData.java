@@ -24,7 +24,7 @@ public class ParameterData implements Serializable {
     private String entityPath;
     private String entityPackage;
     private String entitySuffix;
-    private String compositePkPackage;
+    private String compositePrimaryKeyPackage;
     private List<String> copyright;
     private String author;
     private String tableSearch;
@@ -54,12 +54,12 @@ public class ParameterData implements Serializable {
         this.entitySuffix = entitySuffix;
     }
 
-    public String getCompositePkPackage() {
-        return compositePkPackage;
+    public String getCompositePrimaryKeyPackage() {
+        return compositePrimaryKeyPackage;
     }
 
-    public void setCompositePkPackage(String compositePkPackage) {
-        this.compositePkPackage = compositePkPackage;
+    public void setCompositePrimaryKeyPackage(String compositePrimaryKeyPackage) {
+        this.compositePrimaryKeyPackage = compositePrimaryKeyPackage;
     }
 
     public List<String> getCopyright() {
@@ -105,7 +105,7 @@ public class ParameterData implements Serializable {
                 entityPath
                 , entityPackage
                 , entitySuffix
-                , compositePkPackage
+                , compositePrimaryKeyPackage
                 , copyright
                 , author
                 , tableSearch
@@ -119,7 +119,7 @@ public class ParameterData implements Serializable {
                 .add("entityPath", entityPath)
                 .add("entityPackage", entityPackage)
                 .add("entitySuffix", entitySuffix)
-                .add("compositePkPackage", compositePkPackage)
+                .add("compositePrimaryKeyPackage", compositePrimaryKeyPackage)
                 .add("copyright", copyright)
                 .add("author", author)
                 .add("tableSearch", tableSearch)
