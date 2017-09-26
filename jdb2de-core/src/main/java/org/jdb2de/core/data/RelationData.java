@@ -7,15 +7,42 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RelationData extends AbstractFieldData implements Serializable {
+public class RelationData implements Serializable {
 
     /**
      * Serial Version UID
      */
     private static final long serialVersionUID = -6145705843655597612L;
 
+    private String name;
+    private String upperName;
+    private String type;
     private List<RelationReferenceData> columns;
     private String mappedBy;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getUpperName() {
+        return upperName;
+    }
+
+    public void setUpperName(String upperName) {
+        this.upperName = upperName;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     public List<RelationReferenceData> getColumns() {
         if (columns == null) {
@@ -43,15 +70,15 @@ public class RelationData extends AbstractFieldData implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getName(), getUpperName(), getType(), columns, mappedBy);
+        return Objects.hashCode(name, upperName, type, columns, mappedBy);
     }
 
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("name", getName())
-                .add("upperName", getUpperName())
-                .add("type", getType())
+                .add("name", name)
+                .add("upperName", upperName)
+                .add("type", type)
                 .add("columns", columns)
                 .add("mappedBy", mappedBy)
                 .toString();

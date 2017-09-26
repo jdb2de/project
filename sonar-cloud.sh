@@ -76,7 +76,8 @@ cd ${project_dir}
 mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package sonar:sonar \
     -Dsonar.host.url=https://sonarcloud.io \
     -Dsonar.organization="$organization" \
-    -Dsonar.login="$login"
+    -Dsonar.login="$login" \
+    -Dsonar.exclusions=**/model/**,**/data/**
 
 # Back to previous directory
 cd -

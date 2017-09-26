@@ -6,14 +6,41 @@ import org.jdb2de.core.model.ColumnModel;
 
 import java.io.Serializable;
 
-public class FieldData extends AbstractFieldData implements Serializable {
+public class FieldData implements Serializable {
 
     /**
      * Serial Version UID
      */
     private static final long serialVersionUID = 4531843591765897754L;
 
+    private String name;
+    private String upperName;
+    private String type;
     private ColumnModel column;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getUpperName() {
+        return upperName;
+    }
+
+    public void setUpperName(String upperName) {
+        this.upperName = upperName;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     public ColumnModel getColumn() {
         return column;
@@ -30,15 +57,15 @@ public class FieldData extends AbstractFieldData implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getName(), getUpperName(), getType(), column);
+        return Objects.hashCode(name, upperName, type, column);
     }
 
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("name", getName())
-                .add("upperName", getUpperName())
-                .add("type", getType())
+                .add("name", name)
+                .add("upperName", upperName)
+                .add("type", type)
                 .add("column", column)
                 .toString();
     }
