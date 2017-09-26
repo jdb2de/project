@@ -39,7 +39,7 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "inventory")
-@Generated(value = "jdb2de", date = "2017-09-24 20:44:38", comments = "You should not modify it by hand")
+@Generated(value = "jdb2de", date = "2017-09-26 00:09:00", comments = "You should not modify it by hand")
 public class InventoryModel implements Serializable {
 
     /**
@@ -84,7 +84,7 @@ public class InventoryModel implements Serializable {
     private FilmModel film;
 
     @OneToMany(mappedBy = "inventory", fetch = FetchType.LAZY)
-    private Set<RentalModel> rentalList;
+    private Set<RentalModel> rentalInventoryList;
 
     /**
      * 
@@ -166,12 +166,12 @@ public class InventoryModel implements Serializable {
         this.film = film;
     }
 
-    public Set<RentalModel> getRentalList() {
-        return rentalList;
+    public Set<RentalModel> getRentalInventoryList() {
+        return rentalInventoryList;
     }
 
-    public void setRentalList(Set<RentalModel> rentalList) {
-        this.rentalList = rentalList;
+    public void setRentalInventoryList(Set<RentalModel> rentalInventoryList) {
+        this.rentalInventoryList = rentalInventoryList;
     }
 
     @Override
@@ -187,7 +187,7 @@ public class InventoryModel implements Serializable {
             ,storeId
             ,lastUpdate
             ,film
-            ,rentalList
+            ,rentalInventoryList
         );
     }
 
@@ -199,7 +199,7 @@ public class InventoryModel implements Serializable {
                 .add("storeId", storeId)
                 .add("lastUpdate", lastUpdate)
                 .add("film", film)
-                .add("rentalList", rentalList)
+                .add("rentalInventoryList", rentalInventoryList)
                 .toString();
     }
 }

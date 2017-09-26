@@ -264,6 +264,20 @@ CREATE TABLE store (
   last_update      TIMESTAMP DEFAULT now() NOT NULL
 );
 
+CREATE TABLE multiple_foreign_key (
+  staff_id       INTEGER NOT NULL,
+  staff_one_id   INTEGER NOT NULL,
+  staff_two_id   INTEGER NOT NULL,
+  staff_three_id INTEGER NOT NULL
+);
+
+COMMENT ON TABLE  multiple_foreign_key                IS 'Sample multiple foreign key table';
+COMMENT ON COLUMN multiple_foreign_key.staff_id       IS 'Staff identification';
+COMMENT ON COLUMN multiple_foreign_key.staff_one_id   IS 'Staff identification one';
+COMMENT ON COLUMN multiple_foreign_key.staff_two_id   IS 'Staff identification two';
+COMMENT ON COLUMN multiple_foreign_key.staff_three_id IS 'Staff identification three';
+
+
 -- #################################
 -- PRIMARY KEYS
 -- #################################
@@ -315,6 +329,9 @@ ALTER TABLE ONLY staff
 
 ALTER TABLE ONLY store
   ADD CONSTRAINT store_pk PRIMARY KEY (store_id);
+
+ALTER TABLE ONLY multiple_foreign_key
+  ADD CONSTRAINT multiple_foreign_key_pk PRIMARY KEY (staff_id);
 
 -- #################################
 -- FOREIGN KEYS
@@ -373,3 +390,15 @@ ALTER TABLE ONLY store
 
 ALTER TABLE ONLY store
   ADD CONSTRAINT store_manager_staff_id_fk FOREIGN KEY (manager_staff_id) REFERENCES staff (staff_id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+ALTER TABLE ONLY multiple_foreign_key
+  ADD CONSTRAINT staff_id_fk FOREIGN KEY (staff_id) REFERENCES staff (staff_id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+ALTER TABLE ONLY multiple_foreign_key
+  ADD CONSTRAINT staff_one_id_fk FOREIGN KEY (staff_one_id) REFERENCES staff (staff_id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+ALTER TABLE ONLY multiple_foreign_key
+  ADD CONSTRAINT staff_two_id_fk FOREIGN KEY (staff_two_id) REFERENCES staff (staff_id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+ALTER TABLE ONLY multiple_foreign_key
+  ADD CONSTRAINT staff_three_id_fk FOREIGN KEY (staff_three_id) REFERENCES staff (staff_id) ON UPDATE CASCADE ON DELETE RESTRICT;

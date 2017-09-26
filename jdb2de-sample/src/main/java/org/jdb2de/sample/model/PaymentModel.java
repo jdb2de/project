@@ -39,7 +39,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "payment")
-@Generated(value = "jdb2de", date = "2017-09-24 20:44:38", comments = "You should not modify it by hand")
+@Generated(value = "jdb2de", date = "2017-09-26 00:09:00", comments = "You should not modify it by hand")
 public class PaymentModel implements Serializable {
 
     /**

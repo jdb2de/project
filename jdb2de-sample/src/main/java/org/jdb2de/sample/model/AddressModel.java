@@ -39,7 +39,7 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "address")
-@Generated(value = "jdb2de", date = "2017-09-24 20:44:38", comments = "You should not modify it by hand")
+@Generated(value = "jdb2de", date = "2017-09-26 00:09:00", comments = "You should not modify it by hand")
 public class AddressModel implements Serializable {
 
     /**
@@ -116,13 +116,13 @@ public class AddressModel implements Serializable {
     private CityModel city;
 
     @OneToMany(mappedBy = "address", fetch = FetchType.LAZY)
-    private Set<CustomerModel> customerList;
+    private Set<CustomerModel> customerAddressList;
 
     @OneToMany(mappedBy = "address", fetch = FetchType.LAZY)
-    private Set<StaffModel> staffList;
+    private Set<StaffModel> staffAddressList;
 
     @OneToMany(mappedBy = "address", fetch = FetchType.LAZY)
-    private Set<StoreModel> storeList;
+    private Set<StoreModel> storeAddressList;
 
     /**
      * 
@@ -276,28 +276,28 @@ public class AddressModel implements Serializable {
         this.city = city;
     }
 
-    public Set<CustomerModel> getCustomerList() {
-        return customerList;
+    public Set<CustomerModel> getCustomerAddressList() {
+        return customerAddressList;
     }
 
-    public void setCustomerList(Set<CustomerModel> customerList) {
-        this.customerList = customerList;
+    public void setCustomerAddressList(Set<CustomerModel> customerAddressList) {
+        this.customerAddressList = customerAddressList;
     }
 
-    public Set<StaffModel> getStaffList() {
-        return staffList;
+    public Set<StaffModel> getStaffAddressList() {
+        return staffAddressList;
     }
 
-    public void setStaffList(Set<StaffModel> staffList) {
-        this.staffList = staffList;
+    public void setStaffAddressList(Set<StaffModel> staffAddressList) {
+        this.staffAddressList = staffAddressList;
     }
 
-    public Set<StoreModel> getStoreList() {
-        return storeList;
+    public Set<StoreModel> getStoreAddressList() {
+        return storeAddressList;
     }
 
-    public void setStoreList(Set<StoreModel> storeList) {
-        this.storeList = storeList;
+    public void setStoreAddressList(Set<StoreModel> storeAddressList) {
+        this.storeAddressList = storeAddressList;
     }
 
     @Override
@@ -317,9 +317,9 @@ public class AddressModel implements Serializable {
             ,phone
             ,lastUpdate
             ,city
-            ,customerList
-            ,staffList
-            ,storeList
+            ,customerAddressList
+            ,staffAddressList
+            ,storeAddressList
         );
     }
 
@@ -335,9 +335,9 @@ public class AddressModel implements Serializable {
                 .add("phone", phone)
                 .add("lastUpdate", lastUpdate)
                 .add("city", city)
-                .add("customerList", customerList)
-                .add("staffList", staffList)
-                .add("storeList", storeList)
+                .add("customerAddressList", customerAddressList)
+                .add("staffAddressList", staffAddressList)
+                .add("storeAddressList", storeAddressList)
                 .toString();
     }
 }

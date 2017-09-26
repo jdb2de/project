@@ -90,8 +90,7 @@ public class EntityCreator {
             table.getColumns().stream().map(GeneratorFactory::createFieldData).forEach(fields::add);
 
             // Create entity instance
-            EntityData entity = GeneratorFactory.createEntityData(table, parameters.getEntityPackage(),
-                    parameters.getEntitySuffix(), fields);
+            EntityData entity = GeneratorFactory.createEntityData(table, fields, parameters);
             entity.setImports(GeneratorUtils.createImportList(table.getColumns()));
             entities.add(entity);
         }

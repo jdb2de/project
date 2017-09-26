@@ -39,7 +39,7 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "rental")
-@Generated(value = "jdb2de", date = "2017-09-24 20:44:38", comments = "You should not modify it by hand")
+@Generated(value = "jdb2de", date = "2017-09-26 00:09:00", comments = "You should not modify it by hand")
 public class RentalModel implements Serializable {
 
     /**
@@ -116,7 +116,7 @@ public class RentalModel implements Serializable {
     private StaffModel staff;
 
     @OneToMany(mappedBy = "rental", fetch = FetchType.LAZY)
-    private Set<PaymentModel> paymentList;
+    private Set<PaymentModel> paymentRentalList;
 
     /**
      * 
@@ -268,12 +268,12 @@ public class RentalModel implements Serializable {
         this.staff = staff;
     }
 
-    public Set<PaymentModel> getPaymentList() {
-        return paymentList;
+    public Set<PaymentModel> getPaymentRentalList() {
+        return paymentRentalList;
     }
 
-    public void setPaymentList(Set<PaymentModel> paymentList) {
-        this.paymentList = paymentList;
+    public void setPaymentRentalList(Set<PaymentModel> paymentRentalList) {
+        this.paymentRentalList = paymentRentalList;
     }
 
     @Override
@@ -294,7 +294,7 @@ public class RentalModel implements Serializable {
             ,customer
             ,inventory
             ,staff
-            ,paymentList
+            ,paymentRentalList
         );
     }
 
@@ -311,7 +311,7 @@ public class RentalModel implements Serializable {
                 .add("customer", customer)
                 .add("inventory", inventory)
                 .add("staff", staff)
-                .add("paymentList", paymentList)
+                .add("paymentRentalList", paymentRentalList)
                 .toString();
     }
 }

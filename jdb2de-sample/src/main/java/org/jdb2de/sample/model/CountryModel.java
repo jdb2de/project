@@ -39,7 +39,7 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "country")
-@Generated(value = "jdb2de", date = "2017-09-24 20:44:38", comments = "You should not modify it by hand")
+@Generated(value = "jdb2de", date = "2017-09-26 00:09:00", comments = "You should not modify it by hand")
 public class CountryModel implements Serializable {
 
     /**
@@ -72,7 +72,7 @@ public class CountryModel implements Serializable {
     private Date lastUpdate;
 
     @OneToMany(mappedBy = "country", fetch = FetchType.LAZY)
-    private Set<CityModel> cityList;
+    private Set<CityModel> cityCountryList;
 
     /**
      * 
@@ -128,12 +128,12 @@ public class CountryModel implements Serializable {
         this.lastUpdate = lastUpdate;
     }
 
-    public Set<CityModel> getCityList() {
-        return cityList;
+    public Set<CityModel> getCityCountryList() {
+        return cityCountryList;
     }
 
-    public void setCityList(Set<CityModel> cityList) {
-        this.cityList = cityList;
+    public void setCityCountryList(Set<CityModel> cityCountryList) {
+        this.cityCountryList = cityCountryList;
     }
 
     @Override
@@ -147,7 +147,7 @@ public class CountryModel implements Serializable {
             countryId
             ,country
             ,lastUpdate
-            ,cityList
+            ,cityCountryList
         );
     }
 
@@ -157,7 +157,7 @@ public class CountryModel implements Serializable {
                 .add("countryId", countryId)
                 .add("country", country)
                 .add("lastUpdate", lastUpdate)
-                .add("cityList", cityList)
+                .add("cityCountryList", cityCountryList)
                 .toString();
     }
 }

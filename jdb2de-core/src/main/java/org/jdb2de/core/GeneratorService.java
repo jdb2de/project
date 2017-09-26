@@ -93,6 +93,11 @@ public class GeneratorService {
             throw new ValidationException("Invalid value to table search");
         }
 
+        if (StringUtils.isEmpty(parameters.getPrimaryKeyFieldNameRegex())) {
+            throw new ValidationException(MSG_PARAMETER_NOT_FOUND, "config.pk.field.name.regex");
+        }
+
+
         // Update search regex
         searchRegex = GeneratorUtils.replaceSearchToRegex(parameters.getTableSearch());
 
@@ -184,7 +189,8 @@ public class GeneratorService {
             column.setColumnParameter(columnParameter);
             column.setTranslatedType(information.translateDatabaseType(column.getType()));
 
-            LOG.info("  {}: type={}, java-type={}", column.getName(), column.getType(), column.getTranslatedType().getTargetType());
+            LOG.info("  {}: type={}, java-type={}", column.getName(), column.getType(),
+                    column.getTranslatedType().getTargetType());
         }
 
         // Create table model

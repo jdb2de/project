@@ -40,7 +40,7 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "film")
-@Generated(value = "jdb2de", date = "2017-09-24 20:44:38", comments = "You should not modify it by hand")
+@Generated(value = "jdb2de", date = "2017-09-26 00:09:00", comments = "You should not modify it by hand")
 public class FilmModel implements Serializable {
 
     /**
@@ -157,7 +157,7 @@ public class FilmModel implements Serializable {
     private LanguageModel language;
 
     @OneToMany(mappedBy = "film", fetch = FetchType.LAZY)
-    private Set<InventoryModel> inventoryList;
+    private Set<InventoryModel> inventoryFilmList;
 
     /**
      * Film identification
@@ -401,12 +401,12 @@ public class FilmModel implements Serializable {
         this.language = language;
     }
 
-    public Set<InventoryModel> getInventoryList() {
-        return inventoryList;
+    public Set<InventoryModel> getInventoryFilmList() {
+        return inventoryFilmList;
     }
 
-    public void setInventoryList(Set<InventoryModel> inventoryList) {
-        this.inventoryList = inventoryList;
+    public void setInventoryFilmList(Set<InventoryModel> inventoryFilmList) {
+        this.inventoryFilmList = inventoryFilmList;
     }
 
     @Override
@@ -431,7 +431,7 @@ public class FilmModel implements Serializable {
             ,specialFeatures
             ,fulltext
             ,language
-            ,inventoryList
+            ,inventoryFilmList
         );
     }
 
@@ -452,7 +452,7 @@ public class FilmModel implements Serializable {
                 .add("specialFeatures", specialFeatures)
                 .add("fulltext", fulltext)
                 .add("language", language)
-                .add("inventoryList", inventoryList)
+                .add("inventoryFilmList", inventoryFilmList)
                 .toString();
     }
 }

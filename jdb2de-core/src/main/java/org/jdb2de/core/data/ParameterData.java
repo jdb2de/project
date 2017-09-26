@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,6 +30,10 @@ public class ParameterData implements Serializable {
     private String author;
     private String tableSearch;
     private String tableName;
+    private String primaryKeyFieldNameRegex;
+    private String tableNameRegex;
+    private boolean tableNameRegexCleanEntityName;
+    private boolean tableNameRegexCleanPrimaryKeyField;
 
     public String getEntityPath() {
         return entityPath;
@@ -63,6 +68,9 @@ public class ParameterData implements Serializable {
     }
 
     public List<String> getCopyright() {
+        if (copyright == null) {
+            copyright = new ArrayList<>();
+        }
         return copyright;
     }
 
@@ -94,6 +102,38 @@ public class ParameterData implements Serializable {
         this.tableSearch = tableSearch;
     }
 
+    public String getPrimaryKeyFieldNameRegex() {
+        return primaryKeyFieldNameRegex;
+    }
+
+    public void setPrimaryKeyFieldNameRegex(String primaryKeyFieldNameRegex) {
+        this.primaryKeyFieldNameRegex = primaryKeyFieldNameRegex;
+    }
+
+    public String getTableNameRegex() {
+        return tableNameRegex;
+    }
+
+    public void setTableNameRegex(String tableNameRegex) {
+        this.tableNameRegex = tableNameRegex;
+    }
+
+    public boolean isTableNameRegexCleanEntityName() {
+        return tableNameRegexCleanEntityName;
+    }
+
+    public void setTableNameRegexCleanEntityName(boolean tableNameRegexCleanEntityName) {
+        this.tableNameRegexCleanEntityName = tableNameRegexCleanEntityName;
+    }
+
+    public boolean isTableNameRegexCleanPrimaryKeyField() {
+        return tableNameRegexCleanPrimaryKeyField;
+    }
+
+    public void setTableNameRegexCleanPrimaryKeyField(boolean tableNameRegexCleanPrimaryKeyField) {
+        this.tableNameRegexCleanPrimaryKeyField = tableNameRegexCleanPrimaryKeyField;
+    }
+
     @Override
     public boolean equals(Object obj) {
         return Objects.equal(this, obj);
@@ -110,6 +150,10 @@ public class ParameterData implements Serializable {
                 , author
                 , tableSearch
                 , tableName
+                , primaryKeyFieldNameRegex
+                , tableNameRegex
+                , tableNameRegexCleanEntityName
+                , tableNameRegexCleanPrimaryKeyField
         );
     }
 
@@ -124,6 +168,10 @@ public class ParameterData implements Serializable {
                 .add("author", author)
                 .add("tableSearch", tableSearch)
                 .add("tableName", tableName)
+                .add("primaryKeyFieldNameRegex", primaryKeyFieldNameRegex)
+                .add("tableNameRegex", tableNameRegex)
+                .add("tableNameRegexCleanEntityName", tableNameRegexCleanEntityName)
+                .add("tableNameRegexCleanPrimaryKeyField", tableNameRegexCleanPrimaryKeyField)
                 .toString();
     }
 }

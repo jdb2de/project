@@ -39,7 +39,7 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "customer")
-@Generated(value = "jdb2de", date = "2017-09-24 20:44:38", comments = "You should not modify it by hand")
+@Generated(value = "jdb2de", date = "2017-09-26 00:09:00", comments = "You should not modify it by hand")
 public class CustomerModel implements Serializable {
 
     /**
@@ -132,10 +132,10 @@ public class CustomerModel implements Serializable {
     private AddressModel address;
 
     @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)
-    private Set<PaymentModel> paymentList;
+    private Set<PaymentModel> paymentCustomerList;
 
     @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)
-    private Set<RentalModel> rentalList;
+    private Set<RentalModel> rentalCustomerList;
 
     /**
      * Customer identification
@@ -325,20 +325,20 @@ public class CustomerModel implements Serializable {
         this.address = address;
     }
 
-    public Set<PaymentModel> getPaymentList() {
-        return paymentList;
+    public Set<PaymentModel> getPaymentCustomerList() {
+        return paymentCustomerList;
     }
 
-    public void setPaymentList(Set<PaymentModel> paymentList) {
-        this.paymentList = paymentList;
+    public void setPaymentCustomerList(Set<PaymentModel> paymentCustomerList) {
+        this.paymentCustomerList = paymentCustomerList;
     }
 
-    public Set<RentalModel> getRentalList() {
-        return rentalList;
+    public Set<RentalModel> getRentalCustomerList() {
+        return rentalCustomerList;
     }
 
-    public void setRentalList(Set<RentalModel> rentalList) {
-        this.rentalList = rentalList;
+    public void setRentalCustomerList(Set<RentalModel> rentalCustomerList) {
+        this.rentalCustomerList = rentalCustomerList;
     }
 
     @Override
@@ -360,8 +360,8 @@ public class CustomerModel implements Serializable {
             ,lastUpdate
             ,active
             ,address
-            ,paymentList
-            ,rentalList
+            ,paymentCustomerList
+            ,rentalCustomerList
         );
     }
 
@@ -379,8 +379,8 @@ public class CustomerModel implements Serializable {
                 .add("lastUpdate", lastUpdate)
                 .add("active", active)
                 .add("address", address)
-                .add("paymentList", paymentList)
-                .add("rentalList", rentalList)
+                .add("paymentCustomerList", paymentCustomerList)
+                .add("rentalCustomerList", rentalCustomerList)
                 .toString();
     }
 }

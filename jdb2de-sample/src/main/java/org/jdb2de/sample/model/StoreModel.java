@@ -38,7 +38,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "store")
-@Generated(value = "jdb2de", date = "2017-09-24 20:44:38", comments = "You should not modify it by hand")
+@Generated(value = "jdb2de", date = "2017-09-26 00:09:00", comments = "You should not modify it by hand")
 public class StoreModel implements Serializable {
 
     /**
@@ -84,7 +84,7 @@ public class StoreModel implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="manager_staff_id", referencedColumnName="staff_id")
-    private StaffModel staff;
+    private StaffModel managerStaff;
 
     /**
      * 
@@ -166,12 +166,12 @@ public class StoreModel implements Serializable {
         this.address = address;
     }
 
-    public StaffModel getStaff() {
-        return staff;
+    public StaffModel getManagerStaff() {
+        return managerStaff;
     }
 
-    public void setStaff(StaffModel staff) {
-        this.staff = staff;
+    public void setManagerStaff(StaffModel managerStaff) {
+        this.managerStaff = managerStaff;
     }
 
     @Override
@@ -187,7 +187,7 @@ public class StoreModel implements Serializable {
             ,addressId
             ,lastUpdate
             ,address
-            ,staff
+            ,managerStaff
         );
     }
 
@@ -199,7 +199,7 @@ public class StoreModel implements Serializable {
                 .add("addressId", addressId)
                 .add("lastUpdate", lastUpdate)
                 .add("address", address)
-                .add("staff", staff)
+                .add("managerStaff", managerStaff)
                 .toString();
     }
 }

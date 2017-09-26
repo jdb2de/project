@@ -39,7 +39,7 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "language")
-@Generated(value = "jdb2de", date = "2017-09-24 20:44:38", comments = "You should not modify it by hand")
+@Generated(value = "jdb2de", date = "2017-09-26 00:09:00", comments = "You should not modify it by hand")
 public class LanguageModel implements Serializable {
 
     /**
@@ -72,7 +72,7 @@ public class LanguageModel implements Serializable {
     private Date lastUpdate;
 
     @OneToMany(mappedBy = "language", fetch = FetchType.LAZY)
-    private Set<FilmModel> filmList;
+    private Set<FilmModel> filmLanguageList;
 
     /**
      * 
@@ -128,12 +128,12 @@ public class LanguageModel implements Serializable {
         this.lastUpdate = lastUpdate;
     }
 
-    public Set<FilmModel> getFilmList() {
-        return filmList;
+    public Set<FilmModel> getFilmLanguageList() {
+        return filmLanguageList;
     }
 
-    public void setFilmList(Set<FilmModel> filmList) {
-        this.filmList = filmList;
+    public void setFilmLanguageList(Set<FilmModel> filmLanguageList) {
+        this.filmLanguageList = filmLanguageList;
     }
 
     @Override
@@ -147,7 +147,7 @@ public class LanguageModel implements Serializable {
             languageId
             ,name
             ,lastUpdate
-            ,filmList
+            ,filmLanguageList
         );
     }
 
@@ -157,7 +157,7 @@ public class LanguageModel implements Serializable {
                 .add("languageId", languageId)
                 .add("name", name)
                 .add("lastUpdate", lastUpdate)
-                .add("filmList", filmList)
+                .add("filmLanguageList", filmLanguageList)
                 .toString();
     }
 }

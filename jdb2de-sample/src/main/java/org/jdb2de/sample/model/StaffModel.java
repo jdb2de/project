@@ -39,7 +39,7 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "staff")
-@Generated(value = "jdb2de", date = "2017-09-24 20:44:38", comments = "You should not modify it by hand")
+@Generated(value = "jdb2de", date = "2017-09-26 00:09:00", comments = "You should not modify it by hand")
 public class StaffModel implements Serializable {
 
     /**
@@ -141,13 +141,25 @@ public class StaffModel implements Serializable {
     private AddressModel address;
 
     @OneToMany(mappedBy = "staff", fetch = FetchType.LAZY)
-    private Set<PaymentModel> paymentList;
+    private Set<MultipleForeignKeyModel> multipleForeignKeyStaffList;
+
+    @OneToMany(mappedBy = "staffOne", fetch = FetchType.LAZY)
+    private Set<MultipleForeignKeyModel> multipleForeignKeyStaffOneList;
+
+    @OneToMany(mappedBy = "staffTwo", fetch = FetchType.LAZY)
+    private Set<MultipleForeignKeyModel> multipleForeignKeyStaffTwoList;
+
+    @OneToMany(mappedBy = "staffThree", fetch = FetchType.LAZY)
+    private Set<MultipleForeignKeyModel> multipleForeignKeyStaffThreeList;
 
     @OneToMany(mappedBy = "staff", fetch = FetchType.LAZY)
-    private Set<RentalModel> rentalList;
+    private Set<PaymentModel> paymentStaffList;
 
     @OneToMany(mappedBy = "staff", fetch = FetchType.LAZY)
-    private Set<StoreModel> storeList;
+    private Set<RentalModel> rentalStaffList;
+
+    @OneToMany(mappedBy = "managerStaff", fetch = FetchType.LAZY)
+    private Set<StoreModel> storeManagerStaffList;
 
     /**
      * 
@@ -355,28 +367,60 @@ public class StaffModel implements Serializable {
         this.address = address;
     }
 
-    public Set<PaymentModel> getPaymentList() {
-        return paymentList;
+    public Set<MultipleForeignKeyModel> getMultipleForeignKeyStaffList() {
+        return multipleForeignKeyStaffList;
     }
 
-    public void setPaymentList(Set<PaymentModel> paymentList) {
-        this.paymentList = paymentList;
+    public void setMultipleForeignKeyStaffList(Set<MultipleForeignKeyModel> multipleForeignKeyStaffList) {
+        this.multipleForeignKeyStaffList = multipleForeignKeyStaffList;
     }
 
-    public Set<RentalModel> getRentalList() {
-        return rentalList;
+    public Set<MultipleForeignKeyModel> getMultipleForeignKeyStaffOneList() {
+        return multipleForeignKeyStaffOneList;
     }
 
-    public void setRentalList(Set<RentalModel> rentalList) {
-        this.rentalList = rentalList;
+    public void setMultipleForeignKeyStaffOneList(Set<MultipleForeignKeyModel> multipleForeignKeyStaffOneList) {
+        this.multipleForeignKeyStaffOneList = multipleForeignKeyStaffOneList;
     }
 
-    public Set<StoreModel> getStoreList() {
-        return storeList;
+    public Set<MultipleForeignKeyModel> getMultipleForeignKeyStaffTwoList() {
+        return multipleForeignKeyStaffTwoList;
     }
 
-    public void setStoreList(Set<StoreModel> storeList) {
-        this.storeList = storeList;
+    public void setMultipleForeignKeyStaffTwoList(Set<MultipleForeignKeyModel> multipleForeignKeyStaffTwoList) {
+        this.multipleForeignKeyStaffTwoList = multipleForeignKeyStaffTwoList;
+    }
+
+    public Set<MultipleForeignKeyModel> getMultipleForeignKeyStaffThreeList() {
+        return multipleForeignKeyStaffThreeList;
+    }
+
+    public void setMultipleForeignKeyStaffThreeList(Set<MultipleForeignKeyModel> multipleForeignKeyStaffThreeList) {
+        this.multipleForeignKeyStaffThreeList = multipleForeignKeyStaffThreeList;
+    }
+
+    public Set<PaymentModel> getPaymentStaffList() {
+        return paymentStaffList;
+    }
+
+    public void setPaymentStaffList(Set<PaymentModel> paymentStaffList) {
+        this.paymentStaffList = paymentStaffList;
+    }
+
+    public Set<RentalModel> getRentalStaffList() {
+        return rentalStaffList;
+    }
+
+    public void setRentalStaffList(Set<RentalModel> rentalStaffList) {
+        this.rentalStaffList = rentalStaffList;
+    }
+
+    public Set<StoreModel> getStoreManagerStaffList() {
+        return storeManagerStaffList;
+    }
+
+    public void setStoreManagerStaffList(Set<StoreModel> storeManagerStaffList) {
+        this.storeManagerStaffList = storeManagerStaffList;
     }
 
     @Override
@@ -399,9 +443,13 @@ public class StaffModel implements Serializable {
             ,lastUpdate
             ,picture
             ,address
-            ,paymentList
-            ,rentalList
-            ,storeList
+            ,multipleForeignKeyStaffList
+            ,multipleForeignKeyStaffOneList
+            ,multipleForeignKeyStaffTwoList
+            ,multipleForeignKeyStaffThreeList
+            ,paymentStaffList
+            ,rentalStaffList
+            ,storeManagerStaffList
         );
     }
 
@@ -420,9 +468,13 @@ public class StaffModel implements Serializable {
                 .add("lastUpdate", lastUpdate)
                 .add("picture", picture)
                 .add("address", address)
-                .add("paymentList", paymentList)
-                .add("rentalList", rentalList)
-                .add("storeList", storeList)
+                .add("multipleForeignKeyStaffList", multipleForeignKeyStaffList)
+                .add("multipleForeignKeyStaffOneList", multipleForeignKeyStaffOneList)
+                .add("multipleForeignKeyStaffTwoList", multipleForeignKeyStaffTwoList)
+                .add("multipleForeignKeyStaffThreeList", multipleForeignKeyStaffThreeList)
+                .add("paymentStaffList", paymentStaffList)
+                .add("rentalStaffList", rentalStaffList)
+                .add("storeManagerStaffList", storeManagerStaffList)
                 .toString();
     }
 }
