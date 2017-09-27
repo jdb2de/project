@@ -110,7 +110,19 @@ public final class GeneratorFactory {
      */
     private String tableNameToType(String tableName, boolean useSuffix) {
 
-        String table = clearName(tableName, parameters.isTableNameRegexCleanPrimaryKeyField());
+        String table = clearName(tableName,
+                parameters.isTableNameRegexCleanPrimaryKeyField());;
+        if (StringUtils.isNotEmpty(parameters.getTableNameRegex()) && parameters.isTableNameRegexCleanEntityName()) {
+            table = table.replaceFirst(parameters.getTableNameRegex(), "");
+            if (table.startsWith("_")) {
+                table = table.replaceFirst("^_", "");
+            }
+
+            if (table.endsWith("_")) {
+                table = table.replaceFirst("_$", "");
+            }
+        }
+
         String typeName = GeneratorUtils.underscoreToUpperCamelcase(table);
         if (useSuffix && StringUtils.isNotEmpty(parameters.getEntitySuffix())) {
             String entitySuffix = CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, parameters.getEntitySuffix());
@@ -124,6 +136,7 @@ public final class GeneratorFactory {
 
         String table = clearName(entityRelation.getTable().getName(),
                 parameters.isTableNameRegexCleanPrimaryKeyField());
+
         String relationManyName = tableNameToType(table, false);
         relationManyName = relationManyName.concat(CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, relationOne.getName()));
         return CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, relationManyName.concat(RELATION_MANY_SUFFIX));
@@ -170,7 +183,7 @@ public final class GeneratorFactory {
 
         if (CollectionUtils.isNotEmpty(table.getForeignKeys())) {
             List<RelationData> relations = new ArrayList<>();
-            table.getForeignKeys().forEach(foreignKey -> relations.add(createRelationData(foreignKey)));
+            table.getForeignKeys().forEach(foreignKey -> relations.add(createRelationData(foreignKey, relations)));
             entity.setOneRelations(relations);
         }
 
@@ -227,9 +240,12 @@ public final class GeneratorFactory {
                 }
             }
 
-            // if anyway were not possible to identify the column, gets the reference table name as relation name
+            // TODO Implements name for multiple fk columns if columns do not contains table name
+
+            // if anyway were not possible to identify the column,
+            // gets the reference table name as relation name
             if (StringUtils.isEmpty(mainRelationColumn)) {
-                return GeneratorUtils.underscoreToLowerCamelcase(foreignKey.getReferenceTable());
+                return tableNameToType(foreignKey.getReferenceTable(), false);
             }
         }
 
@@ -238,13 +254,25 @@ public final class GeneratorFactory {
         return tableNameToType(relationName, false);
     }
 
-    private RelationData createRelationData(ForeignKeyModel foreignKey) {
+    private RelationData createRelationData(ForeignKeyModel foreignKey, final List<RelationData> relations) {
 
         RelationData relation = new RelationData();
-        String relationName = generateRelationName(foreignKey);
+        String relationUpperName = generateRelationName(foreignKey);
 
-        relation.setName(relationName);
-        relation.setUpperName(CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, relationName));
+        // Check if relation already exists
+        int count = 1;
+        String tempName = relationUpperName;
+        for (RelationData r : relations) {
+            if (tempName.equals(r.getUpperName())) {
+                count += 1;
+                tempName = relationUpperName.concat(String.valueOf(count));
+            }
+        }
+        // Update relation name
+        relationUpperName = tempName;
+
+        relation.setUpperName(relationUpperName);
+        relation.setName(CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, relationUpperName));
         relation.setType(tableNameToType(foreignKey.getReferenceTable(), true));
 
         List<RelationReferenceData> relationReferences = new ArrayList<>();
