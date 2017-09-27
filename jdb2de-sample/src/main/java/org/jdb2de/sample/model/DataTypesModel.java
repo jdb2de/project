@@ -33,7 +33,7 @@ import java.util.Date;
 import java.util.UUID;
 
 /**
- * Customer registration
+ * PostgreSQL available data types
  * <b>TABLE:</b> data_types
  *
  * This entity was automatically created by JDB2DE tool
@@ -42,7 +42,7 @@ import java.util.UUID;
  */
 @Entity
 @Table(name = "data_types")
-@Generated(value = "jdb2de", date = "2017-09-26 00:09:00", comments = "You should not modify it by hand")
+@Generated(value = "jdb2de", date = "2017-09-26 23:02:22", comments = "You should not modify it by hand")
 public class DataTypesModel implements Serializable {
 
     /**
