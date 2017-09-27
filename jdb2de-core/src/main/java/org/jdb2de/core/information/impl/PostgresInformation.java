@@ -3,7 +3,7 @@ package org.jdb2de.core.information.impl;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jdb2de.core.component.DatabaseConnection;
-import org.jdb2de.core.factory.GeneratorFactory;
+import org.jdb2de.core.component.GeneratorFactory;
 import org.jdb2de.core.information.IDatabaseInformation;
 import org.jdb2de.core.model.ColumnModel;
 import org.jdb2de.core.model.ColumnParameterModel;
@@ -32,10 +32,11 @@ import java.util.stream.Collectors;
 @PropertySource("classpath:/queries/postgresql.properties")
 public class PostgresInformation implements IDatabaseInformation {
 
-    public static final String NULLABLE_FALSE = "YES";
+    private static final String NULLABLE_FALSE = "YES";
 
-    @Autowired
-    private DatabaseConnection databaseConnection;
+    private final DatabaseConnection databaseConnection;
+
+    private final GeneratorFactory factory;
 
     @Value("${pg.all.tables}")
     private String sqlAllTables;
@@ -72,11 +73,18 @@ public class PostgresInformation implements IDatabaseInformation {
 
     private Map<String, TranslateTypeModel> types;
 
+    @Autowired
+    public PostgresInformation(DatabaseConnection databaseConnection, GeneratorFactory factory) {
+        this.databaseConnection = databaseConnection;
+        this.factory = factory;
+    }
+
     @Override
     public List<String> allTables(String regex) {
         List<String> ls = new ArrayList<>();
-        databaseConnection.getJdbc().query(sqlAllTables, GeneratorUtils.toArray(databaseConnection.getSchema()),
-                (rs, rowNum) -> rs.getString("relname")).forEach(ls::add);
+        ls.addAll(databaseConnection.getJdbc().query(sqlAllTables,
+                GeneratorUtils.toArray(databaseConnection.getSchema()),
+                (rs, rowNum) -> rs.getString("relname")));
 
         if (StringUtils.isNotEmpty(regex)) {
             ls = ls.stream().filter(s -> s.matches(regex)).collect(Collectors.toList());
@@ -88,9 +96,9 @@ public class PostgresInformation implements IDatabaseInformation {
     @Override
     public List<String> tablePrimaryKeyColumns(String tableName) {
         List<String> ls = new ArrayList<>();
-        databaseConnection.getJdbc().query(sqlTablePrimaryKeyColumns,
+        ls.addAll(databaseConnection.getJdbc().query(sqlTablePrimaryKeyColumns,
                 GeneratorUtils.toArray(databaseConnection.getSchema(), tableName),
-                (rs, rowNum) -> rs.getString("attname")).forEach(ls::add);
+                (rs, rowNum) -> rs.getString("attname")));
 
         return ls;
     }
@@ -106,8 +114,9 @@ public class PostgresInformation implements IDatabaseInformation {
     public List<ColumnModel> tableColumns(String tableName) {
         List<ColumnModel> ls = new ArrayList<>();
 
-        databaseConnection.getJdbc().query(sqlTableColumns, GeneratorUtils.toArray(databaseConnection.getSchema(), tableName),
-                (rs, rowNum) -> createColumnData(rs)).forEach(ls::add);
+        ls.addAll(databaseConnection.getJdbc().query(sqlTableColumns,
+                GeneratorUtils.toArray(databaseConnection.getSchema(), tableName),
+                (rs, rowNum) -> createColumnData(rs)));
         return ls;
     }
 
@@ -155,14 +164,15 @@ public class PostgresInformation implements IDatabaseInformation {
     public List<ForeignKeyModel> tableForeignKeys(String tableName) {
         List<ForeignKeyModel> ls = new ArrayList<>();
 
-        databaseConnection.getJdbc().query(sqlTableForeignKeys, GeneratorUtils.toArray(databaseConnection.getSchema(),
-                tableName), (rs, rowNum) -> createForeignKeyData(tableName, rs)).forEach(ls::add);
+        ls.addAll(databaseConnection.getJdbc().query(sqlTableForeignKeys,
+                GeneratorUtils.toArray(databaseConnection.getSchema(),
+                tableName), (rs, rowNum) -> createForeignKeyData(tableName, rs)));
         return ls;
     }
 
     @Override
     public TranslateTypeModel translateDatabaseType(String databaseType) {
-        final TranslateTypeModel objectType = GeneratorFactory.createTranslateTypeModel(Object.class.getSimpleName());
+        final TranslateTypeModel objectType = factory.createTranslateTypeModel(Object.class.getSimpleName());
         TranslateTypeModel result = getTypes().get(databaseType);
         // Undefined type
         if (result == null) {
@@ -173,12 +183,12 @@ public class PostgresInformation implements IDatabaseInformation {
 
     private Map<String, TranslateTypeModel> getTypes() {
         if (types == null) {
-            final TranslateTypeModel stringType = GeneratorFactory.createTranslateTypeModel(String.class.getSimpleName());
-            final TranslateTypeModel integerType = GeneratorFactory.createTranslateTypeModel(Integer.class.getSimpleName());
-            final TranslateTypeModel longType = GeneratorFactory.createTranslateTypeModel(Long.class.getSimpleName());
-            final TranslateTypeModel booleanType = GeneratorFactory.createTranslateTypeModel(Boolean.class.getSimpleName());
-            final TranslateTypeModel bigDecimalType = GeneratorFactory.createTranslateTypeModel(BigDecimal.class.getSimpleName(), BigDecimal.class.getName());
-            final TranslateTypeModel dateType = GeneratorFactory.createTranslateTypeModel(Date.class.getSimpleName(), Date.class.getName());
+            final TranslateTypeModel stringType = factory.createTranslateTypeModel(String.class.getSimpleName());
+            final TranslateTypeModel integerType = factory.createTranslateTypeModel(Integer.class.getSimpleName());
+            final TranslateTypeModel longType = factory.createTranslateTypeModel(Long.class.getSimpleName());
+            final TranslateTypeModel booleanType = factory.createTranslateTypeModel(Boolean.class.getSimpleName());
+            final TranslateTypeModel bigDecimalType = factory.createTranslateTypeModel(BigDecimal.class.getSimpleName(), BigDecimal.class.getName());
+            final TranslateTypeModel dateType = factory.createTranslateTypeModel(Date.class.getSimpleName(), Date.class.getName());
 
             types = new HashMap<>();
 
@@ -208,30 +218,30 @@ public class PostgresInformation implements IDatabaseInformation {
             types.put("tsquery", stringType);
 
             // Bob type
-            types.put("bytea", GeneratorFactory.createTranslateTypeModel("byte[]", true));
+            types.put("bytea", factory.createTranslateTypeModel("byte[]", true));
 
             // Specific postgre types
-            types.put("interval", GeneratorFactory.createTranslateTypeModel(PGInterval.class.getSimpleName(), PGInterval.class.getName()));
-            types.put("box", GeneratorFactory.createTranslateTypeModel(PGbox.class.getSimpleName(), PGbox.class.getName()));
-            types.put("circle", GeneratorFactory.createTranslateTypeModel(PGcircle.class.getSimpleName(), PGcircle.class.getName()));
-            types.put("polygon", GeneratorFactory.createTranslateTypeModel(PGpolygon.class.getSimpleName(), PGpolygon.class.getName()));
-            types.put("line", GeneratorFactory.createTranslateTypeModel(PGline.class.getSimpleName(), PGline.class.getName()));
-            types.put("point", GeneratorFactory.createTranslateTypeModel(PGpoint.class.getSimpleName(), PGpoint.class.getName()));
-            types.put("lseg", GeneratorFactory.createTranslateTypeModel(PGlseg.class.getSimpleName(), PGlseg.class.getName()));
-            types.put("path", GeneratorFactory.createTranslateTypeModel(PGpath.class.getSimpleName(), PGpath.class.getName()));
-            types.put("uuid", GeneratorFactory.createTranslateTypeModel(UUID.class.getSimpleName(), UUID.class.getName()));
+            types.put("interval", factory.createTranslateTypeModel(PGInterval.class.getSimpleName(), PGInterval.class.getName()));
+            types.put("box", factory.createTranslateTypeModel(PGbox.class.getSimpleName(), PGbox.class.getName()));
+            types.put("circle", factory.createTranslateTypeModel(PGcircle.class.getSimpleName(), PGcircle.class.getName()));
+            types.put("polygon", factory.createTranslateTypeModel(PGpolygon.class.getSimpleName(), PGpolygon.class.getName()));
+            types.put("line", factory.createTranslateTypeModel(PGline.class.getSimpleName(), PGline.class.getName()));
+            types.put("point", factory.createTranslateTypeModel(PGpoint.class.getSimpleName(), PGpoint.class.getName()));
+            types.put("lseg", factory.createTranslateTypeModel(PGlseg.class.getSimpleName(), PGlseg.class.getName()));
+            types.put("path", factory.createTranslateTypeModel(PGpath.class.getSimpleName(), PGpath.class.getName()));
+            types.put("uuid", factory.createTranslateTypeModel(UUID.class.getSimpleName(), UUID.class.getName()));
         }
         return types;
     }
 
     /**
      *
-     * @param tableName
-     * @return
+     * @param tableName Table name
+     * @return A {@link Integer} with table oid
      */
     private Integer tableOid(String tableName) {
-        return databaseConnection.getJdbc().queryForObject(sqlTableOid, GeneratorUtils.toArray(databaseConnection.getSchema(),
-                tableName), Integer.class);
+        return databaseConnection.getJdbc().queryForObject(sqlTableOid,
+                GeneratorUtils.toArray(databaseConnection.getSchema(), tableName), Integer.class);
     }
 
     /**
@@ -300,9 +310,9 @@ public class PostgresInformation implements IDatabaseInformation {
 
     /**
      *
-     * @param tableOid
-     * @param columnIndex
-     * @return
+     * @param tableOid Table OID
+     * @param columnIndex Column index identification
+     * @return A {@link String} with column description
      */
     private String columnDescription(Integer tableOid, Integer columnIndex) {
         return databaseConnection.getJdbc().queryForObject(sqlColumnDescription,

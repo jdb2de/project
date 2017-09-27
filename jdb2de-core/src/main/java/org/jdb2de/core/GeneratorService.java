@@ -4,9 +4,9 @@ import com.google.common.base.Preconditions;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jdb2de.core.component.EntityCreator;
+import org.jdb2de.core.component.GeneratorFactory;
 import org.jdb2de.core.data.ParameterData;
 import org.jdb2de.core.exception.ValidationException;
-import org.jdb2de.core.factory.GeneratorFactory;
 import org.jdb2de.core.information.IDatabaseInformation;
 import org.jdb2de.core.model.ColumnModel;
 import org.jdb2de.core.model.ColumnParameterModel;
@@ -51,13 +51,17 @@ public class GeneratorService {
 
     private final EntityCreator entityCreator;
 
+    private final GeneratorFactory factory;
+
     private String searchRegex;
 
     @Autowired
-    public GeneratorService(ParameterData parameters, IDatabaseInformation information, EntityCreator entityCreator) {
+    public GeneratorService(ParameterData parameters, IDatabaseInformation information, EntityCreator entityCreator,
+                            GeneratorFactory factory) {
         this.information = information;
         this.parameters = parameters;
         this.entityCreator = entityCreator;
+        this.factory = factory;
     }
 
     @PostConstruct
@@ -194,7 +198,7 @@ public class GeneratorService {
         }
 
         // Create table model
-        TableModel table = GeneratorFactory.createTableModel(tableName, comment, primaryKeyColumns, columns);
+        TableModel table = factory.createTableModel(tableName, comment, primaryKeyColumns, columns);
         table.setForeignKeys(foreignKeys);
 
         return table;

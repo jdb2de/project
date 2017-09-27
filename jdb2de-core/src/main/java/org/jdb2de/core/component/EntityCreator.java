@@ -9,7 +9,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.jdb2de.core.data.EntityData;
 import org.jdb2de.core.data.FieldData;
 import org.jdb2de.core.data.ParameterData;
-import org.jdb2de.core.factory.GeneratorFactory;
 import org.jdb2de.core.model.TableModel;
 import org.jdb2de.core.util.GeneratorUtils;
 import org.slf4j.Logger;
@@ -39,11 +38,13 @@ public class EntityCreator {
 
     private String compositePkPath;
     private final ParameterData parameters;
+    private final GeneratorFactory factory;
     private final Configuration freemarkerConfig;
 
     @Autowired
-    public EntityCreator(ParameterData parameters, Configuration freemarkerConfig) {
+    public EntityCreator(ParameterData parameters, GeneratorFactory factory, Configuration freemarkerConfig) {
         this.parameters = parameters;
+        this.factory = factory;
         this.freemarkerConfig = freemarkerConfig;
     }
 
@@ -54,7 +55,8 @@ public class EntityCreator {
      */
     private void createCompositePkPath() throws IOException {
 
-        String additionalPath = StringUtils.replace(parameters.getCompositePrimaryKeyPackage(), parameters.getEntityPackage(), "");
+        String additionalPath = StringUtils.replace(parameters.getCompositePrimaryKeyPackage(),
+                parameters.getEntityPackage(), "");
         additionalPath = StringUtils.replace(additionalPath, ".", File.separator);
         compositePkPath = parameters.getEntityPath().concat(additionalPath);
         if (!parameters.getEntityPackage().equals(parameters.getCompositePrimaryKeyPackage())) {
@@ -87,17 +89,17 @@ public class EntityCreator {
 
             List<FieldData> fields = new ArrayList<>();
             // Convert columns to fields
-            table.getColumns().stream().map(GeneratorFactory::createFieldData).forEach(fields::add);
+            table.getColumns().stream().map(factory::createFieldData).forEach(fields::add);
 
             // Create entity instance
-            EntityData entity = GeneratorFactory.createEntityData(table, fields, parameters);
+            EntityData entity = factory.createEntityData(table, fields);
             entity.setImports(GeneratorUtils.createImportList(table.getColumns()));
             entities.add(entity);
         }
 
         // Generate many relations and save file
         for (EntityData entity : entities) {
-            entity.setManyRelations(GeneratorFactory.createManyRelations(entity, entities));
+            entity.setManyRelations(factory.createManyRelations(entity, entities));
             params.put(ENTITY_KEY, entity);
             saveFile(params);
         }

@@ -1,4 +1,4 @@
-package org.jdb2de.core.factory;
+package org.jdb2de.core.component;
 
 import com.google.common.base.CaseFormat;
 import org.apache.commons.collections4.CollectionUtils;
@@ -9,6 +9,9 @@ import org.jdb2de.core.model.ForeignKeyModel;
 import org.jdb2de.core.model.TableModel;
 import org.jdb2de.core.model.TranslateTypeModel;
 import org.jdb2de.core.util.GeneratorUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,14 +20,18 @@ import java.util.List;
  *
  * @author Rodrigo Tavares
  */
+@Component
+@Scope(value = "singleton")
 public final class GeneratorFactory {
 
-    private static final String RELATION_MANY_SUFFIX = "List";
-
+    private final ParameterData parameters;
+    
     /**
      * Constructor omitted
      */
-    private GeneratorFactory() {
+    @Autowired
+    private GeneratorFactory(ParameterData parameters) {
+        this.parameters = parameters;
     }
 
     /**
@@ -36,7 +43,8 @@ public final class GeneratorFactory {
      * @param columns Table columns
      * @return A new instance of {@link TableModel}
      */
-    public static TableModel createTableModel(String tableName, String comment, List<String> primaryKeyColumn, List<ColumnModel> columns) {
+    public TableModel createTableModel(String tableName, String comment, List<String> primaryKeyColumn,
+                                       List<ColumnModel> columns) {
         TableModel table = new TableModel();
         table.setName(tableName);
         table.setComment(comment);
@@ -50,7 +58,7 @@ public final class GeneratorFactory {
      * @param type Type identification
      * @return A new instance of {@link TranslateTypeModel}
      */
-    public static TranslateTypeModel createTranslateTypeModel(String type) {
+    public TranslateTypeModel createTranslateTypeModel(String type) {
         return createTranslateTypeModel(type, null, false);
     }
 
@@ -60,7 +68,7 @@ public final class GeneratorFactory {
      * @param isLob
      * @return A new instance of {@link TranslateTypeModel}
      */
-    public static TranslateTypeModel createTranslateTypeModel(String type, boolean isLob) {
+    public TranslateTypeModel createTranslateTypeModel(String type, boolean isLob) {
         return createTranslateTypeModel(type, null, isLob);
     }
 
@@ -70,7 +78,7 @@ public final class GeneratorFactory {
      * @param typeImport
      * @return A new instance of {@link TranslateTypeModel}
      */
-    public static TranslateTypeModel createTranslateTypeModel(String type, String typeImport) {
+    public TranslateTypeModel createTranslateTypeModel(String type, String typeImport) {
         return createTranslateTypeModel(type, typeImport, false);
     }
 
@@ -81,7 +89,7 @@ public final class GeneratorFactory {
      * @param isLob Indicate if type is binary (blob, clob, lob, etc)
      * @return A new instance of {@link TranslateTypeModel}
      */
-    private static TranslateTypeModel createTranslateTypeModel(String type, String typeImport, boolean isLob) {
+    private TranslateTypeModel createTranslateTypeModel(String type, String typeImport, boolean isLob) {
         TranslateTypeModel translateType = new TranslateTypeModel();
         translateType.setTargetType(type);
         translateType.setTargetImport(typeImport);
@@ -92,13 +100,13 @@ public final class GeneratorFactory {
     /**
      *
      * @param tableName Table name
-     * @param suffix Entity name suffix
+     * @param useSuffix Indicates if
      * @return A {@link String} with type name
      */
-    private static String tableNameToType(String tableName, String suffix) {
+    private String tableNameToType(String tableName, boolean useSuffix) {
         String typeName = GeneratorUtils.underscoreToUpperCamelcase(tableName);
-        if (StringUtils.isNotEmpty(suffix)) {
-            String entitySuffix = CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, suffix);
+        if (useSuffix && StringUtils.isNotEmpty(parameters.getEntitySuffix())) {
+            String entitySuffix = CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, parameters.getEntitySuffix());
             typeName = typeName.concat(entitySuffix);
         }
 
@@ -109,15 +117,14 @@ public final class GeneratorFactory {
      * Create a new instance of {@link EntityData}
      * @param table Table name
      * @param fields List of {@link FieldData}
-     * @param parameter Generator parameters
      * @return A new instance of {@link EntityData}
      */
-    public static EntityData createEntityData(TableModel table, List<FieldData> fields, ParameterData parameter) {
+    public EntityData createEntityData(TableModel table, List<FieldData> fields) {
 
         EntityData entity = new EntityData();
-        entity.setPackageName(parameter.getEntityPackage());
+        entity.setPackageName(parameters.getEntityPackage());
         entity.setTable(table);
-        entity.setName(tableNameToType(table.getName(), parameter.getEntitySuffix()));
+        entity.setName(tableNameToType(table.getName(), true));
         entity.setFields(fields);
 
         String typeName = StringUtils.trim(entity.getPackageName()).concat(".");
@@ -126,14 +133,14 @@ public final class GeneratorFactory {
 
         if (CollectionUtils.isNotEmpty(table.getForeignKeys())) {
             List<RelationData> relations = new ArrayList<>();
-            table.getForeignKeys().forEach(f -> relations.add(createRelationData(f, parameter)));
+            table.getForeignKeys().forEach(foreignKey -> relations.add(createRelationData(foreignKey)));
             entity.setOneRelations(relations);
         }
 
         return entity;
     }
 
-    public static FieldData createFieldData(ColumnModel column) {
+    public FieldData createFieldData(ColumnModel column) {
 
         FieldData field = new FieldData();
         field.setColumn(column);
@@ -144,13 +151,14 @@ public final class GeneratorFactory {
         return field;
     }
 
-    private static String generateRelationManyName(EntityData entityRelation, RelationData relationOne) {
-        String relationManyName = tableNameToType(entityRelation.getTable().getName(), null);
+    private String generateRelationManyName(EntityData entityRelation, RelationData relationOne) {
+        final String relationManySuffix = "List";
+        String relationManyName = tableNameToType(entityRelation.getTable().getName(), false);
         relationManyName = relationManyName.concat(CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, relationOne.getName()));
-        return CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, relationManyName.concat(RELATION_MANY_SUFFIX));
+        return CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, relationManyName.concat(relationManySuffix));
     }
 
-    public static List<RelationData> createManyRelations(EntityData entity, List<EntityData> entities) {
+    public List<RelationData> createManyRelations(EntityData entity, List<EntityData> entities) {
         List<RelationData> relationsMany = new ArrayList<>();
         for (EntityData entityRelation : entities) {
             for (RelationData relationOne : entityRelation.getOneRelations()) {
@@ -174,7 +182,7 @@ public final class GeneratorFactory {
         return relationsMany;
     }
 
-    private static String generateRelationName(ForeignKeyModel foreignKey, ParameterData parameter) {
+    private String generateRelationName(ForeignKeyModel foreignKey) {
 
         String mainRelationColumn = null;
         // If there is only one column, gets the first one
@@ -196,18 +204,18 @@ public final class GeneratorFactory {
         }
 
         // Remove from main primary key column name the primary key
-        String relationName = mainRelationColumn.replaceAll(parameter.getPrimaryKeyFieldNameRegex(), "");
+        String relationName = mainRelationColumn.replaceAll(parameters.getPrimaryKeyFieldNameRegex(), "");
         return GeneratorUtils.underscoreToLowerCamelcase(relationName);
     }
 
-    private static RelationData createRelationData(ForeignKeyModel foreignKey, ParameterData parameter) {
+    private RelationData createRelationData(ForeignKeyModel foreignKey) {
 
         RelationData relation = new RelationData();
-        String relationName = generateRelationName(foreignKey, parameter);
+        String relationName = generateRelationName(foreignKey);
 
         relation.setName(relationName);
         relation.setUpperName(CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, relationName));
-        relation.setType(tableNameToType(foreignKey.getReferenceTable(), parameter.getEntitySuffix()));
+        relation.setType(tableNameToType(foreignKey.getReferenceTable(), true));
 
         List<RelationReferenceData> relationReferences = new ArrayList<>();
         for (int i = 0; i < foreignKey.getColumns().size(); i++) {
