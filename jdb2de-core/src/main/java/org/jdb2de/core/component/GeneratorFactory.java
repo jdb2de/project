@@ -13,8 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -29,14 +29,21 @@ public final class GeneratorFactory {
      */
     private static final String RELATION_MANY_SUFFIX = "List";
 
+    /**
+     * Suffix for composite primary keys
+     */
+    private static final String COMPOSITE_PRIMARY_KEY_SUFFIX = "PK";
+
     private final ParameterData parameters;
-    
+    private final ConnectionConfigurationData connectionConfigurationData;
+
     /**
      * Constructor omitted
      */
     @Autowired
-    private GeneratorFactory(ParameterData parameters) {
+    private GeneratorFactory(ParameterData parameters, ConnectionConfigurationData connectionConfigurationData) {
         this.parameters = parameters;
+        this.connectionConfigurationData = connectionConfigurationData;
     }
 
     /**
@@ -51,6 +58,8 @@ public final class GeneratorFactory {
     public TableModel createTableModel(String tableName, String comment, List<String> primaryKeyColumn,
                                        List<ColumnModel> columns) {
         TableModel table = new TableModel();
+        table.setSchema(connectionConfigurationData.getSchema());
+        table.setCatalog(connectionConfigurationData.getCatalog());
         table.setName(tableName);
         table.setComment(comment);
         table.setColumns(columns);
@@ -111,7 +120,7 @@ public final class GeneratorFactory {
     private String tableNameToType(String tableName, boolean useSuffix) {
 
         String table = clearName(tableName,
-                parameters.isTableNameRegexCleanPrimaryKeyField());;
+                parameters.isTableNameRegexCleanPrimaryKeyField());
         if (StringUtils.isNotEmpty(parameters.getTableNameRegex()) && parameters.isTableNameRegexCleanEntityName()) {
             table = table.replaceFirst(parameters.getTableNameRegex(), "");
             if (table.startsWith("_")) {
@@ -163,6 +172,28 @@ public final class GeneratorFactory {
         return table;
     }
 
+    private List<String> createImportList(List<FieldData> fields) {
+        // Check if fields are empty
+        List<String> imports = new ArrayList<>();
+        if (CollectionUtils.isEmpty(fields)) {
+            return imports;
+        }
+
+        // Temporally list for unique imports
+        Set<String> tmpImports = new HashSet<>();
+        fields.forEach(field -> {
+            // Add if not null
+            if (StringUtils.isNotEmpty(field.getTypeImport())) {
+                tmpImports.add(field.getTypeImport());
+            }
+        });
+
+        // Create a ordered list with imports
+        imports.addAll(tmpImports);
+        Collections.sort(imports);
+        return imports;
+    }
+
     /**
      * Create a new instance of {@link EntityData}
      * @param table Table name
@@ -172,12 +203,12 @@ public final class GeneratorFactory {
     public EntityData createEntityData(TableModel table, List<FieldData> fields) {
 
         EntityData entity = new EntityData();
-        entity.setPackageName(parameters.getEntityPackage());
+        entity.setPackageName(StringUtils.trim(parameters.getEntityPackage()));
         entity.setTable(table);
         entity.setName(tableNameToType(table.getName(), true));
         entity.setFields(fields);
 
-        String typeName = StringUtils.trim(entity.getPackageName()).concat(".");
+        String typeName = entity.getPackageName().concat(".");
         typeName += StringUtils.trim(entity.getName());
         entity.setSerialUid(GeneratorUtils.generateSerialVersionUUID(entity.getName(), typeName));
 
@@ -187,6 +218,9 @@ public final class GeneratorFactory {
             entity.setOneRelations(relations);
         }
 
+        List<String> imports = createImportList(entity.getFields());
+        entity.setImports(imports);
+
         return entity;
     }
 
@@ -195,6 +229,7 @@ public final class GeneratorFactory {
         field.setColumn(column);
         field.setName(GeneratorUtils.underscoreToLowerCamelcase(column.getName()));
         field.setUpperName(GeneratorUtils.underscoreToUpperCamelcase(column.getName()));
+        field.setTypeImport(column.getTranslatedType().getTargetImport());
         field.setType(column.getTranslatedType().getTargetType());
 
         return field;
@@ -289,6 +324,29 @@ public final class GeneratorFactory {
         relation.setColumns(relationReferences);
 
         return relation;
+    }
+
+    public CompositePrimaryKeyData createCompositePrimaryKeyData(EntityData entity) {
+
+        CompositePrimaryKeyData compositePrimaryKey = new CompositePrimaryKeyData();
+        compositePrimaryKey.setEntity(entity);
+        compositePrimaryKey.setPackageName(StringUtils.trim(parameters.getCompositePrimaryKeyPackage()));
+        compositePrimaryKey.setName(tableNameToType(entity.getTable().getName(), false).concat(
+                COMPOSITE_PRIMARY_KEY_SUFFIX));
+
+        String compositePrimaryKeyTypeName = compositePrimaryKey.getPackageName().concat(".");
+        compositePrimaryKeyTypeName += StringUtils.trim(compositePrimaryKey.getName());
+        compositePrimaryKey.setSerialUid(GeneratorUtils.generateSerialVersionUUID(compositePrimaryKey.getName(),
+                compositePrimaryKeyTypeName));
+
+        List<FieldData> fields = entity.getFields().stream().filter(
+                field -> field.getColumn().isPrimaryKey()).collect(Collectors.toList());
+        compositePrimaryKey.setFields(fields);
+
+        List<String> imports = createImportList(fields);
+        compositePrimaryKey.setImports(imports);
+
+        return compositePrimaryKey;
     }
 
 }

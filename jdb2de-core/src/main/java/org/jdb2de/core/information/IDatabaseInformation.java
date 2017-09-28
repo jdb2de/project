@@ -13,6 +13,10 @@ import java.util.List;
  */
 public interface IDatabaseInformation {
 
+    String getSchema();
+
+    String getCatalog();
+
     /**
      * Query in the database all table names from the specified schema
      *

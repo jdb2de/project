@@ -2,7 +2,7 @@ package org.jdb2de.core.component;
 
 import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.StringUtils;
-import org.jdb2de.core.data.ConnectionData;
+import org.jdb2de.core.data.ConnectionConfigurationData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,23 +28,23 @@ public class DatabaseConnection {
     private static final Logger LOG = LoggerFactory.getLogger(DatabaseConnection.class);
 
     @Autowired
-    public DatabaseConnection(ConnectionData connectionData) {
-        this.connectionData = connectionData;
+    public DatabaseConnection(ConnectionConfigurationData connectionConfigurationData) {
+        this.connectionConfigurationData = connectionConfigurationData;
     }
 
-    private ConnectionData connectionData;
+    private ConnectionConfigurationData connectionConfigurationData;
     private Connection connection;
     private JdbcTemplate jdbcTemplate;
 
     private Connection getConnection() {
         if (connection == null) {
             try {
-                Class.forName(connectionData.getDriver());
-                connection = DriverManager.getConnection(connectionData.getUrl(), connectionData.getUserName(),
-                        connectionData.getPassword());
+                Class.forName(connectionConfigurationData.getDriver());
+                connection = DriverManager.getConnection(connectionConfigurationData.getUrl(), connectionConfigurationData.getUserName(),
+                        connectionConfigurationData.getPassword());
             } catch (ClassNotFoundException|SQLException e) {
                 LOG.error("Failed to connect to database [user={}, pass=****, url={}]", e,
-                        connectionData.getUserName(), connectionData.getUrl());
+                        connectionConfigurationData.getUserName(), connectionConfigurationData.getUrl());
             }
         }
         return connection;
@@ -59,10 +59,10 @@ public class DatabaseConnection {
     }
 
     public String getSchema() {
-        return StringUtils.trimToEmpty(connectionData.getSchema());
+        return StringUtils.trimToEmpty(connectionConfigurationData.getSchema());
     }
 
     public String getCatalog() {
-        return StringUtils.trimToEmpty(connectionData.getCatalog());
+        return StringUtils.trimToEmpty(connectionConfigurationData.getCatalog());
     }
 }

@@ -6,6 +6,7 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import org.apache.commons.lang3.StringUtils;
+import org.jdb2de.core.data.CompositePrimaryKeyData;
 import org.jdb2de.core.data.EntityData;
 import org.jdb2de.core.data.FieldData;
 import org.jdb2de.core.data.ParameterData;
@@ -33,8 +34,11 @@ public class EntityCreator {
      * Instance for log registration
      */
     private static final Logger LOG = LoggerFactory.getLogger(EntityCreator.class);
+    private static final String PARAMETER_KEY = "param";
     private static final String ENTITY_KEY = "entity";
-    private static final String ENTITY_NAME_PATTERN = "{}.java";
+    private static final String COMPOSITE_NAME_KEY = "compositeName";
+    private static final String COMPOSITE_KEY = "composite";
+    private static final String JAVA_FILE_PATTERN = "{}.java";
 
     private String compositePkPath;
     private final ParameterData parameters;
@@ -78,14 +82,10 @@ public class EntityCreator {
 
         // Parameters to file generation
         Map<String, Object> params = new HashMap<>();
-        params.put("param", parameters);
+        params.put(PARAMETER_KEY, parameters);
 
         List<EntityData> entities = new ArrayList<>();
         for (TableModel table : tables) {
-            // TODO Implements composite key generation
-            if (table.isCompositeKey()) {
-                continue;
-            }
 
             List<FieldData> fields = new ArrayList<>();
             // Convert columns to fields
@@ -93,23 +93,39 @@ public class EntityCreator {
 
             // Create entity instance
             EntityData entity = factory.createEntityData(table, fields);
-            entity.setImports(GeneratorUtils.createImportList(table.getColumns()));
             entities.add(entity);
         }
 
         // Generate many relations and save file
+        List<CompositePrimaryKeyData> compositePrimaryKeys = new ArrayList<>();
         for (EntityData entity : entities) {
             entity.setManyRelations(factory.createManyRelations(entity, entities));
             params.put(ENTITY_KEY, entity);
-            saveFile(params);
+
+            if (entity.getTable().isCompositeKey()) {
+                CompositePrimaryKeyData compositePrimaryKey = factory.createCompositePrimaryKeyData(entity);
+                compositePrimaryKeys.add(compositePrimaryKey);
+                params.put(COMPOSITE_NAME_KEY, compositePrimaryKey.getName());
+            }
+
+            saveEntityFile(params);
+        }
+
+        // Remove unneeded parameters
+        params.remove(ENTITY_KEY);
+        params.remove(COMPOSITE_NAME_KEY);
+
+        for (CompositePrimaryKeyData compositePrimaryKey : compositePrimaryKeys) {
+            params.put(COMPOSITE_KEY, compositePrimaryKey);
+            saveCompositePrimaryKeyFile(params);
         }
     }
 
     /**
      *
-     * @param params Entity content
+     * @param params Composite primary key content
      */
-    private void saveFile(Map<String, Object> params) {
+    private void saveEntityFile(Map<String, Object> params) {
         String strEntity;
         try {
             Template template = freemarkerConfig.getTemplate("entity.ftl");
@@ -119,22 +135,51 @@ public class EntityCreator {
         }
 
         EntityData entity = (EntityData)params.get(ENTITY_KEY);
-        String fileName = GeneratorUtils.messageFormat(ENTITY_NAME_PATTERN, entity.getName());
+        String fileName = GeneratorUtils.messageFormat(JAVA_FILE_PATTERN, entity.getName());
         try {
             LOG.info("Saving entity {}", entity.getName());
             LOG.debug("Entity content:\n{}", strEntity);
 
-            Path entityPath = Paths.get(parameters.getEntityPath(), fileName);
+            Path savePath = Paths.get(parameters.getEntityPath(), fileName);
 
-            LOG.info("Entity path: {}", entityPath);
-            if (java.nio.file.Files.deleteIfExists(entityPath)) {
+            LOG.info("Entity path: {}", savePath);
+            if (java.nio.file.Files.deleteIfExists(savePath)) {
                 LOG.info("Previous entity removed");
             }
 
-            Files.write(strEntity.getBytes(), entityPath.toFile());
+            Files.write(strEntity.getBytes(), savePath.toFile());
             LOG.info("Entity {} created", fileName);
         } catch (IOException e) {
             LOG.error("Failed to save entity to file: {}", e, fileName);
+        }
+    }
+
+    private void saveCompositePrimaryKeyFile(Map<String, Object> params) {
+        String strCompositePrimaryKey;
+        try {
+            Template template = freemarkerConfig.getTemplate("composite-primary-key.ftl");
+            strCompositePrimaryKey = FreeMarkerTemplateUtils.processTemplateIntoString(template, params);
+        } catch (IOException | TemplateException e) {
+            throw new RuntimeException("Error to generate Entity content", e);
+        }
+
+        CompositePrimaryKeyData compositePrimaryKey = (CompositePrimaryKeyData)params.get(COMPOSITE_KEY);
+        String fileName = GeneratorUtils.messageFormat(JAVA_FILE_PATTERN, compositePrimaryKey.getName());
+        try {
+            LOG.info("Saving composite primary key {}", compositePrimaryKey.getName());
+            LOG.debug("Composite Primary Key content:\n{}", strCompositePrimaryKey);
+
+            Path savePath = Paths.get(compositePkPath, fileName);
+
+            LOG.info("Composite Primary Key path: {}", savePath);
+            if (java.nio.file.Files.deleteIfExists(savePath)) {
+                LOG.info("Previous composite primary key removed");
+            }
+
+            Files.write(strCompositePrimaryKey.getBytes(), savePath.toFile());
+            LOG.info("Composite Primary Key {} created", fileName);
+        } catch (IOException e) {
+            LOG.error("Failed to save composite primary key to file: {}", e, fileName);
         }
     }
 

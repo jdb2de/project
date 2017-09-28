@@ -80,6 +80,16 @@ public class PostgresInformation implements IDatabaseInformation {
     }
 
     @Override
+    public String getSchema() {
+        return databaseConnection.getSchema();
+    }
+
+    @Override
+    public String getCatalog() {
+        return databaseConnection.getCatalog();
+    }
+
+    @Override
     public List<String> allTables(String regex) {
         List<String> ls = new ArrayList<>();
         ls.addAll(databaseConnection.getJdbc().query(sqlAllTables,

@@ -15,6 +15,7 @@ public class FieldData implements Serializable {
 
     private String name;
     private String upperName;
+    private String typeImport;
     private String type;
     private ColumnModel column;
 
@@ -32,6 +33,14 @@ public class FieldData implements Serializable {
 
     public void setUpperName(String upperName) {
         this.upperName = upperName;
+    }
+
+    public String getTypeImport() {
+        return typeImport;
+    }
+
+    public void setTypeImport(String typeImport) {
+        this.typeImport = typeImport;
     }
 
     public String getType() {
@@ -57,7 +66,7 @@ public class FieldData implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(name, upperName, type, column);
+        return Objects.hashCode(name, upperName, typeImport, type, column);
     }
 
     @Override
@@ -65,6 +74,7 @@ public class FieldData implements Serializable {
         return MoreObjects.toStringHelper(this)
                 .add("name", name)
                 .add("upperName", upperName)
+                .add("typeImport", typeImport)
                 .add("type", type)
                 .add("column", column)
                 .toString();

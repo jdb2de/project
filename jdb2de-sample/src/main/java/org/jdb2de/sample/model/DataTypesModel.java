@@ -36,13 +36,12 @@ import java.util.UUID;
  * PostgreSQL available data types
  * <b>TABLE:</b> data_types
  *
- * This entity was automatically created by JDB2DE tool
- *
+ * Automatically created by JDB2DE tool
  * @author Rodrigo Tavares
  */
 @Entity
-@Table(name = "data_types")
-@Generated(value = "jdb2de", date = "2017-09-26 23:02:22", comments = "You should not modify it by hand")
+@Table(name = "data_types", schema = "public", catalog = "public")
+@Generated(value = "jdb2de", date = "2017-09-28 00:13:12", comments = "You should not modify it by hand")
 public class DataTypesModel implements Serializable {
 
     /**

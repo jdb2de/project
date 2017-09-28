@@ -33,13 +33,12 @@ import java.util.Set;
  * Simple
  * <b>TABLE:</b> simple
  *
- * This entity was automatically created by JDB2DE tool
- *
+ * Automatically created by JDB2DE tool
  * @author Rodrigo Tavares
  */
 @Entity
-@Table(name = "simple")
-@Generated(value = "jdb2de", date = "2017-09-26 23:02:22", comments = "You should not modify it by hand")
+@Table(name = "simple", schema = "public", catalog = "public")
+@Generated(value = "jdb2de", date = "2017-09-28 00:13:12", comments = "You should not modify it by hand")
 public class SimpleModel implements Serializable {
 
     /**
@@ -63,14 +62,17 @@ public class SimpleModel implements Serializable {
     @Column(name = "creation_date", nullable = false)
     private Date creationDate;
 
-    @OneToMany(mappedBy = "Simple", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "simple", fetch = FetchType.LAZY)
     private Set<MultipleRelationModel> multipleRelationSimpleList;
 
-    @OneToMany(mappedBy = "SimpleOne", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "simpleOne", fetch = FetchType.LAZY)
     private Set<MultipleRelationModel> multipleRelationSimpleOneList;
 
-    @OneToMany(mappedBy = "SimpleTwo", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "simpleTwo", fetch = FetchType.LAZY)
     private Set<MultipleRelationModel> multipleRelationSimpleTwoList;
+
+    @OneToMany(mappedBy = "simple", fetch = FetchType.LAZY)
+    private Set<CompositeModel> compositeSimpleList;
 
     /**
      * Simple identification
@@ -132,6 +134,14 @@ public class SimpleModel implements Serializable {
         this.multipleRelationSimpleTwoList = multipleRelationSimpleTwoList;
     }
 
+    public Set<CompositeModel> getCompositeSimpleList() {
+        return compositeSimpleList;
+    }
+
+    public void setCompositeSimpleList(Set<CompositeModel> compositeSimpleList) {
+        this.compositeSimpleList = compositeSimpleList;
+    }
+
     @Override
     public boolean equals(Object obj) {
         return Objects.equal(this, obj);
@@ -145,6 +155,7 @@ public class SimpleModel implements Serializable {
             ,multipleRelationSimpleList
             ,multipleRelationSimpleOneList
             ,multipleRelationSimpleTwoList
+            ,compositeSimpleList
         );
     }
 
@@ -156,6 +167,7 @@ public class SimpleModel implements Serializable {
                 .add("multipleRelationSimpleList", multipleRelationSimpleList)
                 .add("multipleRelationSimpleOneList", multipleRelationSimpleOneList)
                 .add("multipleRelationSimpleTwoList", multipleRelationSimpleTwoList)
+                .add("compositeSimpleList", compositeSimpleList)
                 .toString();
     }
 }

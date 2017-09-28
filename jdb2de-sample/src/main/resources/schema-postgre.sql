@@ -87,9 +87,20 @@ CREATE TABLE simple (
   creation_date DATE    NOT NULL DEFAULT now()
 );
 
-COMMENT ON TABLE  simple               IS 'Simple';
-COMMENT ON COLUMN simple.id            IS 'Simple identification';
+COMMENT ON TABLE  simple               IS 'Simple table';
+COMMENT ON COLUMN simple.id            IS 'Simple table identification';
 COMMENT ON COLUMN simple.creation_date IS 'Creation date';
+
+CREATE TABLE composite (
+  id            INTEGER NOT NULL,
+  simple_id     INTEGER NOT NULL,
+  creation_date DATE    NOT NULL DEFAULT now()
+);
+
+COMMENT ON TABLE  composite               IS 'Composite primary key';
+COMMENT ON COLUMN composite.id            IS 'Composite primary key identification';
+COMMENT ON COLUMN composite.simple_id     IS 'Simple table identification';
+COMMENT ON COLUMN composite.creation_date IS 'Creation date';
 
 CREATE TABLE multiple_relation (
   id            INTEGER NOT NULL,
@@ -132,6 +143,9 @@ ALTER TABLE ONLY data_types
 ALTER TABLE ONLY simple
   ADD CONSTRAINT simple_pk PRIMARY KEY (id);
 
+ALTER TABLE ONLY composite
+  ADD CONSTRAINT composite_pk PRIMARY KEY (id, simple_id);
+
 ALTER TABLE ONLY multiple_relation
   ADD CONSTRAINT multiple_relation_pk PRIMARY KEY (id);
 
@@ -144,14 +158,14 @@ ALTER TABLE ONLY tb_prefix_relation
 -- #################################
 -- FOREIGN KEYS
 -- #################################
+ALTER TABLE ONLY composite
+  ADD CONSTRAINT composite_fk01 FOREIGN KEY (simple_id) REFERENCES simple (id);
+
 ALTER TABLE ONLY multiple_relation
   ADD CONSTRAINT multiple_relation_fk01 FOREIGN KEY (simple_id) REFERENCES simple (id);
 
 ALTER TABLE ONLY multiple_relation
   ADD CONSTRAINT multiple_relation_fk02 FOREIGN KEY (simple_one_id) REFERENCES simple (id);
-
-ALTER TABLE ONLY multiple_relation
-  ADD CONSTRAINT multiple_relation_fk03 FOREIGN KEY (simple_two_id) REFERENCES simple (id);
 
 ALTER TABLE ONLY multiple_relation
   ADD CONSTRAINT multiple_relation_fk03 FOREIGN KEY (simple_two_id) REFERENCES simple (id);

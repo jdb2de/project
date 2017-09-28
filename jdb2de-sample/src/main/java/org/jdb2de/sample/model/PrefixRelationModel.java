@@ -31,13 +31,12 @@ import java.io.Serializable;
  * Prefix relation table
  * <b>TABLE:</b> tb_prefix_relation
  *
- * This entity was automatically created by JDB2DE tool
- *
+ * Automatically created by JDB2DE tool
  * @author Rodrigo Tavares
  */
 @Entity
-@Table(name = "tb_prefix_relation")
-@Generated(value = "jdb2de", date = "2017-09-26 23:02:22", comments = "You should not modify it by hand")
+@Table(name = "tb_prefix_relation", schema = "public", catalog = "public")
+@Generated(value = "jdb2de", date = "2017-09-28 00:13:12", comments = "You should not modify it by hand")
 public class PrefixRelationModel implements Serializable {
 
     /**
@@ -63,7 +62,7 @@ public class PrefixRelationModel implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="prefix_id", referencedColumnName="id")
-    private PrefixModel Prefix;
+    private PrefixModel prefix;
 
     /**
      * Prefix table relation identification
@@ -102,11 +101,11 @@ public class PrefixRelationModel implements Serializable {
     }
 
     public PrefixModel getPrefix() {
-        return Prefix;
+        return prefix;
     }
 
-    public void setPrefix(PrefixModel Prefix) {
-        this.Prefix = Prefix;
+    public void setPrefix(PrefixModel prefix) {
+        this.prefix = prefix;
     }
 
     @Override
@@ -119,7 +118,7 @@ public class PrefixRelationModel implements Serializable {
         return Objects.hashCode(
             id
             ,prefixId
-            ,Prefix
+            ,prefix
         );
     }
 
@@ -128,7 +127,7 @@ public class PrefixRelationModel implements Serializable {
         return MoreObjects.toStringHelper(this)
                 .add("id", id)
                 .add("prefixId", prefixId)
-                .add("Prefix", Prefix)
+                .add("prefix", prefix)
                 .toString();
     }
 }

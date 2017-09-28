@@ -31,13 +31,12 @@ import java.io.Serializable;
  * Multiple relation
  * <b>TABLE:</b> multiple_relation
  *
- * This entity was automatically created by JDB2DE tool
- *
+ * Automatically created by JDB2DE tool
  * @author Rodrigo Tavares
  */
 @Entity
-@Table(name = "multiple_relation")
-@Generated(value = "jdb2de", date = "2017-09-26 23:02:22", comments = "You should not modify it by hand")
+@Table(name = "multiple_relation", schema = "public", catalog = "public")
+@Generated(value = "jdb2de", date = "2017-09-28 00:13:12", comments = "You should not modify it by hand")
 public class MultipleRelationModel implements Serializable {
 
     /**
@@ -79,15 +78,15 @@ public class MultipleRelationModel implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="simple_id", referencedColumnName="id")
-    private SimpleModel Simple;
+    private SimpleModel simple;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="simple_one_id", referencedColumnName="id")
-    private SimpleModel SimpleOne;
+    private SimpleModel simpleOne;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="simple_two_id", referencedColumnName="id")
-    private SimpleModel SimpleTwo;
+    private SimpleModel simpleTwo;
 
     /**
      * Multiple relation identification
@@ -162,27 +161,27 @@ public class MultipleRelationModel implements Serializable {
     }
 
     public SimpleModel getSimple() {
-        return Simple;
+        return simple;
     }
 
-    public void setSimple(SimpleModel Simple) {
-        this.Simple = Simple;
+    public void setSimple(SimpleModel simple) {
+        this.simple = simple;
     }
 
     public SimpleModel getSimpleOne() {
-        return SimpleOne;
+        return simpleOne;
     }
 
-    public void setSimpleOne(SimpleModel SimpleOne) {
-        this.SimpleOne = SimpleOne;
+    public void setSimpleOne(SimpleModel simpleOne) {
+        this.simpleOne = simpleOne;
     }
 
     public SimpleModel getSimpleTwo() {
-        return SimpleTwo;
+        return simpleTwo;
     }
 
-    public void setSimpleTwo(SimpleModel SimpleTwo) {
-        this.SimpleTwo = SimpleTwo;
+    public void setSimpleTwo(SimpleModel simpleTwo) {
+        this.simpleTwo = simpleTwo;
     }
 
     @Override
@@ -197,9 +196,9 @@ public class MultipleRelationModel implements Serializable {
             ,simpleId
             ,simpleOneId
             ,simpleTwoId
-            ,Simple
-            ,SimpleOne
-            ,SimpleTwo
+            ,simple
+            ,simpleOne
+            ,simpleTwo
         );
     }
 
@@ -210,9 +209,9 @@ public class MultipleRelationModel implements Serializable {
                 .add("simpleId", simpleId)
                 .add("simpleOneId", simpleOneId)
                 .add("simpleTwoId", simpleTwoId)
-                .add("Simple", Simple)
-                .add("SimpleOne", SimpleOne)
-                .add("SimpleTwo", SimpleTwo)
+                .add("simple", simple)
+                .add("simpleOne", simpleOne)
+                .add("simpleTwo", simpleTwo)
                 .toString();
     }
 }

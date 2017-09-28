@@ -26,27 +26,28 @@ import com.google.common.base.Objects;
 import javax.annotation.Generated;
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Set;
+import java.util.Date;
 
 /**
- * Prefix table
- * <b>TABLE:</b> tb_prefix
+ * Composite primary key
+ * <b>TABLE:</b> composite
  *
  * Automatically created by JDB2DE tool
  * @author Rodrigo Tavares
  */
 @Entity
-@Table(name = "tb_prefix", schema = "public", catalog = "public")
+@IdClass(CompositeModelPK.class)
+@Table(name = "composite", schema = "public", catalog = "public")
 @Generated(value = "jdb2de", date = "2017-09-28 00:13:12", comments = "You should not modify it by hand")
-public class PrefixModel implements Serializable {
+public class CompositeModel implements Serializable {
 
     /**
      * Serial Version UID
      */
-    private static final long serialVersionUID = -1542833826L;
+    private static final long serialVersionUID = -1963347500L;
 
     /**
-     * Prefix table identification
+     * Composite primary key identification
      * <b>FIELD: </b>id, <b>TYPE: </b>int4,
      */
     @Id
@@ -54,18 +55,27 @@ public class PrefixModel implements Serializable {
     private Integer id;
 
     /**
-     * Description field
-     * <b>FIELD: </b>description, <b>TYPE: </b>varchar,
+     * Simple table identification
+     * <b>FIELD: </b>simple_id, <b>TYPE: </b>int4,
      */
-    @Basic
-    @Column(name = "description", nullable = false, length = 10)
-    private String description;
-
-    @OneToMany(mappedBy = "prefix", fetch = FetchType.LAZY)
-    private Set<PrefixRelationModel> prefixRelationPrefixList;
+    @Id
+    @Column(name = "simple_id", nullable = false, length = 32)
+    private Integer simpleId;
 
     /**
-     * Prefix table identification
+     * Creation date
+     * <b>FIELD: </b>creation_date, <b>TYPE: </b>date,
+     */
+    @Basic
+    @Column(name = "creation_date", nullable = false)
+    private Date creationDate;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="simple_id", referencedColumnName="id")
+    private SimpleModel simple;
+
+    /**
+     * Composite primary key identification
      * <b>FIELD: </b>id
      * @return A {@link Integer} value
      */
@@ -74,7 +84,7 @@ public class PrefixModel implements Serializable {
     }
 
     /**
-     * Prefix table identification
+     * Composite primary key identification
      * <b>FIELD: </b>id
      * @param id A {@link Integer} value
      */
@@ -83,29 +93,47 @@ public class PrefixModel implements Serializable {
     }
 
     /**
-     * Description field
-     * <b>FIELD: </b>description
-     * @return A {@link String} value
+     * Simple table identification
+     * <b>FIELD: </b>simple_id
+     * @return A {@link Integer} value
      */
-    public String getDescription() {
-        return description;
+    public Integer getSimpleId() {
+        return simpleId;
     }
 
     /**
-     * Description field
-     * <b>FIELD: </b>description
-     * @param description A {@link String} value
+     * Simple table identification
+     * <b>FIELD: </b>simple_id
+     * @param simpleId A {@link Integer} value
      */
-    public void setDescription(String description) {
-        this.description = description;
+    public void setSimpleId(Integer simpleId) {
+        this.simpleId = simpleId;
     }
 
-    public Set<PrefixRelationModel> getPrefixRelationPrefixList() {
-        return prefixRelationPrefixList;
+    /**
+     * Creation date
+     * <b>FIELD: </b>creation_date
+     * @return A {@link Date} value
+     */
+    public Date getCreationDate() {
+        return creationDate;
     }
 
-    public void setPrefixRelationPrefixList(Set<PrefixRelationModel> prefixRelationPrefixList) {
-        this.prefixRelationPrefixList = prefixRelationPrefixList;
+    /**
+     * Creation date
+     * <b>FIELD: </b>creation_date
+     * @param creationDate A {@link Date} value
+     */
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public SimpleModel getSimple() {
+        return simple;
+    }
+
+    public void setSimple(SimpleModel simple) {
+        this.simple = simple;
     }
 
     @Override
@@ -117,8 +145,9 @@ public class PrefixModel implements Serializable {
     public int hashCode() {
         return Objects.hashCode(
             id
-            ,description
-            ,prefixRelationPrefixList
+            ,simpleId
+            ,creationDate
+            ,simple
         );
     }
 
@@ -126,8 +155,9 @@ public class PrefixModel implements Serializable {
     public String toString() {
         return MoreObjects.toStringHelper(this)
                 .add("id", id)
-                .add("description", description)
-                .add("prefixRelationPrefixList", prefixRelationPrefixList)
+                .add("simpleId", simpleId)
+                .add("creationDate", creationDate)
+                .add("simple", simple)
                 .toString();
     }
 }

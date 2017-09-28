@@ -13,7 +13,7 @@ import java.io.Serializable;
  */
 @Component
 @Scope(value = "singleton")
-public class ConnectionData implements Serializable {
+public class ConnectionConfigurationData implements Serializable {
 
     /**
      * Serial Version UID

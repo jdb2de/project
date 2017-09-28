@@ -19,11 +19,29 @@ public class TableModel implements Serializable {
      */
     private static final long serialVersionUID = -867165492491695312L;
 
+    private String schema;
+    private String catalog;
     private String name;
     private String comment;
     private boolean compositeKey;
     private List<ColumnModel> columns;
     private List<ForeignKeyModel> foreignKeys;
+
+    public String getSchema() {
+        return schema;
+    }
+
+    public void setSchema(String schema) {
+        this.schema = schema;
+    }
+
+    public String getCatalog() {
+        return catalog;
+    }
+
+    public void setCatalog(String catalog) {
+        this.catalog = catalog;
+    }
 
     public String getName() {
         return name;
@@ -78,13 +96,15 @@ public class TableModel implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(name, comment, compositeKey, columns);
+        return Objects.hashCode(schema, catalog, name, comment, compositeKey, columns);
     }
 
 
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
+                .add("schema", schema)
+                .add("catalog", catalog)
                 .add("name", name)
                 .add("comment", comment)
                 .add("compositeKey", compositeKey)

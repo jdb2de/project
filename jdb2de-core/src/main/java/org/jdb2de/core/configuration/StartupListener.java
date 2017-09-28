@@ -1,7 +1,7 @@
 package org.jdb2de.core.configuration;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jdb2de.core.data.ConnectionData;
+import org.jdb2de.core.data.ConnectionConfigurationData;
 import org.jdb2de.core.data.ParameterData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,7 +20,7 @@ public class StartupListener {
 
     private final ParameterData parameterData;
 
-    private final ConnectionData connectionData;
+    private final ConnectionConfigurationData connectionConfigurationData;
 
     @Value("${config.entity.path:#{null}}")
     private String configEntityPath;
@@ -31,7 +31,7 @@ public class StartupListener {
     @Value("${config.entity.suffix:#{null}}")
     private String configEntitySuffix;
 
-    @Value("${config.pk.package:#{null}}")
+    @Value("${config.composite.pk.package:#{null}}")
     private String configPrimaryKeyPackage;
 
     @Value("${config.author:#{null}}")
@@ -74,9 +74,9 @@ public class StartupListener {
     private String databaseCatalog;
 
     @Autowired
-    public StartupListener(ParameterData parameterData, ConnectionData connectionData) {
+    public StartupListener(ParameterData parameterData, ConnectionConfigurationData connectionConfigurationData) {
         this.parameterData = parameterData;
-        this.connectionData = connectionData;
+        this.connectionConfigurationData = connectionConfigurationData;
     }
 
     /**
@@ -117,11 +117,11 @@ public class StartupListener {
      * Load database configuration parameters
      */
     private void loadDatabaseParameters() {
-        connectionData.setDriver(databaseDriver);
-        connectionData.setUrl(databaseUrl);
-        connectionData.setUserName(databaseUsername);
-        connectionData.setPassword(databasePassword);
-        connectionData.setSchema(databaseSchema);
-        connectionData.setCatalog(databaseCatalog);
+        connectionConfigurationData.setDriver(databaseDriver);
+        connectionConfigurationData.setUrl(databaseUrl);
+        connectionConfigurationData.setUserName(databaseUsername);
+        connectionConfigurationData.setPassword(databasePassword);
+        connectionConfigurationData.setSchema(databaseSchema);
+        connectionConfigurationData.setCatalog(databaseCatalog);
     }
 }
