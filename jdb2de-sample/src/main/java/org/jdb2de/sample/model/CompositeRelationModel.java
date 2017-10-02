@@ -22,37 +22,54 @@ package org.jdb2de.sample.model;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
+import org.jdb2de.sample.model.pk.CompositeRelationPK;
 
 import javax.annotation.Generated;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Set;
 
 /**
- * Simple table
- * <b>TABLE:</b> simple
+ * Composite relation
+ * <b>TABLE:</b> composite_relation
  *
  * Automatically created by JDB2DE tool
  * @author Rodrigo Tavares
  */
 @Entity
-@Table(name = "simple", schema = "public", catalog = "public")
+@IdClass(CompositeRelationPK.class)
+@Table(name = "composite_relation", schema = "public", catalog = "public")
 @Generated(value = "jdb2de", date = "2017-10-01 23:12:20", comments = "You should not modify it by hand")
-public class SimpleModel implements Serializable {
+public class CompositeRelationModel implements Serializable {
 
     /**
      * Serial Version UID
      */
-    private static final long serialVersionUID = 1386750750L;
+    private static final long serialVersionUID = 3650287260L;
 
     /**
-     * Simple table identification
+     * Composite relation identification
      * <b>FIELD: </b>id, <b>TYPE: </b>int4,
      */
     @Id
     @Column(name = "id", nullable = false, length = 32)
     private Integer id;
+
+    /**
+     * Composite primary key identification
+     * <b>FIELD: </b>composite_id, <b>TYPE: </b>int4,
+     */
+    @Id
+    @Column(name = "composite_id", nullable = false, length = 32)
+    private Integer compositeId;
+
+    /**
+     * Simple table identification
+     * <b>FIELD: </b>simple_id, <b>TYPE: </b>int4,
+     */
+    @Id
+    @Column(name = "simple_id", nullable = false, length = 32)
+    private Integer simpleId;
 
     /**
      * Creation date
@@ -62,20 +79,15 @@ public class SimpleModel implements Serializable {
     @Column(name = "creation_date", nullable = false)
     private Date creationDate;
 
-    @OneToMany(mappedBy = "simple", fetch = FetchType.LAZY)
-    private Set<CompositeModel> compositeSimpleList;
-
-    @OneToMany(mappedBy = "simple", fetch = FetchType.LAZY)
-    private Set<MultipleRelationModel> multipleRelationSimpleList;
-
-    @OneToMany(mappedBy = "simpleOne", fetch = FetchType.LAZY)
-    private Set<MultipleRelationModel> multipleRelationSimpleOneList;
-
-    @OneToMany(mappedBy = "simpleTwo", fetch = FetchType.LAZY)
-    private Set<MultipleRelationModel> multipleRelationSimpleTwoList;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumns({
+        @JoinColumn(name="composite_id", referencedColumnName="id"),
+        @JoinColumn(name="simple_id", referencedColumnName="simple_id"),
+    })
+    private CompositeModel composite;
 
     /**
-     * Simple table identification
+     * Composite relation identification
      * <b>FIELD: </b>id
      * @return A {@link Integer} value
      */
@@ -84,12 +96,48 @@ public class SimpleModel implements Serializable {
     }
 
     /**
-     * Simple table identification
+     * Composite relation identification
      * <b>FIELD: </b>id
      * @param id A {@link Integer} value
      */
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    /**
+     * Composite primary key identification
+     * <b>FIELD: </b>composite_id
+     * @return A {@link Integer} value
+     */
+    public Integer getCompositeId() {
+        return compositeId;
+    }
+
+    /**
+     * Composite primary key identification
+     * <b>FIELD: </b>composite_id
+     * @param compositeId A {@link Integer} value
+     */
+    public void setCompositeId(Integer compositeId) {
+        this.compositeId = compositeId;
+    }
+
+    /**
+     * Simple table identification
+     * <b>FIELD: </b>simple_id
+     * @return A {@link Integer} value
+     */
+    public Integer getSimpleId() {
+        return simpleId;
+    }
+
+    /**
+     * Simple table identification
+     * <b>FIELD: </b>simple_id
+     * @param simpleId A {@link Integer} value
+     */
+    public void setSimpleId(Integer simpleId) {
+        this.simpleId = simpleId;
     }
 
     /**
@@ -110,36 +158,12 @@ public class SimpleModel implements Serializable {
         this.creationDate = creationDate;
     }
 
-    public Set<CompositeModel> getCompositeSimpleList() {
-        return compositeSimpleList;
+    public CompositeModel getComposite() {
+        return composite;
     }
 
-    public void setCompositeSimpleList(Set<CompositeModel> compositeSimpleList) {
-        this.compositeSimpleList = compositeSimpleList;
-    }
-
-    public Set<MultipleRelationModel> getMultipleRelationSimpleList() {
-        return multipleRelationSimpleList;
-    }
-
-    public void setMultipleRelationSimpleList(Set<MultipleRelationModel> multipleRelationSimpleList) {
-        this.multipleRelationSimpleList = multipleRelationSimpleList;
-    }
-
-    public Set<MultipleRelationModel> getMultipleRelationSimpleOneList() {
-        return multipleRelationSimpleOneList;
-    }
-
-    public void setMultipleRelationSimpleOneList(Set<MultipleRelationModel> multipleRelationSimpleOneList) {
-        this.multipleRelationSimpleOneList = multipleRelationSimpleOneList;
-    }
-
-    public Set<MultipleRelationModel> getMultipleRelationSimpleTwoList() {
-        return multipleRelationSimpleTwoList;
-    }
-
-    public void setMultipleRelationSimpleTwoList(Set<MultipleRelationModel> multipleRelationSimpleTwoList) {
-        this.multipleRelationSimpleTwoList = multipleRelationSimpleTwoList;
+    public void setComposite(CompositeModel composite) {
+        this.composite = composite;
     }
 
     @Override
@@ -151,11 +175,10 @@ public class SimpleModel implements Serializable {
     public int hashCode() {
         return Objects.hashCode(
             id
+            ,compositeId
+            ,simpleId
             ,creationDate
-            ,compositeSimpleList
-            ,multipleRelationSimpleList
-            ,multipleRelationSimpleOneList
-            ,multipleRelationSimpleTwoList
+            ,composite
         );
     }
 
@@ -163,11 +186,10 @@ public class SimpleModel implements Serializable {
     public String toString() {
         return MoreObjects.toStringHelper(this)
                 .add("id", id)
+                .add("compositeId", compositeId)
+                .add("simpleId", simpleId)
                 .add("creationDate", creationDate)
-                .add("compositeSimpleList", compositeSimpleList)
-                .add("multipleRelationSimpleList", multipleRelationSimpleList)
-                .add("multipleRelationSimpleOneList", multipleRelationSimpleOneList)
-                .add("multipleRelationSimpleTwoList", multipleRelationSimpleTwoList)
+                .add("composite", composite)
                 .toString();
     }
 }

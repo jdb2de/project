@@ -52,8 +52,11 @@ public class StartupListener {
     @Value("${config.is.table.name.regex.clean.entity.name:#{\"true\"}}")
     private String configTableNameRegexCleanEntityName;
 
-    @Value("${config.is.table.name.regex.clean.pk.field:#{\"true\"}}")
-    private String configTableNameRegexCleanPrimaryKeyField;
+    @Value("${config.is.table.name.regex.clean.fk.field:#{\"true\"}}")
+    private String configTableNameRegexCleanForeignKeyField;
+
+    @Value("${config.table.constant.pk.name:#{null}}")
+    private String configTableConstantPrimaryKeyName;
 
     @Value("${database.driver:#{null}}")
     private String databaseDriver;
@@ -106,11 +109,11 @@ public class StartupListener {
 
         // Boolean conversion
         final String cleanEntityName = StringUtils.lowerCase(configTableNameRegexCleanEntityName);
-        final String cleanPrimaryKeyField = StringUtils.lowerCase(configTableNameRegexCleanPrimaryKeyField);
+        final String cleanForeignKeyField = StringUtils.lowerCase(configTableNameRegexCleanForeignKeyField);
         final String strTrue = Boolean.TRUE.toString();
 
         parameterData.setTableNameRegexCleanEntityName(strTrue.equals(cleanEntityName));
-        parameterData.setTableNameRegexCleanPrimaryKeyField(strTrue.equals(cleanPrimaryKeyField));
+        parameterData.setTableNameRegexCleanForeignKeyField(strTrue.equals(cleanForeignKeyField));
     }
 
     /**

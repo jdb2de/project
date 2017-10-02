@@ -20,9 +20,8 @@ public class ForeignKeyModel implements Serializable {
 
     private String name;
     private String table;
-    private List<String> columns;
     private String referenceTable;
-    private List<String> referenceColumns;
+    private List<ForeignKeyColumnModel> relations;
 
     public String getName() {
         return name;
@@ -40,17 +39,6 @@ public class ForeignKeyModel implements Serializable {
         this.table = table;
     }
 
-    public List<String> getColumns() {
-        if (columns == null) {
-            columns = new ArrayList<>();
-        }
-        return columns;
-    }
-
-    public void setColumns(List<String> columns) {
-        this.columns = columns;
-    }
-
     public String getReferenceTable() {
         return referenceTable;
     }
@@ -59,15 +47,15 @@ public class ForeignKeyModel implements Serializable {
         this.referenceTable = referenceTable;
     }
 
-    public List<String> getReferenceColumns() {
-        if (referenceColumns == null) {
-            referenceColumns = new ArrayList<>();
+    public List<ForeignKeyColumnModel> getRelations() {
+        if (relations == null) {
+            relations = new ArrayList<>();
         }
-        return referenceColumns;
+        return relations;
     }
 
-    public void setReferenceColumns(List<String> referenceColumns) {
-        this.referenceColumns = referenceColumns;
+    public void setRelations(List<ForeignKeyColumnModel> relations) {
+        this.relations = relations;
     }
 
     @Override
@@ -77,7 +65,7 @@ public class ForeignKeyModel implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(name, table, columns, referenceTable, referenceColumns);
+        return Objects.hashCode(name, table, referenceTable, relations);
     }
 
     @Override
@@ -85,9 +73,8 @@ public class ForeignKeyModel implements Serializable {
         return MoreObjects.toStringHelper(this)
                 .add("name", name)
                 .add("table", table)
-                .add("columns", columns)
                 .add("referenceTable", referenceTable)
-                .add("referenceColumns", referenceColumns)
+                .add("relations", relations)
                 .toString();
     }
 }

@@ -45,7 +45,7 @@ import ${import};
  */
 @Entity
 <#if entity.table.compositeKey>
-@IdClass(${entity.name}PK.class)
+@IdClass(${compositeName}.class)
 </#if>
 @Table(name = "${entity.table.name}"<#if entity.table.schema??>, schema = "${entity.table.schema}"</#if><#if entity.table.catalog??>, catalog = "${entity.table.catalog}"</#if>)
 @Generated(value = "jdb2de", date = "${.now?datetime}", comments = "You should not modify it by hand")

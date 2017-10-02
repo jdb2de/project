@@ -18,35 +18,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jdb2de.sample.model;
+package org.jdb2de.sample.model.pk;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
+import org.jdb2de.sample.model.CompositeRelationModel;
 
 import javax.annotation.Generated;
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Id;
 import java.io.Serializable;
-import java.util.Set;
 
 /**
- * Prefix table
- * <b>TABLE:</b> tb_prefix
+ * Composite primary key for {@link CompositeRelationModel}
  *
  * Automatically created by JDB2DE tool
  * @author Rodrigo Tavares
  */
-@Entity
-@Table(name = "tb_prefix", schema = "public", catalog = "public")
 @Generated(value = "jdb2de", date = "2017-10-01 23:12:20", comments = "You should not modify it by hand")
-public class PrefixModel implements Serializable {
+public class CompositeRelationPK implements Serializable {
 
     /**
      * Serial Version UID
      */
-    private static final long serialVersionUID = -1542833826L;
+    private static final long serialVersionUID = -850230055L;
 
     /**
-     * Prefix table identification
+     * Composite relation identification
      * <b>FIELD: </b>id, <b>TYPE: </b>int4,
      */
     @Id
@@ -54,18 +52,23 @@ public class PrefixModel implements Serializable {
     private Integer id;
 
     /**
-     * Description field
-     * <b>FIELD: </b>description, <b>TYPE: </b>varchar,
+     * Composite primary key identification
+     * <b>FIELD: </b>composite_id, <b>TYPE: </b>int4,
      */
-    @Basic
-    @Column(name = "description", nullable = false, length = 10)
-    private String description;
-
-    @OneToMany(mappedBy = "prefix", fetch = FetchType.LAZY)
-    private Set<PrefixRelationModel> prefixRelationPrefixList;
+    @Id
+    @Column(name = "composite_id", nullable = false, length = 32)
+    private Integer compositeId;
 
     /**
-     * Prefix table identification
+     * Simple table identification
+     * <b>FIELD: </b>simple_id, <b>TYPE: </b>int4,
+     */
+    @Id
+    @Column(name = "simple_id", nullable = false, length = 32)
+    private Integer simpleId;
+
+    /**
+     * Composite relation identification
      * <b>FIELD: </b>id
      * @return A {@link Integer} value
      */
@@ -74,7 +77,7 @@ public class PrefixModel implements Serializable {
     }
 
     /**
-     * Prefix table identification
+     * Composite relation identification
      * <b>FIELD: </b>id
      * @param id A {@link Integer} value
      */
@@ -83,29 +86,39 @@ public class PrefixModel implements Serializable {
     }
 
     /**
-     * Description field
-     * <b>FIELD: </b>description
-     * @return A {@link String} value
+     * Composite primary key identification
+     * <b>FIELD: </b>composite_id
+     * @return A {@link Integer} value
      */
-    public String getDescription() {
-        return description;
+    public Integer getCompositeId() {
+        return compositeId;
     }
 
     /**
-     * Description field
-     * <b>FIELD: </b>description
-     * @param description A {@link String} value
+     * Composite primary key identification
+     * <b>FIELD: </b>composite_id
+     * @param compositeId A {@link Integer} value
      */
-    public void setDescription(String description) {
-        this.description = description;
+    public void setCompositeId(Integer compositeId) {
+        this.compositeId = compositeId;
     }
 
-    public Set<PrefixRelationModel> getPrefixRelationPrefixList() {
-        return prefixRelationPrefixList;
+    /**
+     * Simple table identification
+     * <b>FIELD: </b>simple_id
+     * @return A {@link Integer} value
+     */
+    public Integer getSimpleId() {
+        return simpleId;
     }
 
-    public void setPrefixRelationPrefixList(Set<PrefixRelationModel> prefixRelationPrefixList) {
-        this.prefixRelationPrefixList = prefixRelationPrefixList;
+    /**
+     * Simple table identification
+     * <b>FIELD: </b>simple_id
+     * @param simpleId A {@link Integer} value
+     */
+    public void setSimpleId(Integer simpleId) {
+        this.simpleId = simpleId;
     }
 
     @Override
@@ -117,8 +130,8 @@ public class PrefixModel implements Serializable {
     public int hashCode() {
         return Objects.hashCode(
             id
-            ,description
-            ,prefixRelationPrefixList
+            ,compositeId
+            ,simpleId
         );
     }
 
@@ -126,8 +139,8 @@ public class PrefixModel implements Serializable {
     public String toString() {
         return MoreObjects.toStringHelper(this)
                 .add("id", id)
-                .add("description", description)
-                .add("prefixRelationPrefixList", prefixRelationPrefixList)
+                .add("compositeId", compositeId)
+                .add("simpleId", simpleId)
                 .toString();
     }
 }

@@ -35,7 +35,7 @@ import java.io.Serializable;
  * Automatically created by JDB2DE tool
  * @author Rodrigo Tavares
  */
-@Generated(value = "jdb2de", date = "2017-09-28 00:13:12", comments = "You should not modify it by hand")
+@Generated(value = "jdb2de", date = "2017-10-01 23:12:20", comments = "You should not modify it by hand")
 public class CompositePK implements Serializable {
 
     /**

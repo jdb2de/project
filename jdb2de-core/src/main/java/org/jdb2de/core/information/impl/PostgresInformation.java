@@ -5,10 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jdb2de.core.component.DatabaseConnection;
 import org.jdb2de.core.component.GeneratorFactory;
 import org.jdb2de.core.information.IDatabaseInformation;
-import org.jdb2de.core.model.ColumnModel;
-import org.jdb2de.core.model.ColumnParameterModel;
-import org.jdb2de.core.model.ForeignKeyModel;
-import org.jdb2de.core.model.TranslateTypeModel;
+import org.jdb2de.core.model.*;
 import org.jdb2de.core.util.GeneratorUtils;
 import org.postgresql.geometric.*;
 import org.postgresql.util.PGInterval;
@@ -289,21 +286,33 @@ public class PostgresInformation implements IDatabaseInformation {
         Array columnsArray = rs.getArray("conkey");
         Integer[] columnsIndexes = (Integer[]) columnsArray.getArray();
 
-        List<String> columns = new ArrayList<>();
+        List<String> sourceColumns = new ArrayList<>();
         for (int idx : columnsIndexes) {
             ColumnModel columnModel = tableColumnByIndex(foreignKeyModel.getTable(), idx);
-            columns.add(columnModel.getName());
+            sourceColumns.add(columnModel.getName());
         }
-        foreignKeyModel.setColumns(columns);
 
         Array referenceColumnsArray = rs.getArray("confkey");
         Integer[] referenceColumnsIndexes = (Integer[]) referenceColumnsArray.getArray();
-        List<String> referenceColumns = new ArrayList<>();
+        List<String> targetColumns = new ArrayList<>();
         for (int idx : referenceColumnsIndexes) {
             ColumnModel columnModel = tableColumnByIndex(foreignKeyModel.getReferenceTable(), idx);
-            referenceColumns.add(columnModel.getName());
+            targetColumns.add(columnModel.getName());
         }
-        foreignKeyModel.setReferenceColumns(referenceColumns);
+
+        List<ForeignKeyColumnModel> relations = new ArrayList<>();
+        for (int i = 0; i < sourceColumns.size(); i++) {
+            String source = sourceColumns.get(i);
+            String target = targetColumns.get(i);
+
+            ForeignKeyColumnModel relation = new ForeignKeyColumnModel();
+            relation.setIndex(i);
+            relation.setSource(source);
+            relation.setTarget(target);
+
+            relations.add(relation);
+        }
+        foreignKeyModel.setRelations(relations);
 
         return foreignKeyModel;
     }

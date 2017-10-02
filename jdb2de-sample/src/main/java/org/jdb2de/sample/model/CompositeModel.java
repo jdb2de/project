@@ -22,11 +22,13 @@ package org.jdb2de.sample.model;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
+import org.jdb2de.sample.model.pk.CompositePK;
 
 import javax.annotation.Generated;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Set;
 
 /**
  * Composite primary key
@@ -36,9 +38,9 @@ import java.util.Date;
  * @author Rodrigo Tavares
  */
 @Entity
-@IdClass(CompositeModelPK.class)
+@IdClass(CompositePK.class)
 @Table(name = "composite", schema = "public", catalog = "public")
-@Generated(value = "jdb2de", date = "2017-09-28 00:13:12", comments = "You should not modify it by hand")
+@Generated(value = "jdb2de", date = "2017-10-01 23:12:20", comments = "You should not modify it by hand")
 public class CompositeModel implements Serializable {
 
     /**
@@ -73,6 +75,9 @@ public class CompositeModel implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="simple_id", referencedColumnName="id")
     private SimpleModel simple;
+
+    @OneToMany(mappedBy = "composite", fetch = FetchType.LAZY)
+    private Set<CompositeRelationModel> compositeRelationCompositeList;
 
     /**
      * Composite primary key identification
@@ -136,6 +141,14 @@ public class CompositeModel implements Serializable {
         this.simple = simple;
     }
 
+    public Set<CompositeRelationModel> getCompositeRelationCompositeList() {
+        return compositeRelationCompositeList;
+    }
+
+    public void setCompositeRelationCompositeList(Set<CompositeRelationModel> compositeRelationCompositeList) {
+        this.compositeRelationCompositeList = compositeRelationCompositeList;
+    }
+
     @Override
     public boolean equals(Object obj) {
         return Objects.equal(this, obj);
@@ -148,6 +161,7 @@ public class CompositeModel implements Serializable {
             ,simpleId
             ,creationDate
             ,simple
+            ,compositeRelationCompositeList
         );
     }
 
@@ -158,6 +172,7 @@ public class CompositeModel implements Serializable {
                 .add("simpleId", simpleId)
                 .add("creationDate", creationDate)
                 .add("simple", simple)
+                .add("compositeRelationCompositeList", compositeRelationCompositeList)
                 .toString();
     }
 }

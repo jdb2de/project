@@ -36,7 +36,7 @@ import java.io.Serializable;
  */
 @Entity
 @Table(name = "tb_prefix_relation", schema = "public", catalog = "public")
-@Generated(value = "jdb2de", date = "2017-09-28 00:13:12", comments = "You should not modify it by hand")
+@Generated(value = "jdb2de", date = "2017-10-01 23:12:20", comments = "You should not modify it by hand")
 public class PrefixRelationModel implements Serializable {
 
     /**

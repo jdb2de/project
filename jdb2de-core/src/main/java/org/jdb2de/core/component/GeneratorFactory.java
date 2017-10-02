@@ -3,11 +3,9 @@ package org.jdb2de.core.component;
 import com.google.common.base.CaseFormat;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.similarity.JaroWinklerDistance;
 import org.jdb2de.core.data.*;
-import org.jdb2de.core.model.ColumnModel;
-import org.jdb2de.core.model.ForeignKeyModel;
-import org.jdb2de.core.model.TableModel;
-import org.jdb2de.core.model.TranslateTypeModel;
+import org.jdb2de.core.model.*;
 import org.jdb2de.core.util.GeneratorUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -23,6 +21,8 @@ import java.util.stream.Collectors;
 @Component
 @Scope(value = "singleton")
 public final class GeneratorFactory {
+
+    private static String UNDERLINE = "_";
 
     /**
      * Suffix for reverse relation name
@@ -119,18 +119,7 @@ public final class GeneratorFactory {
      */
     private String tableNameToType(String tableName, boolean useSuffix) {
 
-        String table = clearName(tableName,
-                parameters.isTableNameRegexCleanPrimaryKeyField());
-        if (StringUtils.isNotEmpty(parameters.getTableNameRegex()) && parameters.isTableNameRegexCleanEntityName()) {
-            table = table.replaceFirst(parameters.getTableNameRegex(), "");
-            if (table.startsWith("_")) {
-                table = table.replaceFirst("^_", "");
-            }
-
-            if (table.endsWith("_")) {
-                table = table.replaceFirst("_$", "");
-            }
-        }
+        String table = clearName(tableName, parameters.isTableNameRegexCleanEntityName());
 
         String typeName = GeneratorUtils.underscoreToUpperCamelcase(table);
         if (useSuffix && StringUtils.isNotEmpty(parameters.getEntitySuffix())) {
@@ -144,7 +133,7 @@ public final class GeneratorFactory {
     private String generateRelationManyName(EntityData entityRelation, RelationData relationOne) {
 
         String table = clearName(entityRelation.getTable().getName(),
-                parameters.isTableNameRegexCleanPrimaryKeyField());
+                parameters.isTableNameRegexCleanForeignKeyField());
 
         String relationManyName = tableNameToType(table, false);
         relationManyName = relationManyName.concat(CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, relationOne.getName()));
@@ -161,12 +150,12 @@ public final class GeneratorFactory {
         }
 
         String table = originalName.replaceFirst(parameters.getTableNameRegex(), "");
-        if (table.startsWith("_")) {
-            table = table.replaceFirst("^_", "");
+        if (table.startsWith(UNDERLINE)) {
+            table = table.replaceFirst("^".concat(UNDERLINE), "");
         }
 
-        if (table.endsWith("_")) {
-            table = table.replaceFirst("_$", "");
+        if (table.endsWith(UNDERLINE)) {
+            table = table.replaceFirst(UNDERLINE.concat("$"), "");
         }
 
         return table;
@@ -260,32 +249,60 @@ public final class GeneratorFactory {
         return relationsMany;
     }
 
-    private String generateRelationName(ForeignKeyModel foreignKey) {
+    private ForeignKeyColumnModel findMainRelation(String referenceTable, List<ForeignKeyColumnModel> relations) {
 
-        String mainRelationColumn = null;
-        // If there is only one column, gets the first one
-        if (foreignKey.getColumns().size() == 1) {
-            mainRelationColumn = foreignKey.getColumns().get(0);
-        } else {
-            // Otherwise gets the column that contains the reference table in the name
-            for (String column : foreignKey.getColumns()) {
-                if (column.contains(foreignKey.getReferenceTable())) {
-                    mainRelationColumn = column;
-                    break;
-                }
+        Double currentSimilarity = 0.0;
+        ForeignKeyColumnModel currentRelation = null;
+        for (ForeignKeyColumnModel relation : relations) {
+
+            // Check if there is a constant primary key name, if yes and target column
+            // is equals the  constant name, uses this instance as main relation, otherwise
+            // follows to similarity rules
+            if (StringUtils.isNotEmpty(parameters.getTableConstantPrimaryKeyName()) &&
+                    relation.getTarget().equals(parameters.getTableConstantPrimaryKeyName())) {
+                return relation;
             }
 
-            // TODO Implements name for multiple fk columns if columns do not contains table name
+            // Checks if one of the columns in the reference table has the table name
+            String sourceColumn = relation.getSource().replaceFirst(parameters.getPrimaryKeyFieldNameRegex(), "");
+            String targetColumn = relation.getTarget().replaceFirst(parameters.getPrimaryKeyFieldNameRegex(), "");
 
-            // if anyway were not possible to identify the column,
-            // gets the reference table name as relation name
-            if (StringUtils.isEmpty(mainRelationColumn)) {
-                return tableNameToType(foreignKey.getReferenceTable(), false);
+            // Check the similarity between reference table and theirs primary key column
+            JaroWinklerDistance distance = new JaroWinklerDistance();
+            Double similaritySource = distance.apply(referenceTable, sourceColumn);
+            Double similarityTarget = distance.apply(referenceTable, targetColumn);
+
+            // Check the greater similarity between source and target column
+            Double similarity = (similaritySource > similarityTarget) ? similaritySource : similarityTarget;
+
+            // Compare the current similarity with the actual
+            if (similarity > currentSimilarity) {
+                currentRelation = relation;
+                currentSimilarity = similarity;
             }
         }
 
-        // Remove from main primary key column name the primary key
-        String relationName = mainRelationColumn.replaceFirst(parameters.getPrimaryKeyFieldNameRegex(), "");
+        return currentRelation;
+    }
+
+    private String generateRelationName(ForeignKeyModel foreignKey) {
+
+        ForeignKeyColumnModel relation;
+        // If there is only one column, gets the first one
+        if (foreignKey.getRelations().size() == 1) {
+            relation= foreignKey.getRelations().get(0);
+        } else {
+            relation = findMainRelation(foreignKey.getReferenceTable(), foreignKey.getRelations());
+        }
+
+        // if anyway was not possible to identify the column,
+        // gets the reference table name as relation name
+        if (relation == null) {
+            return tableNameToType(foreignKey.getReferenceTable(), false);
+        }
+
+        // Remove prefixes or suffixes from main source and target columns to generate the relation name
+        String relationName = relation.getSource().replaceFirst(parameters.getPrimaryKeyFieldNameRegex(), "");
         return tableNameToType(relationName, false);
     }
 
@@ -311,9 +328,9 @@ public final class GeneratorFactory {
         relation.setType(tableNameToType(foreignKey.getReferenceTable(), true));
 
         List<RelationReferenceData> relationReferences = new ArrayList<>();
-        for (int i = 0; i < foreignKey.getColumns().size(); i++) {
-            String column = foreignKey.getColumns().get(i);
-            String referenceColumn = foreignKey.getReferenceColumns().get(i);
+        for (ForeignKeyColumnModel relationColumns : foreignKey.getRelations()) {
+            String column = relationColumns.getSource();
+            String referenceColumn = relationColumns.getTarget();
 
             RelationReferenceData relationReference = new RelationReferenceData();
             relationReference.setSource(column);

@@ -33,7 +33,8 @@ public class ParameterData implements Serializable {
     private String primaryKeyFieldNameRegex;
     private String tableNameRegex;
     private boolean tableNameRegexCleanEntityName;
-    private boolean tableNameRegexCleanPrimaryKeyField;
+    private boolean tableNameRegexCleanForeignKeyField;
+    private String tableConstantPrimaryKeyName;
 
     public String getEntityPath() {
         return entityPath;
@@ -126,12 +127,20 @@ public class ParameterData implements Serializable {
         this.tableNameRegexCleanEntityName = tableNameRegexCleanEntityName;
     }
 
-    public boolean isTableNameRegexCleanPrimaryKeyField() {
-        return tableNameRegexCleanPrimaryKeyField;
+    public boolean isTableNameRegexCleanForeignKeyField() {
+        return tableNameRegexCleanForeignKeyField;
     }
 
-    public void setTableNameRegexCleanPrimaryKeyField(boolean tableNameRegexCleanPrimaryKeyField) {
-        this.tableNameRegexCleanPrimaryKeyField = tableNameRegexCleanPrimaryKeyField;
+    public void setTableNameRegexCleanForeignKeyField(boolean tableNameRegexCleanForeignKeyField) {
+        this.tableNameRegexCleanForeignKeyField = tableNameRegexCleanForeignKeyField;
+    }
+
+    public String getTableConstantPrimaryKeyName() {
+        return tableConstantPrimaryKeyName;
+    }
+
+    public void setTableConstantPrimaryKeyName(String tableConstantPrimaryKeyName) {
+        this.tableConstantPrimaryKeyName = tableConstantPrimaryKeyName;
     }
 
     @Override
@@ -153,7 +162,8 @@ public class ParameterData implements Serializable {
                 , primaryKeyFieldNameRegex
                 , tableNameRegex
                 , tableNameRegexCleanEntityName
-                , tableNameRegexCleanPrimaryKeyField
+                , tableNameRegexCleanForeignKeyField
+                , tableConstantPrimaryKeyName
         );
     }
 
@@ -171,7 +181,8 @@ public class ParameterData implements Serializable {
                 .add("primaryKeyFieldNameRegex", primaryKeyFieldNameRegex)
                 .add("tableNameRegex", tableNameRegex)
                 .add("tableNameRegexCleanEntityName", tableNameRegexCleanEntityName)
-                .add("tableNameRegexCleanPrimaryKeyField", tableNameRegexCleanPrimaryKeyField)
+                .add("tableNameRegexCleanForeignKeyField", tableNameRegexCleanForeignKeyField)
+                .add("tableConstantPrimaryKeyName", tableConstantPrimaryKeyName)
                 .toString();
     }
 }
