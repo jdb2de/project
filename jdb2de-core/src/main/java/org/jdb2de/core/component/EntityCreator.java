@@ -10,6 +10,7 @@ import org.jdb2de.core.data.CompositePrimaryKeyData;
 import org.jdb2de.core.data.EntityData;
 import org.jdb2de.core.data.FieldData;
 import org.jdb2de.core.data.ParameterData;
+import org.jdb2de.core.exception.GeneratorException;
 import org.jdb2de.core.model.TableModel;
 import org.jdb2de.core.util.GeneratorUtils;
 import org.slf4j.Logger;
@@ -131,7 +132,7 @@ public class EntityCreator {
             Template template = freemarkerConfig.getTemplate("entity.ftl");
             strEntity = FreeMarkerTemplateUtils.processTemplateIntoString(template, params);
         } catch (IOException | TemplateException e) {
-            throw new RuntimeException("Error to generate Entity content", e);
+            throw new GeneratorException("Error to generate Entity content", e);
         }
 
         EntityData entity = (EntityData)params.get(ENTITY_KEY);
@@ -160,7 +161,7 @@ public class EntityCreator {
             Template template = freemarkerConfig.getTemplate("composite-primary-key.ftl");
             strCompositePrimaryKey = FreeMarkerTemplateUtils.processTemplateIntoString(template, params);
         } catch (IOException | TemplateException e) {
-            throw new RuntimeException("Error to generate Entity content", e);
+            throw new GeneratorException("Error to generate Entity content", e);
         }
 
         CompositePrimaryKeyData compositePrimaryKey = (CompositePrimaryKeyData)params.get(COMPOSITE_KEY);

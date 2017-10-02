@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 @Scope(value = "singleton")
 public final class GeneratorFactory {
 
-    private static String UNDERLINE = "_";
+    private static final String UNDERLINE = "_";
 
     /**
      * Suffix for reverse relation name
