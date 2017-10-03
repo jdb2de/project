@@ -5,7 +5,7 @@
 
 	<groupId>org.jdb2de</groupId>
 	<artifactId>jdb2de-core</artifactId>
-	<version>0.1-SNAPSHOT</version>
+	<version>0.2-SNAPSHOT</version>
 
     <name>jdb2de-core</name>
     <description>JDB2DE - Database to Java Documented Entity - Core Project</description>
