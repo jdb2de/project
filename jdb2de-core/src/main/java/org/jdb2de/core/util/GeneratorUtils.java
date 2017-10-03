@@ -5,8 +5,10 @@ import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.ClassPathResource;
 
-import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.text.MessageFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -91,9 +93,9 @@ public final class GeneratorUtils {
         return Long.toString(serialUid);
     }
 
-    public static File fileFromResource(String fileName) {
-        ClassLoader classLoader = GeneratorUtils.class.getClassLoader();
-        return new File(classLoader.getResource(fileName).getFile());
+    public static URL fileFromResource(String fileName) throws IOException {
+        ClassPathResource resource = new ClassPathResource(fileName);
+        return resource.getURL();
     }
 
     /**

@@ -67,7 +67,7 @@ public class GeneratorService {
     @PostConstruct
     private void init() throws IOException {
         // Load copyright and licence from file
-        parameters.setCopyright(com.google.common.io.Files.readLines(GeneratorUtils.fileFromResource(COPYRIGHT_FILE),
+        parameters.setCopyright(com.google.common.io.Resources.readLines(GeneratorUtils.fileFromResource(COPYRIGHT_FILE),
                 Charset.defaultCharset()));
     }
 

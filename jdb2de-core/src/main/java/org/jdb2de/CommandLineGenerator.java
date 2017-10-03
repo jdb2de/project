@@ -32,11 +32,14 @@ public class CommandLineGenerator implements CommandLineRunner {
      */
     private static boolean generatorRunning = false;
 
-    @Autowired
-    private GeneratorService service;
+    private final ConfigurableApplicationContext context;
+    private final GeneratorService service;
 
     @Autowired
-    private ConfigurableApplicationContext context;
+    public CommandLineGenerator(ConfigurableApplicationContext context, GeneratorService service) {
+        this.context = context;
+        this.service = service;
+    }
 
     public static void main(String[] args) {
         // Indicates that the generator is running
